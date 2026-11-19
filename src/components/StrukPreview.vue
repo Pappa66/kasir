@@ -23,6 +23,9 @@
         <div class="flex justify-between gap-2">
           <span>Kasir</span><span>{{ kasir }}</span>
         </div>
+        <div v-if="pelanggan" class="flex justify-between gap-2">
+          <span>Pelanggan</span><span class="truncate text-right">{{ pelanggan }}</span>
+        </div>
       </div>
 
       <div class="my-1.5 border-t border-dashed border-black" />
@@ -40,12 +43,31 @@
       <div class="flex justify-between font-semibold">
         <span>TOTAL</span><span class="tnum">{{ ribuan(total) }}</span>
       </div>
-      <div class="mt-1 flex justify-between">
-        <span>Tunai</span><span class="tnum">{{ ribuan(tunai) }}</span>
-      </div>
-      <div class="flex justify-between">
-        <span>Kembali</span><span class="tnum">{{ ribuan(kembalian) }}</span>
-      </div>
+      <template v-if="metode === 'bon'">
+        <div class="mt-1 flex justify-between">
+          <span>Metode</span><span class="font-semibold">BON</span>
+        </div>
+        <div v-if="dibayar > 0" class="flex justify-between">
+          <span>DP</span><span class="tnum">{{ ribuan(dibayar) }}</span>
+        </div>
+        <div class="flex justify-between font-semibold">
+          <span>Sisa</span><span class="tnum">{{ ribuan(sisa) }}</span>
+        </div>
+        <div v-if="jatuhTempo" class="flex justify-between">
+          <span>Tempo</span><span>{{ jatuhTempo }}</span>
+        </div>
+        <div v-if="noHp" class="flex justify-between gap-2">
+          <span>HP</span><span class="truncate text-right">{{ noHp }}</span>
+        </div>
+      </template>
+      <template v-else>
+        <div class="mt-1 flex justify-between">
+          <span>Tunai</span><span class="tnum">{{ ribuan(tunai) }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span>Kembali</span><span class="tnum">{{ ribuan(kembalian) }}</span>
+        </div>
+      </template>
 
       <div class="my-1.5 border-t border-dashed border-black" />
 
@@ -73,6 +95,12 @@ const props = defineProps({
   kembalian: { type: Number, default: 0 },
   lebar: { type: Number, default: 80 },
   void: { type: Boolean, default: false },
+  pelanggan: { type: String, default: '' },
+  noHp: { type: String, default: '' },
+  metode: { type: String, default: 'tunai' },
+  dibayar: { type: Number, default: 0 },
+  sisa: { type: Number, default: 0 },
+  jatuhTempo: { type: String, default: '' },
 })
 
 const ribuan = (n) => Math.round(Number(n) || 0).toLocaleString('id-ID')

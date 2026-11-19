@@ -198,7 +198,7 @@
 import { computed, ref } from 'vue'
 import { ChevronRight, Eye, Plus, Search, Upload } from 'lucide-vue-next'
 import Modal from '../components/Modal.vue'
-import { getProduk } from '../data/adapter'
+import { getProduk, tambahProduk, ubahProduk } from '../data/adapter'
 import { rupiah, qty } from '../lib/format'
 import { useUi } from '../stores/ui'
 import { useSesi } from '../stores/sesi'
@@ -275,38 +275,30 @@ function simpan() {
     return ui.kabari('Harga jual lebih kecil dari harga beli.', 'warn')
 
   if (mode.value === 'baru') {
-    const id = Math.max(0, ...daftar.value.map((p) => p.id)) + 1
-    daftar.value.unshift({
-      id,
-      kode: `BRG-${String(id).padStart(3, '0')}`,
+    tambahProduk({
       barcode: String(f.barcode || ''),
       nama: String(f.nama).trim(),
       kategori: f.kategori,
       satuan: f.satuan,
-      satuan_dasar: f.satuan,
-      konversi: 1,
       harga_beli: Number(f.harga_beli) || 0,
       harga_jual: Number(f.harga_jual) || 0,
       stok: Number(f.stok) || 0,
       stok_minimum: Number(f.stok_minimum) || 0,
-      pakai_batch: false,
-      expired: null,
     })
-    ui.kabari('Produk baru ditambahkan (demo, belum tersimpan).', 'ok')
+    daftar.value = getProduk()
+    ui.kabari('Produk baru ditambahkan dan langsung bisa dijual di Kasir.', 'ok')
   } else {
-    const i = daftar.value.findIndex((p) => p.id === f.id)
-    if (i >= 0) {
-      daftar.value[i] = {
-        ...daftar.value[i],
-        ...f,
-        nama: String(f.nama).trim(),
-        harga_beli: Number(f.harga_beli) || 0,
-        harga_jual: Number(f.harga_jual) || 0,
-        stok: Number(f.stok) || 0,
-        stok_minimum: Number(f.stok_minimum) || 0,
-      }
-    }
-    ui.kabari('Perubahan produk disimpan di sesi ini.', 'ok')
+    ubahProduk(f.id, {
+      ...f,
+      nama: String(f.nama).trim(),
+      satuan_dasar: f.satuan,
+      harga_beli: Number(f.harga_beli) || 0,
+      harga_jual: Number(f.harga_jual) || 0,
+      stok: Number(f.stok) || 0,
+      stok_minimum: Number(f.stok_minimum) || 0,
+    })
+    daftar.value = getProduk()
+    ui.kabari('Perubahan produk disimpan dan berlaku di seluruh halaman sesi ini.', 'ok')
   }
   formOpen.value = false
 }

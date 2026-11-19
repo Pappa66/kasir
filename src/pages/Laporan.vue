@@ -5,11 +5,16 @@
         <h2 class="text-lg font-semibold text-ink">Penjualan &amp; stok</h2>
         <p class="mt-0.5 text-xs text-ink-soft">{{ tanggalPanjang(HARI_INI) }} · data contoh</p>
       </div>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2" data-no-print>
         <button type="button" class="btn" @click="ekspor">
           <Download :size="15" :stroke-width="1.6" />
           Ekspor CSV
-          <span class="rounded border border-line px-1 text-[10px] text-ink-soft">add-on</span>
+          <AddonTag class="!px-1.5 !py-0 !text-[9px]" />
+        </button>
+        <button type="button" class="btn" @click="cetakPDF">
+          <Printer :size="15" :stroke-width="1.6" />
+          Cetak PDF
+          <AddonTag class="!px-1.5 !py-0 !text-[9px]" />
         </button>
       </div>
     </div>
@@ -43,7 +48,7 @@
       </div>
     </div>
 
-    <div class="flex flex-wrap items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2" data-no-print>
       <div class="flex rounded border border-line p-0.5">
         <button
           v-for="t in tabs"
@@ -237,18 +242,20 @@
       </div>
     </section>
 
-    <p class="text-xs text-ink-soft">
-      Laporan dihitung dari transaksi contoh 19/11/2026. Ekspor CSV dan laporan periode lain
-      termasuk add-on.
+    <p class="text-xs text-ink-soft" data-no-print>
+      Laporan dihitung dari transaksi contoh 19/11/2026. Ekspor CSV dan cetak PDF tersedia sebagai
+      add-on; tombolnya bekerja penuh di demo ini.
     </p>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { Download } from 'lucide-vue-next'
+import { computed, onBeforeUnmount, ref } from 'vue'
+import { Download, Printer } from 'lucide-vue-next'
+import AddonTag from '../components/AddonTag.vue'
 import { getLaporan, getProduk, HARI_INI } from '../data/adapter'
-import { angka, qty, rupiah, tanggalPanjang } from '../lib/format'
+import { unduhCSV } from '../lib/ekspor'
+import { angka, qty, rupiah, tanggalPanjang, tanggalPendek } from '../lib/format'
 import { useUi } from '../stores/ui'
 
 const ui = useUi()
@@ -271,6 +278,57 @@ const nilaiBeliTampil = computed(() => stokTampil.value.reduce((s, p) => s + p.s
 const nilaiJualTampil = computed(() => stokTampil.value.reduce((s, p) => s + p.stok * p.harga_jual, 0))
 
 function ekspor() {
-  ui.kabari('Ekspor CSV adalah add-on (Rp 500.000). Demo hanya menampilkan pratinjau.', 'warn')
+  const baris = [
+    ['Laporan Toko Putra Nusantara 18'],
+    ['Tanggal', tanggalPendek(HARI_INI)],
+    [],
+    ['Ringkasan', 'Nilai'],
+    ['Omzet', l.omzet],
+    ['Laba kotor', l.laba],
+    ['Transaksi', l.transaksi],
+    ['Item terjual', l.item],
+    [],
+    ['Penjualan per jam', 'Transaksi', 'Item', 'Omzet'],
+    ...l.perJam.map((r) => [r.jam, r.transaksi, r.item, r.total]),
+    [],
+    ['Per kasir', 'Transaksi', 'Omzet'],
+    ...l.perKasir.map((r) => [r.kasir, r.transaksi, r.total]),
+    [],
+    ['Per kategori', 'Qty', 'Nilai'],
+    ...l.perKategori.map((r) => [r.kategori, r.qty, r.nilai]),
+    [],
+    ['Produk terlaris', 'Qty', 'Nilai'],
+    ...l.terlaris.map((r) => [r.nama, r.qty, r.nilai]),
+    [],
+    ['Stok produk', 'Kategori', 'Stok', 'Satuan', 'Harga beli', 'Nilai beli', 'Nilai jual'],
+    ...stokTampil.value.map((p) => [
+      p.nama,
+      p.kategori,
+      p.stok,
+      p.satuan,
+      p.harga_beli,
+      p.stok * p.harga_beli,
+      p.stok * p.harga_jual,
+    ]),
+    [],
+    ['Total nilai beli', nilaiBeliTampil.value],
+    ['Total nilai jual', nilaiJualTampil.value],
+  ]
+  unduhCSV('laporan-20261119.csv', baris)
+  ui.kabari('Laporan diekspor ke CSV. Buka di Excel atau Sheets.', 'ok')
 }
+
+function cetakPDF() {
+  document.body.classList.add('cetak-laporan')
+  const bersih = () => {
+    document.body.classList.remove('cetak-laporan')
+    window.removeEventListener('afterprint', bersih)
+  }
+  window.addEventListener('afterprint', bersih)
+  window.print()
+  setTimeout(() => {
+    if (document.body.classList.contains('cetak-laporan')) bersih()
+  }, 1500)
+}
+onBeforeUnmount(() => document.body.classList.remove('cetak-laporan'))
 </script>

@@ -1,0 +1,17 @@
+[
+  { "id": "B-13-01", "produk_id": 13, "kode": "ULT-1011", "expired": "2026-11-10", "qty": 2, "harga_beli": 17000, "masuk": "2026-10-12" },
+  { "id": "B-13-02", "produk_id": 13, "kode": "ULT-1201", "expired": "2026-12-01", "qty": 4, "harga_beli": 17000, "masuk": "2026-11-16" },
+  { "id": "B-13-03", "produk_id": 13, "kode": "ULT-2703", "expired": "2027-03-15", "qty": 8, "harga_beli": 17000, "masuk": "2026-11-16" },
+  { "id": "B-14-01", "produk_id": 14, "kode": "KCP-1208", "expired": "2026-12-08", "qty": 2, "harga_beli": 15500, "masuk": "2026-11-16" },
+  { "id": "B-14-02", "produk_id": 14, "kode": "KCP-2705", "expired": "2027-05-20", "qty": 2, "harga_beli": 15500, "masuk": "2026-11-16" },
+  { "id": "B-15-01", "produk_id": 15, "kode": "SSB-1214", "expired": "2026-12-14", "qty": 6, "harga_beli": 10000, "masuk": "2026-11-16" },
+  { "id": "B-15-02", "produk_id": 15, "kode": "SSB-2704", "expired": "2027-04-02", "qty": 10, "harga_beli": 10000, "masuk": "2026-11-16" },
+  { "id": "B-17-01", "produk_id": 17, "kode": "KPI-2711", "expired": "2027-11-02", "qty": 3, "harga_beli": 12500, "masuk": "2026-11-17" },
+  { "id": "B-18-01", "produk_id": 18, "kode": "TEH-1218", "expired": "2026-12-18", "qty": 9, "harga_beli": 6200, "masuk": "2026-11-17" },
+  { "id": "B-18-02", "produk_id": 18, "kode": "TEH-2706", "expired": "2027-06-30", "qty": 10, "harga_beli": 6200, "masuk": "2026-11-17" },
+  { "id": "B-9-01", "produk_id": 9, "kode": "IDM-2703", "expired": "2027-03-20", "qty": 100, "harga_beli": 2950, "masuk": "2026-11-17" },
+  { "id": "B-9-02", "produk_id": 9, "kode": "IDM-2705", "expired": "2027-05-10", "qty": 140, "harga_beli": 2950, "masuk": "2026-11-17" },
+  { "id": "B-10-01", "produk_id": 10, "kode": "MSS-2704", "expired": "2027-04-11", "qty": 80, "harga_beli": 2800, "masuk": "2026-11-17" },
+  { "id": "B-10-02", "produk_id": 10, "kode": "MSS-2706", "expired": "2027-06-01", "qty": 100, "harga_beli": 2800, "masuk": "2026-11-17" },
+  { "id": "B-25-01", "produk_id": 25, "kode": "TPG-2702", "expired": "2027-02-28", "qty": 5, "harga_beli": 10500, "masuk": "2026-11-18" }
+]

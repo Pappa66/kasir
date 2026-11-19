@@ -216,4 +216,37 @@
   .no-print {
     display: none !important;
   }
+
+  /* Mode cetak laporan: tampilkan isi halaman, sembunyikan kerangka aplikasi. */
+  body.cetak-laporan {
+    background: #fff !important;
+  }
+  body.cetak-laporan > *:not(#app) {
+    display: none !important;
+  }
+  body.cetak-laporan [data-shell-nav],
+  body.cetak-laporan [data-shell-head],
+  body.cetak-laporan [data-banner],
+  body.cetak-laporan [data-no-print] {
+    display: none !important;
+  }
+  body.cetak-laporan [data-shell-body] {
+    padding-left: 0 !important;
+  }
+  body.cetak-laporan #app {
+    display: block !important;
+  }
+  body.cetak-laporan #cetak-root {
+    display: none !important;
+  }
+  body.cetak-laporan main {
+    padding: 0 !important;
+  }
+  body.cetak-laporan .panel {
+    break-inside: avoid;
+    border-color: #c9d2d0 !important;
+  }
+  body.cetak-laporan .btn {
+    display: none !important;
+  }
 }

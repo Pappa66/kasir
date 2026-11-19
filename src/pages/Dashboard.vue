@@ -50,7 +50,7 @@
           {{ d.stokKritis.map((p) => p.nama).slice(0, 2).join(', ') }}
         </p>
       </div>
-      <div class="panel border-l-2 border-l-warn p-4">
+      <RouterLink to="/kedaluwarsa" class="panel border-l-2 border-l-warn p-4 transition-colors hover:bg-surface">
         <div class="flex items-baseline justify-between">
           <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Kadaluarsa &lt; 30 hari</span>
           <div class="flex items-center gap-2">
@@ -59,19 +59,21 @@
           </div>
         </div>
         <p class="mt-1 truncate text-xs text-ink-soft">
-          {{ d.mendekatiExpired.map((p) => p.nama).slice(0, 2).join(', ') }}
+          {{ namaExpired || 'Tidak ada batch mendekati' }}
         </p>
-      </div>
-      <div class="panel border-l-2 border-l-[#9aa8a5] p-4">
+      </RouterLink>
+      <RouterLink to="/piutang" class="panel border-l-2 border-l-[#9aa8a5] p-4 transition-colors hover:bg-surface">
         <div class="flex items-baseline justify-between">
-          <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Bon jatuh tempo</span>
+          <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Bon berjalan</span>
           <div class="flex items-center gap-2">
             <AddonTag />
-            <span class="text-xl font-semibold tnum">3</span>
+            <span class="text-xl font-semibold tnum">{{ d.piutang.jumlah }}</span>
           </div>
         </div>
-        <p class="mt-1 truncate text-xs text-ink-soft">Bu Ani, Warung Sari, Pak Budi</p>
-      </div>
+        <p class="mt-1 truncate text-xs text-ink-soft">
+          {{ rupiah(d.piutang.total) }} belum lunas<span v-if="d.piutang.lewat"> · {{ d.piutang.lewat }} lewat tempo</span>
+        </p>
+      </RouterLink>
     </div>
 
     <div class="grid gap-4 lg:grid-cols-5">
@@ -123,8 +125,17 @@
                 <td class="hidden text-ink-soft tnum sm:table-cell">{{ t.jam }}</td>
                 <td class="num">{{ rupiah(t.total) }}</td>
                 <td>
-                  <span class="status" :class="t.status === 'void' ? 'text-bad' : 'text-ok'">
-                    {{ t.status === 'void' ? 'Void' : 'Selesai' }}
+                  <span
+                    class="status"
+                    :class="
+                      t.status === 'void'
+                        ? 'text-bad'
+                        : t.metode === 'bon' && t.total > t.dibayar
+                          ? 'text-warn'
+                          : 'text-ok'
+                    "
+                  >
+                    {{ t.status === 'void' ? 'Void' : t.metode === 'bon' && t.total > t.dibayar ? 'Bon' : 'Lunas' }}
                   </span>
                 </td>
               </tr>
@@ -172,6 +183,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { ShoppingCart } from 'lucide-vue-next'
 import AddonTag from '../components/AddonTag.vue'
@@ -179,4 +191,8 @@ import { getDashboard, HARI_INI } from '../data/adapter'
 import { rupiah, angka, qty, tanggalPanjang } from '../lib/format'
 
 const d = getDashboard()
+const namaExpired = computed(() => {
+  const unik = [...new Set(d.mendekatiExpired.map((b) => b.produk_nama))]
+  return unik.slice(0, 2).join(', ') + (unik.length > 2 ? ` +${unik.length - 2}` : '')
+})
 </script>

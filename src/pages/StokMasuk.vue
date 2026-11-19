@@ -24,7 +24,7 @@
         <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
           {{ rupiah(nilaiTotal) }}
         </div>
-        <div class="mt-0.5 text-xs text-ink-soft">5 hari terakhir</div>
+        <div class="mt-0.5 text-xs text-ink-soft">dokumen diterima</div>
       </div>
       <div class="p-4">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Supplier</div>
@@ -101,8 +101,9 @@
     </section>
 
     <p class="text-xs text-ink-soft">
-      Menerima dokumen akan menambah stok di aplikasi asli. Di prototipe ini stok hanya berubah
-      pada tampilan sesi.
+      Menerima dokumen langsung menambah stok produk dan membuat batch baru bila tanggal expired
+      diisi. Perubahan bertahan selama sesi demo dan kembali seperti semula setelah halaman dimuat
+      ulang.
     </p>
 
     <!-- Detail dokumen -->
@@ -138,6 +139,7 @@
                 <th>Produk</th>
                 <th class="num w-24">Qty</th>
                 <th class="num w-32">Harga beli</th>
+                <th class="hidden w-28 sm:table-cell">Expired</th>
                 <th class="num w-32">Subtotal</th>
               </tr>
             </thead>
@@ -146,6 +148,9 @@
                 <td class="font-medium">{{ i.nama }}</td>
                 <td class="num text-ink-soft">{{ qty(i.qty) }} {{ i.satuan }}</td>
                 <td class="num text-ink-soft">{{ rupiah(i.harga_beli) }}</td>
+                <td class="hidden text-ink-soft tnum sm:table-cell">
+                  {{ i.expired ? tanggalPendek(i.expired) : '—' }}
+                </td>
                 <td class="num font-medium">{{ rupiah(i.subtotal) }}</td>
               </tr>
             </tbody>
@@ -159,7 +164,7 @@
       </div>
 
       <template #footer>
-        <span class="text-2xs text-ink-soft">Prototipe — stok tidak benar-benar berubah.</span>
+        <span class="text-2xs text-ink-soft">Stok dan batch bertambah di sesi demo.</span>
         <div class="flex gap-2">
           <button type="button" class="btn" @click="detail = null">Tutup</button>
           <button
@@ -198,7 +203,7 @@
         </div>
 
         <div class="rounded border border-line bg-surface p-3">
-          <div class="grid gap-2 sm:grid-cols-[minmax(0,1fr)_88px_128px_auto]">
+          <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_80px_120px_140px_auto]">
             <div class="min-w-0">
               <label class="label" for="sm-produk">Produk</label>
               <select id="sm-produk" v-model="pilih" class="input" @change="pilihProduk">
@@ -229,6 +234,10 @@
                 class="input tnum"
               />
             </div>
+            <div>
+              <label class="label" for="sm-expired">Expired</label>
+              <input id="sm-expired" v-model="expiredMasuk" type="date" class="input tnum" />
+            </div>
             <div class="flex items-end">
               <button type="button" class="btn w-full" @click="tambahBaris">
                 <Plus :size="15" :stroke-width="1.8" />
@@ -238,7 +247,8 @@
           </div>
           <p v-if="produkDipilih" class="mt-1.5 text-2xs text-ink-soft">
             Stok sekarang {{ qty(produkDipilih.stok) }} {{ produkDipilih.satuan }} · harga beli
-            terakhir {{ rupiah(produkDipilih.harga_beli) }}
+            terakhir {{ rupiah(produkDipilih.harga_beli) }}. Isi tanggal expired untuk membuat batch
+            FEFO.
           </p>
         </div>
 
@@ -247,17 +257,21 @@
             <thead>
               <tr>
                 <th>Produk</th>
-                <th class="num w-24">Qty</th>
-                <th class="num w-32">Harga beli</th>
-                <th class="num w-32">Subtotal</th>
+                <th class="num w-20">Qty</th>
+                <th class="num w-28">Harga beli</th>
+                <th class="hidden w-28 sm:table-cell">Expired</th>
+                <th class="num w-28">Subtotal</th>
                 <th class="w-10"></th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(b, i) in baris" :key="b.produk_id">
+              <tr v-for="(b, i) in baris" :key="`${b.produk_id}-${b.harga_beli}-${b.expired}`">
                 <td class="font-medium">{{ b.nama }}</td>
                 <td class="num text-ink-soft">{{ qty(b.qty) }} {{ b.satuan }}</td>
                 <td class="num text-ink-soft">{{ rupiah(b.harga_beli) }}</td>
+                <td class="hidden text-ink-soft tnum sm:table-cell">
+                  {{ b.expired ? tanggalPendek(b.expired) : '—' }}
+                </td>
                 <td class="num font-medium">{{ rupiah(b.qty * b.harga_beli) }}</td>
                 <td class="text-right">
                   <button
@@ -271,7 +285,7 @@
                 </td>
               </tr>
               <tr v-if="!baris.length">
-                <td colspan="5" class="py-6 text-center text-xs text-ink-soft">
+                <td colspan="6" class="py-6 text-center text-xs text-ink-soft">
                   Belum ada baris. Pilih produk lalu tekan Tambah.
                 </td>
               </tr>
@@ -308,6 +322,8 @@ import {
   getSupplier,
   HARI_INI,
   nomorStokMasukBerikutnya,
+  tambahStokMasuk,
+  terimaStokMasuk,
 } from '../data/adapter'
 import { rupiah, qty, tanggalPendek } from '../lib/format'
 import { useUi } from '../stores/ui'
@@ -324,6 +340,7 @@ const supplierId = ref(supplier[0].id)
 const pilih = ref('')
 const qtyMasuk = ref(1)
 const hargaMasuk = ref(0)
+const expiredMasuk = ref('')
 const baris = ref([])
 
 const nilaiTotal = computed(() =>
@@ -333,11 +350,19 @@ const draft = computed(() => dokumen.value.filter((d) => d.status === 'draft').l
 const produkDipilih = computed(() => produk.find((p) => p.id === Number(pilih.value)) || null)
 const totalBaris = computed(() => baris.value.reduce((s, b) => s + b.qty * b.harga_beli, 0))
 
+function segarkan() {
+  dokumen.value = getStokMasuk()
+  if (detail.value) {
+    detail.value = dokumen.value.find((d) => d.nomor === detail.value.nomor) || null
+  }
+}
+
 function bukaForm() {
   supplierId.value = supplier[0].id
   pilih.value = ''
   qtyMasuk.value = 1
   hargaMasuk.value = 0
+  expiredMasuk.value = ''
   baris.value = []
   formOpen.value = true
 }
@@ -347,6 +372,7 @@ function pilihProduk() {
   if (!p) return
   hargaMasuk.value = p.harga_beli
   qtyMasuk.value = 1
+  expiredMasuk.value = p.expired || ''
 }
 
 function tambahBaris() {
@@ -357,7 +383,10 @@ function tambahBaris() {
   const h = Number(hargaMasuk.value) || 0
   if (h <= 0) return ui.kabari('Harga beli harus lebih dari nol.', 'warn')
 
-  const ada = baris.value.find((b) => b.produk_id === p.id && b.harga_beli === h)
+  const expired = expiredMasuk.value || null
+  const ada = baris.value.find(
+    (b) => b.produk_id === p.id && b.harga_beli === h && b.expired === expired,
+  )
   if (ada) {
     ada.qty = Number((ada.qty + q).toFixed(3))
   } else {
@@ -367,28 +396,34 @@ function tambahBaris() {
       satuan: p.satuan,
       qty: Number(q.toFixed(3)),
       harga_beli: h,
+      expired,
     })
   }
   pilih.value = ''
   qtyMasuk.value = 1
   hargaMasuk.value = 0
+  expiredMasuk.value = ''
 }
 
 function simpan() {
   if (!baris.value.length) return
   const nomor = nomorStokMasukBerikutnya()
-  dokumen.value.unshift({
+  tambahStokMasuk({
     id: Date.now(),
     nomor,
     tanggal: HARI_INI,
     supplier_id: supplierId.value,
-    supplier: supplier.find((s) => s.id === supplierId.value)?.nama || '-',
     status: 'draft',
-    items: baris.value.map((b) => ({ ...b, subtotal: b.qty * b.harga_beli })),
-    total: totalBaris.value,
+    items: baris.value.map((b) => ({
+      produk_id: b.produk_id,
+      qty: b.qty,
+      harga_beli: b.harga_beli,
+      expired: b.expired,
+    })),
   })
+  segarkan()
   formOpen.value = false
-  ui.kabari(`Draft ${nomor} dibuat. Tekan "Terima barang" untuk menambah stok.`, 'ok')
+  ui.kabari(`Draft ${nomor} dibuat. Tekan "Terima barang" untuk menambah stok & batch.`, 'ok')
 }
 
 function lihat(d) {
@@ -396,8 +431,13 @@ function lihat(d) {
 }
 
 function terima(d) {
-  d.status = 'diterima'
-  detail.value = null
-  ui.kabari(`${d.nomor} diterima. Stok bertambah di aplikasi asli.`, 'ok')
+  const hasil = terimaStokMasuk(d.nomor)
+  if (!hasil) return ui.kabari('Dokumen tidak dapat diterima.', 'warn')
+  segarkan()
+  const batchBaru = hasil.items.filter((i) => i.expired).length
+  ui.kabari(
+    `${hasil.nomor} diterima. Stok bertambah${batchBaru ? ` dan ${batchBaru} batch baru dibuat` : ''}.`,
+    'ok',
+  )
 }
 </script>

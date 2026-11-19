@@ -1,17 +1,31 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
+// Keranjang + pembayaran. Mendukung tunai dan bon (add-on piutang).
 export const useKeranjang = defineStore('keranjang', () => {
   const items = ref([])
   const tunai = ref(0)
   const pelanggan = ref('')
+  const metode = ref('tunai') // tunai | bon
+  const noHp = ref('')
+  const jatuhTempo = ref('2026-11-26')
+  const dp = ref(0)
 
   const jumlahItem = computed(() => items.value.length)
   const totalQty = computed(() => items.value.reduce((s, i) => s + i.qty, 0))
   const subtotal = computed(() => items.value.reduce((s, i) => s + Math.round(i.qty * i.harga), 0))
   const total = computed(() => subtotal.value)
-  const kembalian = computed(() => Math.max(0, (Number(tunai.value) || 0) - total.value))
-  const bisaBayar = computed(() => items.value.length > 0 && (Number(tunai.value) || 0) >= total.value)
+  const kembalian = computed(() =>
+    metode.value === 'tunai' ? Math.max(0, (Number(tunai.value) || 0) - total.value) : 0,
+  )
+  const sisaBon = computed(() => Math.max(0, total.value - (Number(dp.value) || 0)))
+  const bisaBayar = computed(() => {
+    if (!items.value.length) return false
+    if (metode.value === 'bon') {
+      return !!pelanggan.value.trim() && (Number(dp.value) || 0) <= total.value
+    }
+    return (Number(tunai.value) || 0) >= total.value
+  })
 
   function tambah(produk) {
     const ada = items.value.find((i) => i.produk_id === produk.id)
@@ -67,21 +81,38 @@ export const useKeranjang = defineStore('keranjang', () => {
     items.value = []
     tunai.value = 0
     pelanggan.value = ''
+    metode.value = 'tunai'
+    noHp.value = ''
+    jatuhTempo.value = '2026-11-26'
+    dp.value = 0
   }
 
   function setTunai(v) {
     tunai.value = Number(v) || 0
   }
 
+  function setMetode(v) {
+    metode.value = v === 'bon' ? 'bon' : 'tunai'
+  }
+
+  function setDp(v) {
+    dp.value = Math.max(0, Number(v) || 0)
+  }
+
   return {
     items,
     tunai,
     pelanggan,
+    metode,
+    noHp,
+    jatuhTempo,
+    dp,
     jumlahItem,
     totalQty,
     subtotal,
     total,
     kembalian,
+    sisaBon,
     bisaBayar,
     tambah,
     ubahQty,
@@ -90,5 +121,7 @@ export const useKeranjang = defineStore('keranjang', () => {
     hapus,
     kosongkan,
     setTunai,
+    setMetode,
+    setDp,
   }
 })

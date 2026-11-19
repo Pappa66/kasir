@@ -174,7 +174,30 @@
       <div class="panel" data-tour="bayar">
         <div class="panel-h">
           <span class="panel-title">Pembayaran</span>
-          <span class="text-xs text-ink-soft">Tunai</span>
+          <div class="flex rounded border border-line p-0.5">
+            <button
+              type="button"
+              class="rounded px-2.5 py-0.5 text-2xs transition-colors"
+              :class="keranjang.metode === 'tunai' ? 'bg-accent text-white' : 'text-ink-soft hover:bg-surface'"
+              @click="keranjang.setMetode('tunai')"
+            >
+              Tunai
+            </button>
+            <button
+              type="button"
+              class="flex items-center gap-1 rounded px-2.5 py-0.5 text-2xs transition-colors"
+              :class="keranjang.metode === 'bon' ? 'bg-accent text-white' : 'text-ink-soft hover:bg-surface'"
+              @click="keranjang.setMetode('bon')"
+            >
+              Bon
+              <span
+                class="rounded border px-1 text-[9px] uppercase tracking-wide"
+                :class="keranjang.metode === 'bon' ? 'border-white/40 text-white/80' : 'border-accent-2/40 text-accent-2'"
+              >
+                add-on
+              </span>
+            </button>
+          </div>
         </div>
 
         <div class="space-y-2.5 px-4 py-4">
@@ -196,47 +219,126 @@
             <span class="text-3xl font-semibold leading-none tnum">{{ rupiah(keranjang.total) }}</span>
           </div>
 
-          <div class="pt-1">
-            <label class="label" for="tunai">Uang diterima</label>
-            <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-soft">Rp</span>
-              <input
-                id="tunai"
-                v-model="tunaiTeks"
-                type="text"
-                inputmode="numeric"
-                class="input h-11 pl-9 text-base tnum"
-                placeholder="0"
-              />
+          <template v-if="keranjang.metode === 'tunai'">
+            <div class="pt-1">
+              <label class="label" for="tunai">Uang diterima</label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-soft">Rp</span>
+                <input
+                  id="tunai"
+                  v-model="tunaiTeks"
+                  type="text"
+                  inputmode="numeric"
+                  class="input h-11 pl-9 text-base tnum"
+                  placeholder="0"
+                />
+              </div>
+              <div class="mt-2 flex gap-1.5">
+                <button type="button" class="btn btn-sm flex-1" @click="keranjang.setTunai(keranjang.total)">
+                  Uang pas
+                </button>
+                <button type="button" class="btn btn-sm flex-1" @click="tambahUang(50000)">+50 rb</button>
+                <button type="button" class="btn btn-sm flex-1" @click="tambahUang(100000)">+100 rb</button>
+              </div>
             </div>
-            <div class="mt-2 flex gap-1.5">
-              <button type="button" class="btn btn-sm flex-1" @click="keranjang.setTunai(keranjang.total)">
-                Uang pas
-              </button>
-              <button type="button" class="btn btn-sm flex-1" @click="tambahUang(50000)">+50 rb</button>
-              <button type="button" class="btn btn-sm flex-1" @click="tambahUang(100000)">+100 rb</button>
+
+            <div class="flex items-center justify-between pt-1 text-sm">
+              <span class="text-ink-soft">Kembalian</span>
+              <span class="tnum font-medium" :class="keranjang.kembalian > 0 ? 'text-ok' : 'text-ink-soft'">
+                {{ rupiah(keranjang.kembalian) }}
+              </span>
             </div>
-          </div>
 
-          <div class="flex items-center justify-between pt-1 text-sm">
-            <span class="text-ink-soft">Kembalian</span>
-            <span class="tnum font-medium" :class="keranjang.kembalian > 0 ? 'text-ok' : 'text-ink-soft'">
-              {{ rupiah(keranjang.kembalian) }}
-            </span>
-          </div>
+            <button
+              type="button"
+              class="btn btn-primary btn-lg mt-1 w-full"
+              :disabled="!keranjang.bisaBayar"
+              @click="bayar"
+            >
+              Bayar {{ rupiah(keranjang.total) }}
+            </button>
 
-          <button
-            type="button"
-            class="btn btn-primary btn-lg mt-1 w-full"
-            :disabled="!keranjang.bisaBayar"
-            @click="bayar"
-          >
-            Bayar {{ rupiah(keranjang.total) }}
-          </button>
+            <p v-if="keranjang.jumlahItem && Number(keranjang.tunai) < keranjang.total" class="text-center text-2xs text-ink-soft">
+              Uang diterima kurang {{ rupiah(keranjang.total - keranjang.tunai) }}
+            </p>
+          </template>
 
-          <p v-if="keranjang.jumlahItem && Number(keranjang.tunai) < keranjang.total" class="text-center text-2xs text-ink-soft">
-            Uang diterima kurang {{ rupiah(keranjang.total - keranjang.tunai) }}
-          </p>
+          <template v-else>
+            <div class="space-y-2.5 border-t border-line pt-3">
+              <div class="flex flex-wrap items-center gap-2">
+                <AddonTag />
+                <span class="text-2xs leading-relaxed text-ink-soft">
+                  Bon pelanggan: barang diambil dulu, dibayar kemudian.
+                </span>
+              </div>
+
+              <div>
+                <label class="label" for="bon-pelanggan">Nama pelanggan</label>
+                <input
+                  id="bon-pelanggan"
+                  v-model="keranjang.pelanggan"
+                  class="input"
+                  placeholder="cth. Bu Ani / Warung Sari"
+                />
+              </div>
+
+              <div>
+                <label class="label" for="bon-hp">No. WhatsApp <span class="normal-case text-[#94a3a0]">(opsional)</span></label>
+                <input
+                  id="bon-hp"
+                  v-model="keranjang.noHp"
+                  type="tel"
+                  inputmode="tel"
+                  class="input tnum"
+                  placeholder="08xx-xxxx-xxxx"
+                />
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="label" for="bon-dp">Uang muka</label>
+                  <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-soft">Rp</span>
+                    <input
+                      id="bon-dp"
+                      v-model="dpTeks"
+                      type="text"
+                      inputmode="numeric"
+                      class="input pl-9 tnum"
+                      placeholder="0"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label class="label" for="bon-tempo">Jatuh tempo</label>
+                  <input id="bon-tempo" v-model="keranjang.jatuhTempo" type="date" class="input tnum" />
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between border-t border-line pt-2 text-sm">
+                <span class="text-ink-soft">Sisa bon</span>
+                <span class="tnum font-semibold" :class="keranjang.sisaBon > 0 ? 'text-warn' : 'text-ok'">
+                  {{ rupiah(keranjang.sisaBon) }}
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-primary btn-lg mt-1 w-full"
+              :disabled="!keranjang.bisaBayar"
+              @click="bayar"
+            >
+              Simpan bon {{ rupiah(keranjang.total) }}
+            </button>
+
+            <p
+              v-if="keranjang.jumlahItem && !keranjang.pelanggan.trim()"
+              class="text-center text-2xs text-warn"
+            >
+              Nama pelanggan wajib diisi untuk bon.
+            </p>
+          </template>
         </div>
       </div>
 
@@ -284,9 +386,15 @@
         <StrukPreview
           :toko="toko"
           :nomor="struk.nomor"
-          :tanggal="struk.tanggal"
+          :tanggal="tanggalPendek(struk.tanggal)"
           :jam="struk.jam"
           :kasir="struk.kasir"
+          :pelanggan="struk.pelanggan"
+          :no-hp="struk.no_hp"
+          :metode="struk.metode"
+          :dibayar="struk.dibayar"
+          :sisa="Math.max(0, struk.total - struk.dibayar)"
+          :jatuh-tempo="struk.jatuh_tempo ? tanggalPendek(struk.jatuh_tempo) : ''"
           :items="struk.items"
           :total="struk.total"
           :tunai="struk.tunai"
@@ -296,12 +404,29 @@
         />
       </div>
 
+      <div class="flex flex-wrap items-center gap-2 border-t border-line px-4 py-2">
+        <AddonTag class="!px-1.5 !py-0 !text-[9px]" />
+        <span class="min-w-0 flex-1 truncate font-mono text-2xs text-ink-soft">
+          {{ tautanStruk }}
+        </span>
+        <button type="button" class="btn btn-sm shrink-0" @click="salinTautan">
+          Salin tautan
+        </button>
+      </div>
+
       <template #footer>
         <span class="text-2xs text-ink-soft">Prototipe — tidak tersimpan.</span>
-        <div class="flex shrink-0 gap-2">
+        <div class="flex flex-wrap shrink-0 gap-2">
           <button type="button" class="btn whitespace-nowrap" @click="cetak">
             <Printer :size="15" :stroke-width="1.6" />
             Cetak
+          </button>
+          <button type="button" class="btn whitespace-nowrap" @click="kirimWA">
+            <MessageCircle :size="15" :stroke-width="1.6" />
+            WA
+            <span class="rounded border border-accent-2/40 px-1 text-[9px] uppercase tracking-wide text-accent-2">
+              add-on
+            </span>
           </button>
           <button type="button" class="btn btn-primary whitespace-nowrap" @click="transaksiBaru">
             Transaksi baru
@@ -309,25 +434,57 @@
         </div>
       </template>
     </Modal>
+
+    <KirimWA
+      :open="waOpen"
+      :nomor="struk ? struk.no_hp : ''"
+      :pesan="pesanWA"
+      :subjudul="struk ? struk.nomor : ''"
+      @close="waOpen = false"
+    />
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { Search, ShoppingCart, Minus, Plus, X, Trash2, Printer } from 'lucide-vue-next'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import {
+  Search,
+  ShoppingCart,
+  Minus,
+  Plus,
+  X,
+  Trash2,
+  Printer,
+  MessageCircle,
+} from 'lucide-vue-next'
 import StrukPreview from '../components/StrukPreview.vue'
 import Modal from '../components/Modal.vue'
+import KirimWA from '../components/KirimWA.vue'
+import AddonTag from '../components/AddonTag.vue'
 import { useKeranjang } from '../stores/keranjang'
 import { useToko } from '../stores/toko'
 import { useCetak } from '../stores/cetak'
 import { useSesi } from '../stores/sesi'
-import { getProduk, HARI_INI, nomorInvoiceBerikutnya, tambahPenjualan } from '../data/adapter'
+import { useUi } from '../stores/ui'
+import {
+  getProduk,
+  HARI_INI,
+  nomorInvoiceBerikutnya,
+  tambahPenjualan,
+  kurangiStok,
+  potongBatchFEFO,
+  tautanPublik,
+} from '../data/adapter'
+import { pesanInvoice } from '../lib/pesan'
 import { rupiah, qty, selisihHari, tanggalPendek } from '../lib/format'
 
 const keranjang = useKeranjang()
 const tokoStore = useToko()
 const cetakStore = useCetak()
 const sesi = useSesi()
+const ui = useUi()
+const route = useRoute()
 const toko = computed(() => tokoStore.data)
 const semuaProduk = getProduk()
 
@@ -336,6 +493,7 @@ const cari = ref('')
 const aktifIndex = ref(0)
 const pesan = ref('')
 const struk = ref(null)
+const waOpen = ref(false)
 const lebar = ref(tokoStore.data.lebar_struk || 80)
 
 let pesanTimer = null
@@ -354,8 +512,13 @@ const hasil = computed(() => {
 })
 
 onMounted(() => {
+  if (route.query.bon === '1') keranjang.setMetode('bon')
   inputCari.value?.focus()
   document.addEventListener('keydown', pintasanGlobal)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', pintasanGlobal)
 })
 
 function pintasanGlobal(e) {
@@ -403,6 +566,11 @@ const tunaiTeks = computed({
   set: (v) => keranjang.setTunai(String(v).replace(/\D/g, '')),
 })
 
+const dpTeks = computed({
+  get: () => (keranjang.dp ? keranjang.dp.toLocaleString('id-ID') : ''),
+  set: (v) => keranjang.setDp(String(v).replace(/\D/g, '')),
+})
+
 function tambahUang(nominal) {
   keranjang.setTunai((Number(keranjang.tunai) || 0) + nominal)
 }
@@ -412,53 +580,80 @@ const jamSekarang = () => {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
+const tautanStruk = computed(() => (struk.value ? tautanPublik(struk.value.nomor) : ''))
+const pesanWA = computed(() =>
+  struk.value ? pesanInvoice(struk.value, toko.value, tautanStruk.value) : '',
+)
+
 function bayar() {
   if (!keranjang.bisaBayar) return
+  const metode = keranjang.metode
+  if (metode === 'bon' && !keranjang.pelanggan.trim()) {
+    return tampilPesan('Nama pelanggan wajib diisi untuk bon.')
+  }
+
   const nomor = nomorInvoiceBerikutnya()
-  const items = keranjang.items.map((i) => ({
-    produk_id: i.produk_id,
-    nama: i.nama,
-    satuan: i.satuan,
-    qty: i.qty,
-    harga: i.harga,
-    subtotal: Math.round(i.qty * i.harga),
-  }))
+  const items = keranjang.items.map((i) => {
+    // FEFO: potong batch terdekat lalu kurangi stok produk.
+    const fefo = potongBatchFEFO(i.produk_id, i.qty)
+    kurangiStok(i.produk_id, i.qty)
+    return {
+      produk_id: i.produk_id,
+      nama: i.nama,
+      satuan: i.satuan,
+      qty: i.qty,
+      harga: i.harga,
+      subtotal: Math.round(i.qty * i.harga),
+      batch: fefo.terpakai,
+      batch_lewat: fefo.lewat,
+    }
+  })
+
+  const total = keranjang.total
+  const dibayar = metode === 'bon' ? Number(keranjang.dp) || 0 : Number(keranjang.tunai) || 0
+  const batchTerpakai = items.flatMap((i) => i.batch || [])
+
   const transaksi = {
     id: Date.now(),
     nomor,
     tanggal: HARI_INI,
     jam: jamSekarang(),
     kasir: sesi.aktif.nama,
-    pelanggan: keranjang.pelanggan || '',
+    pelanggan: keranjang.pelanggan.trim(),
+    no_hp: keranjang.noHp.trim(),
     items,
     subtotal: keranjang.subtotal,
-    total: keranjang.total,
-    tunai: Number(keranjang.tunai),
-    kembalian: keranjang.kembalian,
+    total,
+    tunai: metode === 'tunai' ? dibayar : 0,
+    kembalian: metode === 'tunai' ? keranjang.kembalian : 0,
+    metode,
+    status_bayar:
+      metode === 'bon' ? (dibayar >= total ? 'lunas' : dibayar > 0 ? 'sebagian' : 'belum') : 'lunas',
+    dibayar,
+    jatuh_tempo: metode === 'bon' ? keranjang.jatuhTempo : null,
+    pembayaran:
+      dibayar > 0 ? [{ tanggal: HARI_INI, nominal: dibayar, metode: 'tunai' }] : [],
+    batch_terpakai: batchTerpakai,
     status: 'selesai',
     void_alasan: null,
   }
-  tambahPenjualan(transaksi)
 
-  struk.value = {
-    nomor,
-    tanggal: tanggalPendek(HARI_INI),
-    jam: transaksi.jam,
-    kasir: transaksi.kasir,
-    items: transaksi.items,
-    total: transaksi.total,
-    tunai: transaksi.tunai,
-    kembalian: transaksi.kembalian,
-  }
+  tambahPenjualan(transaksi)
+  struk.value = transaksi
+
+  const adaLewat = items.some((i) => i.batch_lewat > 0)
+  if (adaLewat) ui.kabari('Ada batch yang sudah lewat expired dan ikut terpotong. Cek halaman Kedaluwarsa.', 'warn')
 }
 
 function tutupStruk() {
   struk.value = null
+  waOpen.value = false
 }
 
 function transaksiBaru() {
   keranjang.kosongkan()
   struk.value = null
+  waOpen.value = false
   cari.value = ''
   inputCari.value?.focus()
 }
@@ -468,9 +663,15 @@ function cetak() {
   cetakStore.siapkan({
     toko: toko.value,
     nomor: struk.value.nomor,
-    tanggal: struk.value.tanggal,
+    tanggal: tanggalPendek(struk.value.tanggal),
     jam: struk.value.jam,
     kasir: struk.value.kasir,
+    pelanggan: struk.value.pelanggan,
+    noHp: struk.value.no_hp,
+    metode: struk.value.metode,
+    dibayar: struk.value.dibayar,
+    sisa: Math.max(0, struk.value.total - struk.value.dibayar),
+    jatuhTempo: struk.value.jatuh_tempo ? tanggalPendek(struk.value.jatuh_tempo) : '',
     items: struk.value.items,
     total: struk.value.total,
     tunai: struk.value.tunai,
@@ -478,5 +679,20 @@ function cetak() {
     lebar: lebar.value,
   })
   window.print()
+}
+
+function kirimWA() {
+  if (!struk.value) return
+  waOpen.value = true
+}
+
+async function salinTautan() {
+  if (!tautanStruk.value) return
+  try {
+    await navigator.clipboard.writeText(tautanStruk.value)
+    ui.kabari('Tautan invoice publik disalin.', 'ok')
+  } catch {
+    ui.kabari('Browser menolak akses clipboard. Salin manual dari teks tautan.', 'warn')
+  }
 }
 </script>

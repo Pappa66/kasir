@@ -1,7 +1,8 @@
 <template>
-  <div class="min-h-screen">
+  <div class="min-h-screen" data-shell>
     <aside
       class="fixed inset-y-0 left-0 z-30 flex w-[56px] flex-col bg-ink text-[#a9bcba] lg:w-[232px]"
+      data-shell-nav
     >
       <div class="flex h-[52px] items-center gap-2 border-b border-white/10 px-4">
         <div
@@ -36,6 +37,19 @@
           />
           <component :is="m.icon" :size="18" :stroke-width="1.5" class="shrink-0" />
           <span class="hidden lg:block">{{ m.label }}</span>
+          <span
+            v-if="m.addon"
+            class="ml-auto hidden shrink-0 rounded border border-[#59a9a2]/50 px-1 py-px text-[8px] uppercase tracking-[0.06em] text-[#7fc4bd] lg:block"
+            title="Fitur tambahan di luar paket dasar"
+          >
+            add-on<template v-if="lencana(m)"> · {{ lencana(m) }}</template>
+          </span>
+          <span
+            v-else-if="lencana(m)"
+            class="ml-auto hidden min-w-[18px] rounded-full bg-white/10 px-1 text-center text-[10px] leading-[16px] text-white lg:block"
+          >
+            {{ lencana(m) }}
+          </span>
         </RouterLink>
       </nav>
 
@@ -52,9 +66,10 @@
       </div>
     </aside>
 
-    <div class="pl-[56px] lg:pl-[232px]">
+    <div class="pl-[56px] lg:pl-[232px]" data-shell-body>
       <header
         class="sticky top-0 z-20 flex h-[52px] items-center justify-between gap-3 border-b border-line bg-paper px-3 sm:px-4 lg:px-6"
+        data-shell-head
       >
         <div class="flex min-w-0 items-center gap-3">
           <h1 class="truncate text-base font-semibold text-ink">{{ judulHalaman }}</h1>
@@ -157,12 +172,15 @@ import {
   BarChart3,
   Settings,
   BookOpen,
+  Wallet,
+  CalendarClock,
   ChevronDown,
   Check,
   LogOut,
   Play,
 } from 'lucide-vue-next'
 import ToastHost from './ToastHost.vue'
+import { getKedaluwarsaRingkas, getPiutangRingkas } from '../data/adapter'
 import { useToko } from '../stores/toko'
 import { useUi } from '../stores/ui'
 import { useSesi } from '../stores/sesi'
@@ -181,13 +199,28 @@ const menu = [
   { path: '/produk', label: 'Produk', icon: Package, peran: ['pemilik', 'kasir'] },
   { path: '/stok-masuk', label: 'Stok Masuk', icon: ArrowDownToLine, peran: ['pemilik'] },
   { path: '/invoice', label: 'Invoice', icon: ReceiptText, peran: ['pemilik', 'kasir'] },
+  { path: '/piutang', label: 'Piutang', icon: Wallet, peran: ['pemilik'], addon: true, lencana: 'piutang' },
+  { path: '/kedaluwarsa', label: 'Kedaluwarsa', icon: CalendarClock, peran: ['pemilik'], addon: true, lencana: 'expired' },
   { path: '/opname', label: 'Stock Opname', icon: ClipboardCheck, peran: ['pemilik'] },
   { path: '/laporan', label: 'Laporan', icon: BarChart3, peran: ['pemilik'] },
   { path: '/pengaturan', label: 'Pengaturan', icon: Settings, peran: ['pemilik'] },
   { path: '/panduan', label: 'Panduan', icon: BookOpen, peran: ['pemilik', 'kasir'] },
 ]
 
-const menuTampil = computed(() => menu.filter((m) => m.peran.includes(sesi.peran)))
+const menuTampil = computed(() => {
+  // route.path menjadi pemicu agar angka lencana ikut segar setelah transaksi.
+  const _ = route.path
+  const piutang = getPiutangRingkas()
+  const expired = getKedaluwarsaRingkas()
+  return menu
+    .filter((m) => m.peran.includes(sesi.peran))
+    .map((m) => ({
+      ...m,
+      _lencana: m.lencana === 'piutang' ? piutang.jumlah : m.lencana === 'expired' ? expired.expired + expired.segera : 0,
+    }))
+})
+
+const lencana = (m) => (m._lencana > 0 ? m._lencana : 0)
 
 const aktif = (path) => route.path === path || route.path.startsWith(path + '/')
 const judulHalaman = computed(() => route.meta.title || 'Kasir')

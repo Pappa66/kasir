@@ -7,10 +7,17 @@
           {{ tanggalPanjang(HARI_INI) }} · {{ semua.length }} transaksi
         </p>
       </div>
-      <RouterLink to="/kasir" class="btn btn-primary">
-        <ShoppingCart :size="15" :stroke-width="1.6" />
-        Transaksi baru
-      </RouterLink>
+      <div class="flex flex-wrap gap-2">
+        <button type="button" class="btn" @click="ekspor">
+          <Download :size="15" :stroke-width="1.6" />
+          Ekspor CSV
+          <AddonTag class="!px-1.5 !py-0 !text-[9px]" />
+        </button>
+        <RouterLink to="/kasir" class="btn btn-primary">
+          <ShoppingCart :size="15" :stroke-width="1.6" />
+          Transaksi baru
+        </RouterLink>
+      </div>
     </div>
 
     <section class="panel">
@@ -72,10 +79,18 @@
                 {{ t.pelanggan || '—' }}
               </td>
               <td class="num hidden text-ink-soft md:table-cell">{{ t.items.length }}</td>
-              <td class="num font-medium">{{ rupiah(t.total) }}</td>
+              <td class="num font-medium">
+                {{ rupiah(t.total) }}
+                <div
+                  v-if="t.metode === 'bon' && t.status !== 'void' && t.total > t.dibayar"
+                  class="text-2xs font-normal text-warn"
+                >
+                  sisa {{ rupiah(t.total - t.dibayar) }}
+                </div>
+              </td>
               <td>
-                <span class="status" :class="t.status === 'void' ? 'text-bad' : 'text-ok'">
-                  {{ t.status === 'void' ? 'Void' : 'Selesai' }}
+                <span class="status" :class="statusClass(t)">
+                  {{ labelStatus(t) }}
                 </span>
               </td>
               <td class="text-right text-[#9aa8a5]">
@@ -102,8 +117,8 @@
           </div>
           <div class="shrink-0 text-right">
             <div class="text-sm font-medium tnum">{{ rupiah(t.total) }}</div>
-            <span class="status" :class="t.status === 'void' ? 'text-bad' : 'text-ok'">
-              {{ t.status === 'void' ? 'Void' : 'Selesai' }}
+            <span class="status" :class="statusClass(t)">
+              {{ labelStatus(t) }}
             </span>
           </div>
           <ChevronRight :size="16" :stroke-width="1.6" class="shrink-0 text-[#9aa8a5]" />
@@ -142,34 +157,62 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { ChevronRight, Search, ShoppingCart } from 'lucide-vue-next'
+import { ChevronRight, Download, Search, ShoppingCart } from 'lucide-vue-next'
+import AddonTag from '../components/AddonTag.vue'
 import { getPenjualan, HARI_INI } from '../data/adapter'
-import { rupiah, tanggalPanjang } from '../lib/format'
+import { unduhCSV } from '../lib/ekspor'
+import { rupiah, tanggalPanjang, tanggalPendek } from '../lib/format'
+import { useUi } from '../stores/ui'
 
 const router = useRouter()
+const ui = useUi()
 const semua = getPenjualan()
 const tab = ref('semua')
 const cari = ref('')
 const limit = ref(12)
 
-const jumlah = (status) =>
-  status === 'semua' ? semua.length : semua.filter((t) => t.status === status).length
+const sisaBon = (t) => Math.max(0, t.total - t.dibayar)
+const adalahBon = (t) => t.metode === 'bon' && t.status === 'selesai' && sisaBon(t) > 0
+
+const jumlah = (id) => {
+  if (id === 'semua') return semua.length
+  if (id === 'selesai') return semua.filter((t) => t.status === 'selesai').length
+  if (id === 'bon') return semua.filter(adalahBon).length
+  if (id === 'void') return semua.filter((t) => t.status === 'void').length
+  return 0
+}
 
 const tabs = computed(() => [
   { id: 'semua', label: 'Semua', jumlah: jumlah('semua') },
-  { id: 'selesai', label: 'Selesai', jumlah: jumlah('selesai') },
+  { id: 'selesai', label: 'Lunas', jumlah: jumlah('selesai') },
+  { id: 'bon', label: 'Bon', jumlah: jumlah('bon') },
   { id: 'void', label: 'Void', jumlah: jumlah('void') },
 ])
+
+const labelStatus = (t) => {
+  if (t.status === 'void') return 'Void'
+  if (t.metode === 'bon') return sisaBon(t) > 0 ? `Bon ${rupiah(sisaBon(t))}` : 'Bon lunas'
+  return 'Lunas'
+}
+const statusClass = (t) =>
+  t.status === 'void'
+    ? 'text-bad'
+    : t.metode === 'bon' && sisaBon(t) > 0
+      ? 'text-warn'
+      : 'text-ok'
 
 const hasil = computed(() => {
   const q = cari.value.trim().toLowerCase()
   return semua.filter((t) => {
-    const cocokTab = tab.value === 'semua' || t.status === tab.value
+    const cocokTab =
+      tab.value === 'semua' ||
+      (tab.value === 'bon' ? adalahBon(t) : t.status === tab.value)
     const cocokCari =
       !q ||
       t.nomor.toLowerCase().includes(q) ||
       t.kasir.toLowerCase().includes(q) ||
-      (t.pelanggan || '').toLowerCase().includes(q)
+      (t.pelanggan || '').toLowerCase().includes(q) ||
+      (t.no_hp || '').toLowerCase().includes(q)
     return cocokTab && cocokCari
   })
 })
@@ -178,5 +221,28 @@ const tampil = computed(() => hasil.value.slice(0, limit.value))
 
 function buka(t) {
   router.push(`/invoice/${t.nomor}`)
+}
+
+function ekspor() {
+  if (!hasil.value.length) return ui.kabari('Tidak ada transaksi untuk diekspor.', 'warn')
+  const baris = [
+    ['Nomor', 'Tanggal', 'Jam', 'Kasir', 'Pelanggan', 'No. HP', 'Metode', 'Status bayar', 'Total', 'Dibayar', 'Sisa', 'Status'],
+    ...hasil.value.map((t) => [
+      t.nomor,
+      tanggalPendek(t.tanggal),
+      t.jam,
+      t.kasir,
+      t.pelanggan || '',
+      t.no_hp || '',
+      t.metode === 'bon' ? 'Bon' : 'Tunai',
+      t.status_bayar,
+      t.total,
+      t.dibayar,
+      t.status === 'void' ? 0 : sisaBon(t),
+      t.status === 'void' ? 'Void' : 'Selesai',
+    ]),
+  ]
+  unduhCSV('invoice-20261119.csv', baris)
+  ui.kabari(`${hasil.value.length} transaksi diekspor ke CSV.`, 'ok')
 }
 </script>

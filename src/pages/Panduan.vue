@@ -59,9 +59,37 @@
             </li>
           </ul>
           <p class="mt-2 text-2xs leading-relaxed text-ink-soft">
-            Diaktifkan terpisah sesuai kebutuhan toko. Label pada Dashboard menandai fitur ini.
+            Semua add-on di bawah sudah bisa dicoba di demo ini. Piutang dan Kedaluwarsa khusus
+            pemilik; WhatsApp dan export bisa dibuka dari invoice dan laporan.
           </p>
         </div>
+      </div>
+
+      <div class="grid gap-px border-t border-line bg-line sm:grid-cols-2">
+        <RouterLink
+          v-for="a in addonDetail"
+          :key="a.judul"
+          :to="a.to"
+          class="group flex items-start gap-3 bg-paper p-4 transition-colors hover:bg-surface"
+        >
+          <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded border border-line bg-surface text-accent-2">
+            <component :is="a.icon" :size="15" :stroke-width="1.6" />
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="flex flex-wrap items-center gap-2">
+              <span class="text-sm font-medium text-ink">{{ a.judul }}</span>
+              <span class="rounded border border-accent-2/40 px-1 py-px text-[9px] uppercase tracking-[0.06em] text-accent-2">
+                add-on
+              </span>
+            </span>
+            <span class="mt-1 block text-xs leading-relaxed text-ink-soft">{{ a.isi }}</span>
+          </span>
+          <ChevronRight
+            :size="15"
+            :stroke-width="1.6"
+            class="mt-0.5 shrink-0 text-[#9aa8a5] transition-transform group-hover:translate-x-0.5"
+          />
+        </RouterLink>
       </div>
     </section>
 
@@ -267,8 +295,11 @@
 import { ref, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import {
+  CalendarClock,
   Check,
   ChevronRight,
+  FileSpreadsheet,
+  MessageCircle,
   Minus,
   Monitor,
   Play,
@@ -277,6 +308,7 @@ import {
   ScanLine,
   ShieldCheck,
   ShoppingCart,
+  Wallet,
 } from 'lucide-vue-next'
 import AddonTag from '../components/AddonTag.vue'
 import { useSesi } from '../stores/sesi'
@@ -320,7 +352,19 @@ const alur = [
     to: '/laporan',
     judul: 'Tutup buku di Laporan',
     khusus: true,
-    isi: 'Lihat penjualan hari ini, produk terlaris, dan daftar stok di bawah minimum.',
+    isi: 'Lihat penjualan hari ini, produk terlaris, dan stok menipis. Ekspor CSV atau cetak PDF dari tombol di kanan atas.',
+  },
+  {
+    to: '/piutang',
+    judul: 'Jual bon, lalu tagih',
+    khusus: true,
+    isi: 'Di Kasir pilih metode Bon, isi pelanggan dan jatuh tempo. Catat pelunasan dari halaman Piutang atau detail invoice.',
+  },
+  {
+    to: '/kedaluwarsa',
+    judul: 'Cek batch kedaluwarsa',
+    khusus: true,
+    isi: 'Batch diurutkan tanggal expired. Penjualan memotong batch terdekat lebih dulu; batch rusak bisa ditarik dari rak.',
   },
 ]
 
@@ -328,6 +372,9 @@ const akses = [
   { modul: 'Kasir', pemilik: 'Penuh', kasir: 'Penuh' },
   { modul: 'Produk', pemilik: 'Tambah & ubah', kasir: 'Lihat saja' },
   { modul: 'Invoice', pemilik: 'Termasuk void', kasir: 'Lihat & cetak' },
+  { modul: 'Invoice publik', pemilik: 'Tautan bertoken', kasir: 'Tautan bertoken' },
+  { modul: 'Piutang & Bon', pemilik: 'Penuh', kasir: null },
+  { modul: 'Kedaluwarsa & FEFO', pemilik: 'Penuh', kasir: null },
   { modul: 'Stok Masuk', pemilik: 'Penuh', kasir: null },
   { modul: 'Stock Opname', pemilik: 'Hitung & posting', kasir: null },
   { modul: 'Laporan', pemilik: 'Penuh', kasir: null },
@@ -338,25 +385,54 @@ const akses = [
 const batasan = [
   'Tanpa login, database, dan penyimpanan permanen.',
   'Muat ulang halaman mengembalikan data contoh.',
-  'Kirim WhatsApp, export Excel, dan audit log belum dibuat.',
-  'Pembayaran hanya tunai; tanpa QRIS atau kartu.',
+  'WhatsApp dibuka lewat wa.me; demo tidak mengirim pesan otomatis.',
+  'Ekspor CSV/PDF dibuat di browser, bukan dari server.',
+  'Tautan invoice publik memakai token demo, bukan autentikasi.',
 ]
 
 const dasar = [
   'Kasir, keranjang, dan pembayaran tunai',
-  'Produk, stok, dan stok masuk',
+  'Produk, stok, dan penerimaan barang',
   'Invoice dan struk thermal 58/80 mm',
   'Stock opname dengan alasan selisih',
   'Laporan penjualan, stok, dan laba',
   'Pengaturan toko dan pengguna',
   'Peran Pemilik dan Kasir',
+  'Void bertanda alasan, hanya pemilik',
 ]
 
 const addon = [
   'Piutang dan bon pelanggan',
   'Batch expired dan FEFO',
   'Kirim struk lewat WhatsApp',
-  'Export Excel dan PDF',
+  'Export Excel (CSV) dan PDF',
+]
+
+const addonDetail = [
+  {
+    judul: 'Piutang & bon',
+    to: '/piutang',
+    icon: Wallet,
+    isi: 'Jual barang dengan DP atau tempo, catat pelunasan sebagian, dan pantau bon lewat tempo.',
+  },
+  {
+    judul: 'Expired & FEFO',
+    to: '/kedaluwarsa',
+    icon: CalendarClock,
+    isi: 'Batch per tanggal expired, potong otomatis saat jual, dan tarik batch rusak dari rak.',
+  },
+  {
+    judul: 'Kirim WhatsApp',
+    to: '/invoice',
+    icon: MessageCircle,
+    isi: 'Buka WhatsApp dengan rincian invoice dan tautan publik yang sudah terisi dari detail invoice.',
+  },
+  {
+    judul: 'Export Excel & PDF',
+    to: '/laporan',
+    icon: FileSpreadsheet,
+    isi: 'Unduh CSV yang rapi di Excel, atau cetak laporan dan invoice ke PDF satu halaman.',
+  },
 ]
 
 function masuk(role) {

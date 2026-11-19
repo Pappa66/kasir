@@ -1,5 +1,152 @@
 [
   {
+    "id": 71,
+    "nomor": "INV-20261119-0071",
+    "tanggal": "2026-11-19",
+    "jam": "20:05",
+    "kasir": "Siti",
+    "pelanggan": "Pak Budi",
+    "no_hp": "0813-2211-0099",
+    "items": [
+      {
+        "produk_id": 4,
+        "nama": "Beras Curah",
+        "satuan": "kg",
+        "qty": 2,
+        "harga": 15500,
+        "subtotal": 31000
+      },
+      {
+        "produk_id": 11,
+        "nama": "Telur Ayam",
+        "satuan": "kg",
+        "qty": 1,
+        "harga": 28000,
+        "subtotal": 28000
+      },
+      {
+        "produk_id": 5,
+        "nama": "Gula Pasir 1kg",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 16500,
+        "subtotal": 33000
+      }
+    ],
+    "subtotal": 92000,
+    "total": 92000,
+    "tunai": 0,
+    "kembalian": 0,
+    "metode": "bon",
+    "status_bayar": "belum",
+    "dibayar": 0,
+    "jatuh_tempo": "2026-11-12",
+    "pembayaran": [],
+    "batch_terpakai": [],
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 70,
+    "nomor": "INV-20261119-0070",
+    "tanggal": "2026-11-19",
+    "jam": "19:55",
+    "kasir": "Rina",
+    "pelanggan": "Warung Sari",
+    "no_hp": "0857-1122-3344",
+    "items": [
+      {
+        "produk_id": 7,
+        "nama": "Minyak Goreng 2L",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 36000,
+        "subtotal": 72000
+      },
+      {
+        "produk_id": 5,
+        "nama": "Gula Pasir 1kg",
+        "satuan": "pcs",
+        "qty": 4,
+        "harga": 16500,
+        "subtotal": 66000
+      },
+      {
+        "produk_id": 18,
+        "nama": "Teh Celup 25's",
+        "satuan": "kotak",
+        "qty": 2,
+        "harga": 7500,
+        "subtotal": 15000
+      }
+    ],
+    "subtotal": 153000,
+    "total": 153000,
+    "tunai": 53000,
+    "kembalian": 0,
+    "metode": "bon",
+    "status_bayar": "sebagian",
+    "dibayar": 53000,
+    "jatuh_tempo": "2026-11-24",
+    "pembayaran": [
+      {
+        "tanggal": "2026-11-19",
+        "nominal": 53000,
+        "metode": "tunai"
+      }
+    ],
+    "batch_terpakai": [],
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 69,
+    "nomor": "INV-20261119-0069",
+    "tanggal": "2026-11-19",
+    "jam": "19:50",
+    "kasir": "Siti",
+    "pelanggan": "Bu Ani",
+    "no_hp": "0812-8899-7766",
+    "items": [
+      {
+        "produk_id": 13,
+        "nama": "Susu UHT Ultra 1L",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 19500,
+        "subtotal": 39000
+      },
+      {
+        "produk_id": 14,
+        "nama": "Kecap Manis ABC 520ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 18000,
+        "subtotal": 36000
+      },
+      {
+        "produk_id": 15,
+        "nama": "Saus Sambal 335ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12000,
+        "subtotal": 12000
+      }
+    ],
+    "subtotal": 87000,
+    "total": 87000,
+    "tunai": 0,
+    "kembalian": 0,
+    "metode": "bon",
+    "status_bayar": "belum",
+    "dibayar": 0,
+    "jatuh_tempo": "2026-11-26",
+    "pembayaran": [],
+    "batch_terpakai": [],
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
     "id": 68,
     "nomor": "INV-20261119-0068",
     "tanggal": "2026-11-19",

@@ -11,6 +11,9 @@ import Laporan from '../pages/Laporan.vue'
 import Pengaturan from '../pages/Pengaturan.vue'
 import Panduan from '../pages/Panduan.vue'
 import AksesTerbatas from '../pages/AksesTerbatas.vue'
+import Piutang from '../pages/Piutang.vue'
+import Kedaluwarsa from '../pages/Kedaluwarsa.vue'
+import InvoicePublik from '../pages/InvoicePublik.vue'
 import { useSesi } from '../stores/sesi'
 
 const PEMILIK = ['pemilik']
@@ -58,6 +61,24 @@ const routes = [
     meta: { title: 'Detail Invoice', peran: SEMUA },
   },
   {
+    path: '/piutang',
+    name: 'piutang',
+    component: Piutang,
+    meta: { title: 'Piutang & Bon', peran: PEMILIK },
+  },
+  {
+    path: '/kedaluwarsa',
+    name: 'kedaluwarsa',
+    component: Kedaluwarsa,
+    meta: { title: 'Kedaluwarsa', peran: PEMILIK },
+  },
+  {
+    path: '/publik/:nomor',
+    name: 'invoice-publik',
+    component: InvoicePublik,
+    meta: { title: 'Invoice Publik', publik: true },
+  },
+  {
     path: '/opname',
     name: 'opname',
     component: Opname,
@@ -103,6 +124,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
+  if (to.meta.publik) return true
   const izin = to.meta.peran
   if (izin && !izin.includes(useSesi().peran)) {
     return { path: '/akses-terbatas', query: { dari: to.fullPath } }

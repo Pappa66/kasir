@@ -20,10 +20,13 @@ npm run preview  # cek hasil build
 | Kasir | Cari/scan barcode, keranjang (qty desimal kg, batas stok), pembayaran tunai, struk 58/80 mm, cetak |
 | Produk | Daftar 25 produk, cari/filter kategori, tambah & ubah produk, status stok |
 | Stok Masuk | Dokumen penerimaan, detail dokumen, buat draft, terima barang |
-| Invoice | Riwayat transaksi, filter selesai/void, cari, muat bertahap |
-| Detail Invoice | Rincian item, ringkasan bayar, pratinjau struk, cetak ulang, void dengan alasan |
+| Invoice | Riwayat transaksi, filter lunas/bon/void, cari, ekspor CSV |
+| Detail Invoice | Rincian item, status bon, pelunasan, tautan publik, WA, CSV, cetak ulang, void dengan alasan |
+| Piutang & Bon (add-on) | Bon berjalan, lewat tempo, pelunasan sebagian/penuh |
+| Kedaluwarsa & FEFO (add-on) | Batch per tanggal expired, sisa hari, nilai berisiko, tarik batch dari rak |
+| Invoice publik | Halaman tanpa shell untuk pelanggan; divalidasi token demo, bisa dicetak |
 | Stock Opname | Daftar sesi, lembar hitung fisik, selisih + alasan wajib, posting dengan PIN pemilik |
-| Laporan | Penjualan per jam & per kasir, nilai stok, produk terlaris, kategori |
+| Laporan | Penjualan per jam & per kasir, nilai stok, produk terlaris, kategori, ekspor CSV/PDF |
 | Pengaturan | Identitas toko, lebar struk, tes cetak, daftar pengguna, muat ulang data |
 | Panduan | Alur demo 3 menit, tabel hak akses, catatan perangkat, mulai tur interaktif |
 | Akses terbatas | Halaman pengganti saat kasir membuka modul pemilik; tombol masuk sebagai pemilik |
@@ -34,13 +37,17 @@ Hanya ada dua peran sesuai spesifikasi: **Pemilik** (semua modul) dan **Kasir**
 (Kasir, Produk lihat saja, Invoice, Panduan). Tiga akun contoh: H. Ahmad
 (Pemilik), Siti dan Rina (Kasir). Ganti peran lewat dropdown nama di kanan atas.
 
-- Kasir tidak melihat menu Dashboard, Stok Masuk, Opname, Laporan, Pengaturan.
+- Kasir tidak melihat menu Dashboard, Stok Masuk, Opname, Laporan, Pengaturan,
+  Piutang, dan Kedaluwarsa.
 - URL modul pemilik yang dibuka langsung diarahkan ke `/akses-terbatas?dari=...`;
   setelah masuk sebagai pemilik, halaman tujuan dibuka kembali.
 - Produk untuk kasir: tanpa tambah/import/ubah, tanpa harga beli dan nilai stok.
 - Void invoice hanya muncul untuk pemilik; kasir hanya bisa melihat dan mencetak.
+- Pelunasan bon dan tarik batch hanya untuk pemilik.
 - Transaksi baru mencatat nama pengguna aktif sebagai kasir.
 - Ini simulasi, bukan autentikasi. Pilihan peran tersimpan di sessionStorage.
+- Halaman `/publik/:nomor?token=...` sengaja melewati guard peran karena dibuka
+  pelanggan tanpa login; isinya hanya divalidasi token demo.
 
 ## Tur interaktif
 
@@ -49,6 +56,10 @@ langkah: menu, ganti peran, pencarian/scan, keranjang, pembayaran, dan struk.
 Navigasi lewat Lanjut/Kembali/Lewati, panah kiri-kanan, atau Esc. Tur berpindah
 ke halaman Kasir sendiri, menyorot elemen terkait, dan menghormati
 `prefers-reduced-motion`.
+
+Tur juga berjalan otomatis sekali per tab saat demo pertama dibuka. Bisa
+dimatikan dari Panduan; tombol Tur tetap tersedia. Tur otomatis tidak muncul di
+halaman invoice publik.
 
 ## Label add-on
 
@@ -60,6 +71,15 @@ dalam demo:
 - Add-on: piutang/bon, batch expired/FEFO, kirim struk WhatsApp, export
   Excel/PDF. Label `ADD-ON` netral menandai fitur tambahan; penjelasan
   lengkap ada di Panduan, tanpa angka harga.
+- Semua add-on sudah berfungsi di demo:
+  - **Piutang/bon** — metode Bon di Kasir (DP, nomor HP, jatuh tempo),
+    pelunasan di `/piutang` atau detail invoice, sisa bon ikut di struk.
+  - **Expired/FEFO** — batch dari penerimaan barang, penjualan memotong batch
+    terdekat, batch expired bisa ditarik dan stok ikut berkurang.
+  - **WhatsApp** — modal pesan terisi, membuka `wa.me`; tidak ada API dan
+    tidak mengirim otomatis.
+  - **Export** — CSV ber-BOM (aman dibuka di Excel) dan cetak PDF satu
+    halaman untuk laporan/invoice.
 - Harga dan paket komersial dibahas terpisah, bukan di UI prototipe.
 
 ## Struktur penting
@@ -68,12 +88,15 @@ dalam demo:
 src/
   data/adapter.js      ← SATU-SATUNYA pintu data. Ganti isi file ini dengan
                           panggilan API/Inertia Laravel; komponen tidak berubah.
-  data/*.json          ← data contoh (25 produk, 68 transaksi, supplier, opname)
-  stores/              ← Pinia: keranjang, toko, ui (toast), opname, cetak,
-                          sesi (peran demo), tour (langkah tur)
+  data/*.json          ← data contoh (25 produk, 71 transaksi, 15 batch,
+                          supplier, stok masuk, opname)
+  stores/              ← Pinia: keranjang (tunai/bon), toko, ui (toast),
+                          opname, cetak, sesi (peran demo), tour (langkah tur)
   components/          ← AppShell, StrukPreview, CetakStruk, Modal, ToastHost,
-                          PrototypeBanner, EmptyState, TourGuide
-  pages/               ← 10 halaman + 2 halaman detail
+                          PrototypeBanner, EmptyState, TourGuide, AddonTag,
+                          KirimWA
+  lib/                 ← format, ekspor (CSV/WA), pesan (template WhatsApp)
+  pages/               ← 12 halaman + 4 halaman detail/publik
   style.css            ← token warna, tabel, tombol, aturan cetak
 ```
 
@@ -82,8 +105,14 @@ src/
 - Tanggal demo dipaku di `HARI_INI = '2026-11-19'` (`src/data/adapter.js`).
 - Jam pada struk memakai jam asli komputer.
 - Banner "Prototipe — data contoh, belum tersimpan" selalu tampil.
-- Perubahan (transaksi baru, void, produk, opname, pengaturan) hanya bertahan
-  selama tab terbuka; muat ulang mengembalikan data contoh.
+- Perubahan (transaksi baru, void, pelunasan bon, produk, batch, opname,
+  pengaturan) hanya bertahan selama tab terbuka; muat ulang mengembalikan data
+  contoh.
+- Penjualan memotong stok dan batch FEFO; void mengembalikan keduanya.
+- Menerima dokumen Stok Masuk menambah stok dan membuat batch bila tanggal
+  expired diisi.
+- Tautan invoice publik berbentuk `/#/publik/<nomor>?token=<token demo>` dan
+  ditolak bila token tidak cocok.
 - Lebar struk bisa diganti 58/80 mm dari dialog setelah pembayaran atau dari
   Pengaturan.
 - Barcode gun USB bekerja sebagai keyboard: fokus otomatis di kolom cari,
@@ -98,8 +127,9 @@ src/
 
 - 25 produk: beras 5/10/25 kg, gula curah desimal, Indomie karton→pcs,
   susu mendekati expired, gas tabung, dll.
-- 68 transaksi tanggal 19/11/2026: 67 selesai + 1 void.
-- Omzet contoh Rp 3.999.775, rata-rata Rp 59.698 per transaksi.
+- 15 batch FEFO untuk produk ber-expired.
+- 71 transaksi tanggal 19/11/2026: 67 selesai tunai, 3 bon, 1 void.
+- Omzet contoh mengikuti data transaksi di `penjualan.json`.
 
 ## Deploy
 

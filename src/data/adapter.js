@@ -7,42 +7,307 @@ import pengaturanData from './pengaturan.json'
 import supplierData from './supplier.json'
 import stokMasukData from './stok_masuk.json'
 import opnameData from './opname.json'
+import batchData from './batch.json'
 import { selisihHari } from '../lib/format'
 
 export const HARI_INI = '2026-11-19'
+
+const bulat = (n) => Math.round((Number(n) || 0) * 1000) / 1000
+const salin = (o) => JSON.parse(JSON.stringify(o))
 
 export function getPengaturan() {
   return { ...pengaturanData }
 }
 
+// ------------------------------------------------------------------ produk
+// Cache sesi: perubahan produk bertahan selama tab terbuka.
+let cacheProduk = null
+
 export function getProduk() {
-  return produkData.map((p) => ({ ...p }))
+  if (!cacheProduk) cacheProduk = produkData.map((p) => ({ ...p }))
+  return cacheProduk
 }
 
-// Salinan sesi: transaksi baru / void ikut terlihat di halaman lain
-// selama tab terbuka. Di aplikasi asli, ini tugas database.
+export function cariProduk(id) {
+  return getProduk().find((p) => p.id === Number(id)) || null
+}
+
+export function tambahProduk(data) {
+  const produk = getProduk()
+  const id = Math.max(0, ...produk.map((p) => p.id)) + 1
+  const baru = {
+    id,
+    kode: `BRG-${String(id).padStart(3, '0')}`,
+    barcode: '',
+    kategori: 'Lainnya',
+    satuan: 'pcs',
+    satuan_dasar: 'pcs',
+    konversi: 1,
+    harga_beli: 0,
+    harga_jual: 0,
+    stok: 0,
+    stok_minimum: 5,
+    pakai_batch: false,
+    expired: null,
+    ...data,
+    id,
+  }
+  produk.unshift(baru)
+  return baru
+}
+
+export function ubahProduk(id, patch) {
+  const p = cariProduk(id)
+  if (!p) return null
+  Object.assign(p, patch)
+  return p
+}
+
+export function kurangiStok(id, qty) {
+  const p = cariProduk(id)
+  if (!p) return null
+  p.stok = Math.max(0, bulat(p.stok - Number(qty)))
+  return p
+}
+
+export function tambahStok(id, qty) {
+  const p = cariProduk(id)
+  if (!p) return null
+  p.stok = bulat(p.stok + Number(qty))
+  return p
+}
+
+// ------------------------------------------------------------------- batch
+// Batch dipakai fitur add-on expired/FEFO. Stok batch selalu mencerminkan
+// stok produk untuk produk yang punya batch.
+let cacheBatch = null
+
+export function getBatch() {
+  if (!cacheBatch) cacheBatch = batchData.map((b) => ({ ...b }))
+  return cacheBatch
+}
+
+export function batchProduk(produkId) {
+  return getBatch().filter((b) => b.produk_id === Number(produkId))
+}
+
+function sinkronExpired(produkId) {
+  const p = cariProduk(produkId)
+  if (!p) return
+  const aktif = batchProduk(produkId)
+    .filter((b) => b.qty > 0 && b.expired)
+    .map((b) => b.expired)
+    .sort()
+  if (aktif.length) p.expired = aktif[0]
+  p.pakai_batch = batchProduk(produkId).length > 0
+}
+
+export function tambahBatch(data) {
+  const batch = getBatch()
+  const baru = {
+    id: `B-${data.produk_id}-${Date.now().toString(36)}-${batch.length}`,
+    kode: `BATCH-${batch.length + 1}`,
+    masuk: HARI_INI,
+    harga_beli: 0,
+    ...data,
+  }
+  batch.push(baru)
+  sinkronExpired(baru.produk_id)
+  return baru
+}
+
+// FEFO: potong batch dengan tanggal expired terdekat lebih dulu.
+// Batch yang sudah lewat tanggal tetap dipakai paling akhir agar stok
+// tidak menggantung, tetapi jumlahnya ditandai untuk peringatan.
+export function potongBatchFEFO(produkId, qty) {
+  const daftar = batchProduk(produkId)
+    .filter((b) => b.qty > 0)
+    .sort((a, b) => String(a.expired).localeCompare(String(b.expired)))
+  let sisa = bulat(qty)
+  const terpakai = []
+  let lewat = 0
+
+  const ambil = (b) => {
+    if (sisa <= 0 || b.qty <= 0) return
+    const jumlah = bulat(Math.min(b.qty, sisa))
+    b.qty = bulat(b.qty - jumlah)
+    sisa = bulat(sisa - jumlah)
+    if (b.expired && b.expired < HARI_INI) lewat += jumlah
+    terpakai.push({
+      batch_id: b.id,
+      kode: b.kode,
+      expired: b.expired,
+      qty: jumlah,
+      produk_id: Number(produkId),
+    })
+  }
+
+  for (const b of daftar) {
+    if (sisa <= 0) break
+    if (b.expired && b.expired < HARI_INI) continue
+    ambil(b)
+  }
+  for (const b of daftar) {
+    if (sisa <= 0) break
+    if (!b.expired || b.expired >= HARI_INI) continue
+    ambil(b)
+  }
+
+  if (terpakai.length) sinkronExpired(produkId)
+  return { terpakai, lewat }
+}
+
+export function kembalikanBatch(daftar) {
+  for (const t of daftar || []) {
+    const b = getBatch().find((x) => x.id === t.batch_id)
+    if (!b) continue
+    b.qty = bulat(b.qty + Number(t.qty))
+    sinkronExpired(b.produk_id)
+  }
+}
+
+export function getKedaluwarsa() {
+  const produk = new Map(getProduk().map((p) => [p.id, p]))
+  return getBatch()
+    .filter((b) => b.qty > 0)
+    .map((b) => {
+      const p = produk.get(b.produk_id)
+      const sisa = selisihHari(b.expired, HARI_INI)
+      return {
+        ...b,
+        produk_nama: p?.nama || `Produk #${b.produk_id}`,
+        satuan: p?.satuan || 'pcs',
+        kategori: p?.kategori || 'Lainnya',
+        sisa_hari: sisa,
+        nilai: Math.round(b.qty * (b.harga_beli || p?.harga_beli || 0)),
+        status: sisa < 0 ? 'expired' : sisa <= 30 ? 'segera' : 'aman',
+      }
+    })
+    .sort((a, b) => String(a.expired).localeCompare(String(b.expired)))
+}
+
+export function getKedaluwarsaRingkas() {
+  const daftar = getKedaluwarsa()
+  const kena = daftar.filter((b) => b.sisa_hari <= 30)
+  return {
+    daftar,
+    expired: kena.filter((b) => b.sisa_hari < 0).length,
+    segera: kena.filter((b) => b.sisa_hari >= 0).length,
+    nilai: kena.reduce((s, b) => s + b.nilai, 0),
+  }
+}
+
+export function tarikBatch(batchId, alasan = '') {
+  const b = getBatch().find((x) => x.id === batchId)
+  if (!b || b.qty <= 0) return null
+  const qty = b.qty
+  b.qty = 0
+  b.ditarik = HARI_INI
+  b.alasan = alasan
+  kurangiStok(b.produk_id, qty)
+  sinkronExpired(b.produk_id)
+  return { ...b, qty_ditarik: qty }
+}
+
+// --------------------------------------------------------------- penjualan
+// Salinan sesi: transaksi baru / void / pelunasan bon ikut terlihat di
+// halaman lain selama tab terbuka. Di aplikasi asli, ini tugas database.
 let cachePenjualan = null
 
-export function getPenjualan() {
-  if (!cachePenjualan) {
-    cachePenjualan = penjualanData.map((t) => ({
-      ...t,
-      items: t.items.map((i) => ({ ...i })),
-    }))
+// Token publik deterministik supaya tautan invoice bisa dibagikan tanpa
+// menyimpan kolom tambahan di data contoh.
+export function tokenPublik(nomor) {
+  let h = 0
+  for (const c of String(nomor)) h = (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0
+  return h.toString(36).padStart(8, '0').slice(-8)
+}
+
+export function tautanPublik(nomor) {
+  const asal = typeof location !== 'undefined' ? location.origin : ''
+  return `${asal}/#/publik/${nomor}?token=${tokenPublik(nomor)}`
+}
+
+function normalisasiPenjualan(t) {
+  const metode = t.metode || 'tunai'
+  const statusBayar =
+    t.status === 'void' ? 'batal' : t.status_bayar || (metode === 'bon' ? 'belum' : 'lunas')
+  return {
+    ...t,
+    items: t.items.map((i) => ({ ...i, batch: (i.batch || []).map((b) => ({ ...b })) })),
+    metode,
+    status_bayar: statusBayar,
+    dibayar: t.dibayar ?? (metode === 'tunai' ? t.total : 0),
+    jatuh_tempo: t.jatuh_tempo ?? null,
+    no_hp: t.no_hp || '',
+    pembayaran: (t.pembayaran || []).map((p) => ({ ...p })),
+    batch_terpakai: (t.batch_terpakai || []).map((b) => ({ ...b })),
+    token: tokenPublik(t.nomor),
   }
+}
+
+export function getPenjualan() {
+  if (!cachePenjualan) cachePenjualan = penjualanData.map(normalisasiPenjualan)
   return cachePenjualan
 }
 
 export function tambahPenjualan(transaksi) {
-  getPenjualan().unshift(transaksi)
+  getPenjualan().unshift(normalisasiPenjualan(transaksi))
 }
 
 export function batalkanPenjualan(nomor, alasan) {
   const t = getPenjualan().find((x) => x.nomor === nomor)
   if (!t) return null
+  if (t.status === 'void') return t
   t.status = 'void'
   t.void_alasan = alasan
+  t.status_bayar = 'batal'
+  // Kembalikan stok dan batch supaya angka konsisten setelah void.
+  for (const i of t.items) tambahStok(i.produk_id, i.qty)
+  kembalikanBatch(t.batch_terpakai)
   return t
+}
+
+// ------------------------------------------------------------------ piutang
+export function getPiutang() {
+  return getPenjualan()
+    .filter((t) => t.status === 'selesai' && t.metode === 'bon')
+    .map((t) => {
+      const sisa = Math.max(0, t.total - t.dibayar)
+      const lewat = t.jatuh_tempo ? selisihHari(t.jatuh_tempo, HARI_INI) : null
+      return { ...t, sisa, lewat, lunas: sisa <= 0 }
+    })
+}
+
+export function getPiutangRingkas() {
+  const daftar = getPiutang()
+  const belum = daftar.filter((t) => t.sisa > 0)
+  return {
+    daftar,
+    jumlah: belum.length,
+    total: belum.reduce((s, t) => s + t.sisa, 0),
+    lewat: belum.filter((t) => t.lewat !== null && t.lewat < 0).length,
+    lunas: daftar.length - belum.length,
+  }
+}
+
+export function bayarPiutang(nomor, nominal, metode = 'tunai') {
+  const t = getPenjualan().find((x) => x.nomor === nomor)
+  if (!t || t.metode !== 'bon' || t.status === 'void') return null
+  const sisa = Math.max(0, t.total - t.dibayar)
+  const bayar = Math.min(bulat(nominal), sisa)
+  if (bayar <= 0) return null
+  t.dibayar = bulat(t.dibayar + bayar)
+  t.pembayaran.push({ tanggal: HARI_INI, nominal: bayar, metode })
+  t.status_bayar = t.dibayar >= t.total ? 'lunas' : 'sebagian'
+  return t
+}
+
+// ------------------------------------------------------------ invoice publik
+export function getInvoicePublik(nomor, token) {
+  const t = getPenjualan().find((x) => x.nomor === nomor)
+  if (!t) return { error: 'notfound' }
+  if (!token || token !== tokenPublik(nomor)) return { error: 'token' }
+  return { transaksi: t }
 }
 
 // ---------------------------------------------------------------- dashboard
@@ -67,12 +332,10 @@ export function getDashboard() {
 
   const stokKritis = produk
     .filter((p) => p.stok <= p.stok_minimum)
-    .sort((a, b) => a.stok / a.stok_minimum - b.stok / b.stok_minimum)
+    .sort((a, b) => a.stok / Math.max(1, a.stok_minimum) - b.stok / Math.max(1, b.stok_minimum))
 
-  const mendekatiExpired = produk
-    .filter((p) => p.expired && selisihHari(p.expired, HARI_INI) <= 30)
-    .map((p) => ({ ...p, sisa_hari: selisihHari(p.expired, HARI_INI) }))
-    .sort((a, b) => a.sisa_hari - b.sisa_hari)
+  const mendekatiExpired = getKedaluwarsa().filter((b) => b.sisa_hari <= 30)
+  const piutang = getPiutangRingkas()
 
   return {
     total,
@@ -83,6 +346,7 @@ export function getDashboard() {
     terlaris,
     stokKritis,
     mendekatiExpired,
+    piutang,
     terakhir: semua.slice(0, 6),
   }
 }
@@ -102,11 +366,23 @@ export function getSupplier() {
 }
 
 // --------------------------------------------------------------- stok masuk
+let cacheDokumen = null
+
+function dokumenMentah() {
+  if (!cacheDokumen) {
+    cacheDokumen = stokMasukData.map((d) => ({
+      ...d,
+      items: d.items.map((i) => ({ ...i })),
+    }))
+  }
+  return cacheDokumen
+}
+
 export function getStokMasuk() {
   const produk = new Map(getProduk().map((p) => [p.id, p]))
   const supplier = new Map(getSupplier().map((s) => [s.id, s]))
 
-  return stokMasukData.map((d) => {
+  return dokumenMentah().map((d) => {
     const items = d.items.map((i) => {
       const p = produk.get(i.produk_id)
       return {
@@ -129,6 +405,40 @@ let nomorStokTerakhir = stokMasukData.length
 export function nomorStokMasukBerikutnya() {
   nomorStokTerakhir += 1
   return `SM-20261119-${String(nomorStokTerakhir).padStart(3, '0')}`
+}
+
+export function tambahStokMasuk(doc) {
+  const baru = {
+    ...doc,
+    items: doc.items.map((i) => ({ ...i })),
+  }
+  dokumenMentah().unshift(baru)
+  return baru
+}
+
+export function terimaStokMasuk(nomor) {
+  const d = dokumenMentah().find((x) => x.nomor === nomor)
+  if (!d || d.status === 'diterima') return null
+  d.status = 'diterima'
+  d.diterima = HARI_INI
+
+  for (const i of d.items) {
+    tambahStok(i.produk_id, i.qty)
+    ubahProduk(i.produk_id, { harga_beli: i.harga_beli })
+    const p = cariProduk(i.produk_id)
+    const expired = i.expired || p?.expired || null
+    if (expired) {
+      tambahBatch({
+        produk_id: i.produk_id,
+        kode: `${nomor}-${i.produk_id}`,
+        expired,
+        qty: i.qty,
+        harga_beli: i.harga_beli,
+        masuk: HARI_INI,
+      })
+    }
+  }
+  return d
 }
 
 // ------------------------------------------------------------------ opname
@@ -223,6 +533,8 @@ export function getLaporan() {
   }
   const perKategori = [...kategoriMap.values()].sort((a, b) => b.nilai - a.nilai)
 
+  const piutang = getPiutangRingkas()
+
   return {
     omzet,
     transaksi: sah.length,
@@ -232,8 +544,14 @@ export function getLaporan() {
     perKasir,
     perKategori,
     terlaris,
+    piutang,
     nilaiStokBeli: produk.reduce((s, p) => s + p.stok * p.harga_beli, 0),
     nilaiStokJual: produk.reduce((s, p) => s + p.stok * p.harga_jual, 0),
     jumlahSku: produk.length,
   }
+}
+
+// Ekspor siap pakai untuk komponen (memakai salinan agar aman).
+export function snapshotProduk() {
+  return salin(getProduk())
 }
