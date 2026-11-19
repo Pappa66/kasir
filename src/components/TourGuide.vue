@@ -115,7 +115,7 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowRight, X } from 'lucide-vue-next'
 import { useTour } from '../stores/tour'
@@ -124,14 +124,14 @@ import { useUi } from '../stores/ui'
 const langkah = [
   {
     target: '[data-tour="menu"]',
-    rute: '/panduan',
+    rute: null,
     posisi: 'kanan',
     judul: 'Semua modul di satu tempat',
     isi: 'Menu di kiri menyesuaikan peran. Pemilik melihat semua modul; kasir hanya Kasir, Produk, Invoice, dan Panduan.',
   },
   {
     target: '[data-tour="peran"]',
-    rute: '/panduan',
+    rute: null,
     posisi: 'bawah',
     judul: 'Coba peran lain',
     isi: 'Klik nama pengguna di kanan atas untuk masuk sebagai Pemilik atau Kasir. Halaman yang tidak diizinkan akan menampilkan pesan akses terbatas.',
@@ -170,6 +170,10 @@ const tour = useTour()
 const ui = useUi()
 const route = useRoute()
 const router = useRouter()
+
+const KUNCI_TERLIHAT = 'demo-tur-terlihat'
+const KUNCI_AUTO = 'demo-tur-otomatis'
+let timerAuto = null
 
 const kotak = ref(null)
 const kartuEl = ref(null)
@@ -275,7 +279,7 @@ function targetkan(ulang = 0) {
 async function muat(ulang = 0) {
   if (!tour.aktif) return
   const token = ++kunci
-  if (route.path !== kini.value.rute) {
+  if (kini.value.rute && route.path !== kini.value.rute) {
     await router.push(kini.value.rute)
     if (token !== kunci || !tour.aktif) return
     await new Promise((r) => setTimeout(r, 260))
@@ -325,6 +329,7 @@ watch(
   () => tour.aktif,
   (v) => {
     if (v) {
+      sessionStorage.setItem(KUNCI_TERLIHAT, '1')
       document.addEventListener('keydown', tombol)
       window.addEventListener('resize', ukuran)
       window.addEventListener('scroll', jadwalkanUkur, true)
@@ -346,7 +351,21 @@ watch(
   },
 )
 
+onMounted(() => {
+  // Tur otomatis: sekali per tab, bisa dimatikan dari Panduan.
+  // Halaman publik (invoice ber-token) tidak pernah memulai tur.
+  const auto = localStorage.getItem(KUNCI_AUTO) !== '0'
+  const sudah = sessionStorage.getItem(KUNCI_TERLIHAT) === '1'
+  if (!auto || sudah || route.meta.publik) return
+  timerAuto = setTimeout(() => {
+    if (tour.aktif || route.meta.publik) return
+    if (sessionStorage.getItem(KUNCI_TERLIHAT) === '1') return
+    tour.mulai()
+  }, 900)
+})
+
 onBeforeUnmount(() => {
+  clearTimeout(timerAuto)
   document.removeEventListener('keydown', tombol)
   window.removeEventListener('resize', ukuran)
   window.removeEventListener('scroll', jadwalkanUkur, true)

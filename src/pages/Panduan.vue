@@ -215,6 +215,29 @@
 
         <section class="panel">
           <div class="panel-h">
+            <span class="panel-title">Tur otomatis</span>
+            <span class="text-xs text-ink-soft">sekali per tab</span>
+          </div>
+          <div class="p-4">
+            <label class="flex cursor-pointer items-start gap-3">
+              <input
+                v-model="autoTur"
+                type="checkbox"
+                class="mt-0.5 h-4 w-4 shrink-0 accent-[#0f3d3e]"
+              />
+              <span class="min-w-0">
+                <span class="block text-sm font-medium text-ink">Mulai sendiri saat demo dibuka</span>
+                <span class="mt-0.5 block text-2xs leading-relaxed text-ink-soft">
+                  Tur berjalan otomatis sekali per tab. Tombol Tur di topbar tetap bisa dipakai
+                  kapan saja, dan tombol Lewati tetap tersedia.
+                </span>
+              </span>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-h">
             <span class="panel-title">Batasan prototipe</span>
           </div>
           <ul class="space-y-2 p-4 text-xs leading-relaxed text-ink-soft">
@@ -241,6 +264,7 @@
 </template>
 
 <script setup>
+import { ref, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import {
   Check,
@@ -263,6 +287,12 @@ const router = useRouter()
 const sesi = useSesi()
 const tour = useTour()
 const ui = useUi()
+
+const autoTur = ref(localStorage.getItem('demo-tur-otomatis') !== '0')
+watch(autoTur, (v) => {
+  localStorage.setItem('demo-tur-otomatis', v ? '1' : '0')
+  if (v) sessionStorage.removeItem('demo-tur-terlihat')
+})
 
 const alur = [
   {
