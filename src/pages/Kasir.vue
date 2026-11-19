@@ -1,0 +1,480 @@
+<template>
+  <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_400px]">
+    <!-- Kolom kiri: pencarian + keranjang -->
+    <div class="min-w-0 space-y-4">
+      <div class="panel">
+        <div class="relative p-3">
+          <Search
+            :size="16"
+            :stroke-width="1.6"
+            class="pointer-events-none absolute left-6 top-1/2 -translate-y-1/2 text-[#94a3a0]"
+          />
+          <input
+            ref="inputCari"
+            v-model="cari"
+            type="text"
+            class="input h-11 pl-9 pr-3 text-sm sm:pr-24 sm:text-base"
+            placeholder="Scan barcode atau ketik produk…"
+            autocomplete="off"
+            spellcheck="false"
+            @keydown.down.prevent="geser(1)"
+            @keydown.up.prevent="geser(-1)"
+            @keydown.enter.prevent="pilihAktif"
+            @keydown.esc="cari = ''"
+          />
+          <div class="absolute right-5 top-1/2 hidden -translate-y-1/2 items-center gap-1.5 text-2xs text-ink-soft sm:flex">
+            <kbd class="rounded border border-line bg-surface px-1.5 py-0.5">Enter</kbd>
+            <span>tambah</span>
+          </div>
+
+          <!-- hasil pencarian -->
+          <div
+            v-if="cari && hasil.length"
+            class="absolute left-3 right-3 top-[calc(100%-2px)] z-20 overflow-hidden rounded border border-line bg-paper shadow-[0_4px_12px_rgba(15,47,46,0.10)]"
+          >
+            <button
+              v-for="(p, i) in hasil"
+              :key="p.id"
+              type="button"
+              class="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors"
+              :class="i === aktifIndex ? 'bg-surface' : 'hover:bg-surface'"
+              @mouseenter="aktifIndex = i"
+              @click="tambah(p)"
+            >
+              <div class="min-w-0 flex-1">
+                <div class="truncate text-sm text-ink">{{ p.nama }}</div>
+                <div class="text-2xs text-ink-soft">
+                  {{ p.kode }} · stok {{ qty(p.stok) }} {{ p.satuan }}
+                </div>
+              </div>
+              <div class="tnum shrink-0 text-sm font-medium">{{ rupiah(p.harga_jual) }}</div>
+            </button>
+          </div>
+
+          <div
+            v-else-if="cari && !hasil.length"
+            class="absolute left-3 right-3 top-[calc(100%-2px)] z-20 rounded border border-line bg-paper px-3 py-2 text-xs text-ink-soft shadow-[0_4px_12px_rgba(15,47,46,0.10)]"
+          >
+            Produk tidak ditemukan.
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between border-t border-line px-3 py-1.5 max-sm:hidden">
+          <span class="hidden text-2xs text-ink-soft sm:inline">
+            Barcode gun USB langsung menambahkan barang ke keranjang.
+          </span>
+          <span v-if="pesan" class="text-2xs font-medium text-warn">{{ pesan }}</span>
+        </div>
+      </div>
+
+      <div class="panel flex min-h-[300px] flex-col lg:min-h-[420px]">
+        <div class="panel-h shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="panel-title">Keranjang</span>
+            <span class="text-xs text-ink-soft">{{ keranjang.jumlahItem }} item</span>
+          </div>
+          <button
+            type="button"
+            class="btn btn-ghost btn-sm"
+            :disabled="!keranjang.jumlahItem"
+            @click="keranjang.kosongkan()"
+          >
+            <Trash2 :size="14" :stroke-width="1.6" />
+            Kosongkan
+          </button>
+        </div>
+
+        <div v-if="!keranjang.jumlahItem" class="flex flex-1 flex-col items-center justify-center px-4 py-14 text-center">
+          <ShoppingCart :size="20" :stroke-width="1.5" class="mx-auto mb-3 text-[#9aa8a5]" />
+          <p class="text-sm font-medium text-ink">Belum ada item</p>
+          <p class="mt-1 text-xs text-ink-soft">Scan barcode atau ketik nama produk di kolom atas.</p>
+        </div>
+
+        <div v-else class="flex-1 overflow-auto">
+          <table class="tbl table-fixed">
+            <thead>
+              <tr>
+                <th>Produk</th>
+                <th class="w-[112px] text-center">Qty</th>
+                <th class="num hidden w-24 sm:table-cell">Harga</th>
+                <th class="num hidden w-24 sm:table-cell sm:w-28">Subtotal</th>
+                <th class="w-9"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="i in keranjang.items" :key="i.produk_id">
+                <td>
+                  <div class="flex items-center gap-2">
+                    <span class="truncate font-medium" :title="i.nama">{{ i.nama }}</span>
+                    <span
+                      v-if="peringatanExpired(i)"
+                      class="hidden shrink-0 rounded border border-[#e3c9a8] px-1 text-[10px] text-warn sm:inline"
+                    >
+                      {{ peringatanExpired(i) }}
+                    </span>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-x-1.5 text-2xs text-ink-soft">
+                    <span class="hidden sm:inline">per {{ i.satuan }}</span>
+                    <span class="sm:hidden">{{ rupiah(i.qty * i.harga) }}</span>
+                    <span
+                      v-if="peringatanExpired(i)"
+                      class="rounded border border-[#e3c9a8] px-1 text-[10px] text-warn sm:hidden"
+                    >
+                      {{ peringatanExpired(i) }}
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  <div class="flex items-center">
+                    <button
+                      type="button"
+                      class="h-7 w-6 rounded-l border border-line text-ink-soft transition-colors hover:bg-surface sm:w-7"
+                      @click="keranjang.turun(i.produk_id)"
+                    >
+                      <Minus :size="13" :stroke-width="1.8" class="mx-auto" />
+                    </button>
+                    <input
+                      :value="i.qty"
+                      type="number"
+                      :step="i.desimal ? 0.25 : 1"
+                      min="0"
+                      class="h-7 w-10 border-y border-line text-center text-sm tnum focus:outline-none sm:w-12"
+                      @change="keranjang.ubahQty(i.produk_id, $event.target.value)"
+                    />
+                    <button
+                      type="button"
+                      class="h-7 w-6 rounded-r border border-line text-ink-soft transition-colors hover:bg-surface sm:w-7"
+                      @click="keranjang.naik(i.produk_id)"
+                    >
+                      <Plus :size="13" :stroke-width="1.8" class="mx-auto" />
+                    </button>
+                  </div>
+                </td>
+                <td class="num hidden text-ink-soft sm:table-cell">{{ rupiah(i.harga) }}</td>
+                <td class="num hidden font-medium sm:table-cell">{{ rupiah(i.qty * i.harga) }}</td>
+                <td class="text-right">
+                  <button
+                    type="button"
+                    class="text-ink-soft transition-colors hover:text-bad"
+                    title="Hapus"
+                    @click="keranjang.hapus(i.produk_id)"
+                  >
+                    <X :size="15" :stroke-width="1.6" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kolom kanan: ringkasan pembayaran -->
+    <aside class="min-w-0 space-y-4 lg:sticky lg:top-[68px]">
+      <div class="panel">
+        <div class="panel-h">
+          <span class="panel-title">Pembayaran</span>
+          <span class="text-xs text-ink-soft">Tunai</span>
+        </div>
+
+        <div class="space-y-2.5 px-4 py-4">
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-ink-soft">Jumlah item</span>
+            <span class="tnum">{{ keranjang.jumlahItem }}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-ink-soft">Subtotal</span>
+            <span class="tnum">{{ rupiah(keranjang.subtotal) }}</span>
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <span class="text-ink-soft">Pajak (0%)</span>
+            <span class="tnum text-ink-soft">Rp 0</span>
+          </div>
+
+          <div class="!mt-3 flex items-end justify-between border-t border-line pt-3">
+            <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Total</span>
+            <span class="text-3xl font-semibold leading-none tnum">{{ rupiah(keranjang.total) }}</span>
+          </div>
+
+          <div class="pt-1">
+            <label class="label" for="tunai">Uang diterima</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-soft">Rp</span>
+              <input
+                id="tunai"
+                v-model="tunaiTeks"
+                type="text"
+                inputmode="numeric"
+                class="input h-11 pl-9 text-base tnum"
+                placeholder="0"
+              />
+            </div>
+            <div class="mt-2 flex gap-1.5">
+              <button type="button" class="btn btn-sm flex-1" @click="keranjang.setTunai(keranjang.total)">
+                Uang pas
+              </button>
+              <button type="button" class="btn btn-sm flex-1" @click="tambahUang(50000)">+50 rb</button>
+              <button type="button" class="btn btn-sm flex-1" @click="tambahUang(100000)">+100 rb</button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-1 text-sm">
+            <span class="text-ink-soft">Kembalian</span>
+            <span class="tnum font-medium" :class="keranjang.kembalian > 0 ? 'text-ok' : 'text-ink-soft'">
+              {{ rupiah(keranjang.kembalian) }}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary btn-lg mt-1 w-full"
+            :disabled="!keranjang.bisaBayar"
+            @click="bayar"
+          >
+            Bayar {{ rupiah(keranjang.total) }}
+          </button>
+
+          <p v-if="keranjang.jumlahItem && Number(keranjang.tunai) < keranjang.total" class="text-center text-2xs text-ink-soft">
+            Uang diterima kurang {{ rupiah(keranjang.total - keranjang.tunai) }}
+          </p>
+        </div>
+      </div>
+
+      <div class="panel px-4 py-3">
+        <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Pintasan</div>
+        <ul class="mt-1.5 space-y-1 text-xs text-ink-soft">
+          <li class="flex justify-between gap-3"><span>Fokus pencarian</span><kbd class="rounded border border-line bg-surface px-1.5">/</kbd></li>
+          <li class="flex justify-between gap-3"><span>Tambah barang</span><kbd class="rounded border border-line bg-surface px-1.5">Enter</kbd></li>
+          <li class="flex justify-between gap-3"><span>Batalkan pencarian</span><kbd class="rounded border border-line bg-surface px-1.5">Esc</kbd></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Modal struk -->
+    <Modal
+      :open="!!struk"
+      title="Transaksi selesai"
+      :subtitle="struk ? struk.nomor : ''"
+      lebar="max-w-md"
+      @close="tutupStruk"
+    >
+      <div class="flex items-center justify-between border-b border-line px-4 py-2">
+        <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Lebar struk</span>
+        <div class="flex rounded border border-line p-0.5">
+          <button
+            type="button"
+            class="rounded px-2.5 py-1 text-xs transition-colors"
+            :class="lebar === 58 ? 'bg-accent text-white' : 'text-ink-soft hover:bg-surface'"
+            @click="lebar = 58"
+          >
+            58 mm
+          </button>
+          <button
+            type="button"
+            class="rounded px-2.5 py-1 text-xs transition-colors"
+            :class="lebar === 80 ? 'bg-accent text-white' : 'text-ink-soft hover:bg-surface'"
+            @click="lebar = 80"
+          >
+            80 mm
+          </button>
+        </div>
+      </div>
+
+      <div class="flex justify-center bg-surface px-4 py-5">
+        <StrukPreview
+          :toko="toko"
+          :nomor="struk.nomor"
+          :tanggal="struk.tanggal"
+          :jam="struk.jam"
+          :kasir="struk.kasir"
+          :items="struk.items"
+          :total="struk.total"
+          :tunai="struk.tunai"
+          :kembalian="struk.kembalian"
+          :lebar="lebar"
+          class="border border-line px-3 py-3"
+        />
+      </div>
+
+      <template #footer>
+        <span class="text-2xs text-ink-soft">Prototipe — tidak tersimpan.</span>
+        <div class="flex shrink-0 gap-2">
+          <button type="button" class="btn whitespace-nowrap" @click="cetak">
+            <Printer :size="15" :stroke-width="1.6" />
+            Cetak
+          </button>
+          <button type="button" class="btn btn-primary whitespace-nowrap" @click="transaksiBaru">
+            Transaksi baru
+          </button>
+        </div>
+      </template>
+    </Modal>
+  </div>
+</template>
+
+<script setup>
+import { computed, onMounted, ref } from 'vue'
+import { Search, ShoppingCart, Minus, Plus, X, Trash2, Printer } from 'lucide-vue-next'
+import StrukPreview from '../components/StrukPreview.vue'
+import Modal from '../components/Modal.vue'
+import { useKeranjang } from '../stores/keranjang'
+import { useToko } from '../stores/toko'
+import { useCetak } from '../stores/cetak'
+import { getProduk, HARI_INI, nomorInvoiceBerikutnya, tambahPenjualan } from '../data/adapter'
+import { rupiah, qty, selisihHari, tanggalPendek } from '../lib/format'
+
+const keranjang = useKeranjang()
+const tokoStore = useToko()
+const cetakStore = useCetak()
+const toko = computed(() => tokoStore.data)
+const semuaProduk = getProduk()
+
+const inputCari = ref(null)
+const cari = ref('')
+const aktifIndex = ref(0)
+const pesan = ref('')
+const struk = ref(null)
+const lebar = ref(tokoStore.data.lebar_struk || 80)
+
+let pesanTimer = null
+
+const hasil = computed(() => {
+  const q = cari.value.trim().toLowerCase()
+  if (!q) return []
+  return semuaProduk
+    .filter(
+      (p) =>
+        p.nama.toLowerCase().includes(q) ||
+        p.barcode === q ||
+        p.kode.toLowerCase() === q,
+    )
+    .slice(0, 6)
+})
+
+onMounted(() => {
+  inputCari.value?.focus()
+  document.addEventListener('keydown', pintasanGlobal)
+})
+
+function pintasanGlobal(e) {
+  if (e.key === '/' && document.activeElement?.tagName !== 'INPUT') {
+    e.preventDefault()
+    inputCari.value?.focus()
+  }
+}
+
+function geser(arah) {
+  if (!hasil.value.length) return
+  aktifIndex.value = (aktifIndex.value + arah + hasil.value.length) % hasil.value.length
+}
+
+function pilihAktif() {
+  if (hasil.value.length) return tambah(hasil.value[Math.min(aktifIndex.value, hasil.value.length - 1)])
+  if (cari.value.trim()) tampilPesan('Produk tidak ditemukan.')
+}
+
+function tambah(p) {
+  if (p.stok <= 0) return tampilPesan(`Stok ${p.nama} habis.`)
+  keranjang.tambah(p)
+  cari.value = ''
+  aktifIndex.value = 0
+  pesan.value = ''
+  inputCari.value?.focus()
+}
+
+function tampilPesan(t) {
+  pesan.value = t
+  clearTimeout(pesanTimer)
+  pesanTimer = setTimeout(() => (pesan.value = ''), 2400)
+}
+
+function peringatanExpired(item) {
+  if (!item.expired) return ''
+  const sisa = selisihHari(item.expired, HARI_INI)
+  if (sisa < 0) return 'expired'
+  if (sisa <= 30) return `exp ${sisa} hari`
+  return ''
+}
+
+const tunaiTeks = computed({
+  get: () => (keranjang.tunai ? keranjang.tunai.toLocaleString('id-ID') : ''),
+  set: (v) => keranjang.setTunai(String(v).replace(/\D/g, '')),
+})
+
+function tambahUang(nominal) {
+  keranjang.setTunai((Number(keranjang.tunai) || 0) + nominal)
+}
+
+const jamSekarang = () => {
+  const d = new Date()
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
+function bayar() {
+  if (!keranjang.bisaBayar) return
+  const nomor = nomorInvoiceBerikutnya()
+  const items = keranjang.items.map((i) => ({
+    produk_id: i.produk_id,
+    nama: i.nama,
+    satuan: i.satuan,
+    qty: i.qty,
+    harga: i.harga,
+    subtotal: Math.round(i.qty * i.harga),
+  }))
+  const transaksi = {
+    id: Date.now(),
+    nomor,
+    tanggal: HARI_INI,
+    jam: jamSekarang(),
+    kasir: tokoStore.data.kasir_aktif,
+    pelanggan: keranjang.pelanggan || '',
+    items,
+    subtotal: keranjang.subtotal,
+    total: keranjang.total,
+    tunai: Number(keranjang.tunai),
+    kembalian: keranjang.kembalian,
+    status: 'selesai',
+    void_alasan: null,
+  }
+  tambahPenjualan(transaksi)
+
+  struk.value = {
+    nomor,
+    tanggal: tanggalPendek(HARI_INI),
+    jam: transaksi.jam,
+    kasir: transaksi.kasir,
+    items: transaksi.items,
+    total: transaksi.total,
+    tunai: transaksi.tunai,
+    kembalian: transaksi.kembalian,
+  }
+}
+
+function tutupStruk() {
+  struk.value = null
+}
+
+function transaksiBaru() {
+  keranjang.kosongkan()
+  struk.value = null
+  cari.value = ''
+  inputCari.value?.focus()
+}
+
+function cetak() {
+  if (!struk.value) return
+  cetakStore.siapkan({
+    toko: toko.value,
+    nomor: struk.value.nomor,
+    tanggal: struk.value.tanggal,
+    jam: struk.value.jam,
+    kasir: struk.value.kasir,
+    items: struk.value.items,
+    total: struk.value.total,
+    tunai: struk.value.tunai,
+    kembalian: struk.value.kembalian,
+    lebar: lebar.value,
+  })
+  window.print()
+}
+</script>

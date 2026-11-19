@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-surface text-ink font-sans text-sm antialiased;
+  }
+  ::selection {
+    @apply bg-accent text-white;
+  }
+  :focus-visible {
+    outline: 2px solid #0f3d3e;
+    outline-offset: 2px;
+  }
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer utilities {
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #c9d2d0 transparent;
+  }
+  .scroll-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scroll-thin::-webkit-scrollbar-thumb {
+    background: #c9d2d0;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply border border-line bg-paper rounded-lg;
+  }
+  .panel-h {
+    @apply flex items-center justify-between px-4 h-11 border-b border-line;
+  }
+  .panel-title {
+    @apply text-sm font-semibold text-ink;
+  }
+
+  .tbl {
+    @apply w-full border-collapse text-sm;
+  }
+  .tbl thead th {
+    @apply bg-surface text-left text-2xs font-medium uppercase tracking-[0.04em] text-ink-soft;
+    height: 34px;
+    padding: 0 12px;
+    border-bottom: 1px solid #dfe4e2;
+    white-space: nowrap;
+  }
+  .tbl tbody td {
+    height: 40px;
+    padding: 0 12px;
+    border-bottom: 1px solid #edf1f0;
+    vertical-align: middle;
+  }
+  .tbl tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  .tbl tbody tr:hover td {
+    background: #f1f5f4;
+  }
+  .tbl thead th.text-center {
+    text-align: center;
+  }
+  .tbl .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded px-3 h-9 text-sm font-medium
+           border border-line bg-paper text-ink transition-colors hover:bg-surface
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply border-accent bg-accent text-white hover:bg-accent-2 hover:border-accent-2;
+  }
+  .btn-ghost {
+    @apply border-transparent bg-transparent hover:bg-surface;
+  }
+  .btn-sm {
+    @apply h-7 px-2 text-xs;
+  }
+  .btn-lg {
+    @apply h-12 text-base font-semibold;
+  }
+
+  .input {
+    @apply w-full rounded border border-line bg-paper px-3 h-9 text-sm text-ink
+           placeholder:text-[#94a3a0] focus:border-accent-2 focus:outline-none;
+  }
+  .label {
+    @apply block text-2xs font-medium uppercase tracking-[0.04em] text-ink-soft mb-1.5;
+  }
+
+  .status {
+    @apply text-xs font-medium;
+  }
+}
+
+@media print {
+  @page {
+    margin: 0;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  /* Hanya salinan struk di #cetak-root yang ikut tercetak.
+     Elemen lain disembunyikan total agar tidak ada halaman kosong. */
+  body > *:not(#cetak-root) {
+    display: none !important;
+  }
+  #cetak-root {
+    display: block !important;
+  }
+  #cetak-root .print-area {
+    position: static;
+    margin: 0;
+    padding: 3mm 3mm 6mm !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

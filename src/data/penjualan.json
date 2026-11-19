@@ -1,0 +1,2642 @@
+[
+  {
+    "id": 68,
+    "nomor": "INV-20261119-0068",
+    "tanggal": "2026-11-19",
+    "jam": "19:40",
+    "kasir": "Rina",
+    "pelanggan": "Bu Ani",
+    "items": [
+      {
+        "produk_id": 10,
+        "nama": "Mie Sedaap Soto",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3300,
+        "subtotal": 3300
+      },
+      {
+        "produk_id": 8,
+        "nama": "Minyak Curah",
+        "satuan": "kg",
+        "qty": 1.5,
+        "harga": 17000,
+        "subtotal": 25500
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      }
+    ],
+    "subtotal": 29800,
+    "total": 29800,
+    "tunai": 30000,
+    "kembalian": 200,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 67,
+    "nomor": "INV-20261119-0067",
+    "tanggal": "2026-11-19",
+    "jam": "19:33",
+    "kasir": "Rina",
+    "pelanggan": "Bu Ani",
+    "items": [
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      },
+      {
+        "produk_id": 15,
+        "nama": "Saus Sambal 335ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12000,
+        "subtotal": 24000
+      },
+      {
+        "produk_id": 17,
+        "nama": "Kopi Kapal Api 165g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 14500,
+        "subtotal": 29000
+      },
+      {
+        "produk_id": 4,
+        "nama": "Beras Curah",
+        "satuan": "kg",
+        "qty": 2,
+        "harga": 15500,
+        "subtotal": 31000
+      }
+    ],
+    "subtotal": 85000,
+    "total": 85000,
+    "tunai": 85000,
+    "kembalian": 0,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 66,
+    "nomor": "INV-20261119-0066",
+    "tanggal": "2026-11-19",
+    "jam": "19:21",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 4000,
+        "subtotal": 8000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 1000,
+        "subtotal": 2000
+      },
+      {
+        "produk_id": 7,
+        "nama": "Minyak Goreng 2L",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 36000,
+        "subtotal": 36000
+      },
+      {
+        "produk_id": 25,
+        "nama": "Tepung Terigu 1kg",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12000,
+        "subtotal": 24000
+      }
+    ],
+    "subtotal": 70000,
+    "total": 70000,
+    "tunai": 70000,
+    "kembalian": 0,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 65,
+    "nomor": "INV-20261119-0065",
+    "tanggal": "2026-11-19",
+    "jam": "19:13",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 9,
+        "nama": "Indomie Goreng",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3500,
+        "subtotal": 3500
+      },
+      {
+        "produk_id": 18,
+        "nama": "Teh Celup 25's",
+        "satuan": "kotak",
+        "qty": 2,
+        "harga": 7500,
+        "subtotal": 15000
+      },
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3000,
+        "subtotal": 6000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 1000,
+        "subtotal": 2000
+      }
+    ],
+    "subtotal": 26500,
+    "total": 26500,
+    "tunai": 30000,
+    "kembalian": 3500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 64,
+    "nomor": "INV-20261119-0064",
+    "tanggal": "2026-11-19",
+    "jam": "19:05",
+    "kasir": "Siti",
+    "pelanggan": "Warung Sari",
+    "items": [
+      {
+        "produk_id": 11,
+        "nama": "Telur Ayam",
+        "satuan": "kg",
+        "qty": 1,
+        "harga": 28000,
+        "subtotal": 28000
+      },
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3000,
+        "subtotal": 6000
+      }
+    ],
+    "subtotal": 34000,
+    "total": 34000,
+    "tunai": 35000,
+    "kembalian": 1000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 63,
+    "nomor": "INV-20261119-0063",
+    "tanggal": "2026-11-19",
+    "jam": "18:54",
+    "kasir": "Siti",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 10,
+        "nama": "Mie Sedaap Soto",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3300,
+        "subtotal": 6600
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 1000,
+        "subtotal": 2000
+      }
+    ],
+    "subtotal": 8600,
+    "total": 8600,
+    "tunai": 10000,
+    "kembalian": 1400,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 62,
+    "nomor": "INV-20261119-0062",
+    "tanggal": "2026-11-19",
+    "jam": "18:44",
+    "kasir": "Siti",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 1,
+        "nama": "Beras Pandan Wangi 5kg",
+        "satuan": "karung",
+        "qty": 1,
+        "harga": 68000,
+        "subtotal": 68000
+      },
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4000,
+        "subtotal": 4000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      },
+      {
+        "produk_id": 9,
+        "nama": "Indomie Goreng",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3500,
+        "subtotal": 7000
+      }
+    ],
+    "subtotal": 80000,
+    "total": 80000,
+    "tunai": 80000,
+    "kembalian": 0,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 61,
+    "nomor": "INV-20261119-0061",
+    "tanggal": "2026-11-19",
+    "jam": "18:32",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 19,
+        "nama": "Sabun Lifebuoy 75g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4500,
+        "subtotal": 4500
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      },
+      {
+        "produk_id": 14,
+        "nama": "Kecap Manis ABC 520ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 18000,
+        "subtotal": 36000
+      },
+      {
+        "produk_id": 25,
+        "nama": "Tepung Terigu 1kg",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12000,
+        "subtotal": 24000
+      }
+    ],
+    "subtotal": 65500,
+    "total": 65500,
+    "tunai": 70000,
+    "kembalian": 4500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 60,
+    "nomor": "INV-20261119-0060",
+    "tanggal": "2026-11-19",
+    "jam": "18:20",
+    "kasir": "Rina",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4000,
+        "subtotal": 4000
+      },
+      {
+        "produk_id": 9,
+        "nama": "Indomie Goreng",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3500,
+        "subtotal": 3500
+      },
+      {
+        "produk_id": 23,
+        "nama": "Gas LPG 3kg (isi ulang)",
+        "satuan": "tabung",
+        "qty": 1,
+        "harga": 22000,
+        "subtotal": 22000
+      },
+      {
+        "produk_id": 21,
+        "nama": "Pasta Gigi 190g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12500,
+        "subtotal": 25000
+      }
+    ],
+    "subtotal": 54500,
+    "total": 54500,
+    "tunai": 55000,
+    "kembalian": 500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 59,
+    "nomor": "INV-20261119-0059",
+    "tanggal": "2026-11-19",
+    "jam": "18:10",
+    "kasir": "Siti",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 14,
+        "nama": "Kecap Manis ABC 520ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 18000,
+        "subtotal": 36000
+      },
+      {
+        "produk_id": 3,
+        "nama": "Beras Pandan Wangi 25kg",
+        "satuan": "karung",
+        "qty": 1,
+        "harga": 315000,
+        "subtotal": 315000
+      },
+      {
+        "produk_id": 6,
+        "nama": "Gula Curah",
+        "satuan": "kg",
+        "qty": 2,
+        "harga": 15000,
+        "subtotal": 30000
+      }
+    ],
+    "subtotal": 381000,
+    "total": 381000,
+    "tunai": 385000,
+    "kembalian": 4000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 58,
+    "nomor": "INV-20261119-0058",
+    "tanggal": "2026-11-19",
+    "jam": "17:59",
+    "kasir": "Siti",
+    "pelanggan": "Bu Rina",
+    "items": [
+      {
+        "produk_id": 9,
+        "nama": "Indomie Goreng",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3500,
+        "subtotal": 3500
+      },
+      {
+        "produk_id": 10,
+        "nama": "Mie Sedaap Soto",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3300,
+        "subtotal": 3300
+      },
+      {
+        "produk_id": 8,
+        "nama": "Minyak Curah",
+        "satuan": "kg",
+        "qty": 1.5,
+        "harga": 17000,
+        "subtotal": 25500
+      }
+    ],
+    "subtotal": 32300,
+    "total": 32300,
+    "tunai": 35000,
+    "kembalian": 2700,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 57,
+    "nomor": "INV-20261119-0057",
+    "tanggal": "2026-11-19",
+    "jam": "17:47",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 4,
+        "nama": "Beras Curah",
+        "satuan": "kg",
+        "qty": 2,
+        "harga": 15500,
+        "subtotal": 31000
+      },
+      {
+        "produk_id": 18,
+        "nama": "Teh Celup 25's",
+        "satuan": "kotak",
+        "qty": 2,
+        "harga": 7500,
+        "subtotal": 15000
+      }
+    ],
+    "subtotal": 46000,
+    "total": 46000,
+    "tunai": 50000,
+    "kembalian": 4000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 56,
+    "nomor": "INV-20261119-0056",
+    "tanggal": "2026-11-19",
+    "jam": "17:37",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 11,
+        "nama": "Telur Ayam",
+        "satuan": "kg",
+        "qty": 2,
+        "harga": 28000,
+        "subtotal": 56000
+      },
+      {
+        "produk_id": 23,
+        "nama": "Gas LPG 3kg (isi ulang)",
+        "satuan": "tabung",
+        "qty": 2,
+        "harga": 22000,
+        "subtotal": 44000
+      },
+      {
+        "produk_id": 4,
+        "nama": "Beras Curah",
+        "satuan": "kg",
+        "qty": 1.5,
+        "harga": 15500,
+        "subtotal": 23250
+      }
+    ],
+    "subtotal": 123250,
+    "total": 123250,
+    "tunai": 125000,
+    "kembalian": 1750,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 55,
+    "nomor": "INV-20261119-0055",
+    "tanggal": "2026-11-19",
+    "jam": "17:27",
+    "kasir": "Rina",
+    "pelanggan": "Bu Ani",
+    "items": [
+      {
+        "produk_id": 9,
+        "nama": "Indomie Goreng",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3500,
+        "subtotal": 3500
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 1000,
+        "subtotal": 2000
+      },
+      {
+        "produk_id": 5,
+        "nama": "Gula Pasir 1kg",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 16500,
+        "subtotal": 16500
+      },
+      {
+        "produk_id": 14,
+        "nama": "Kecap Manis ABC 520ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 18000,
+        "subtotal": 18000
+      }
+    ],
+    "subtotal": 40000,
+    "total": 40000,
+    "tunai": 40000,
+    "kembalian": 0,
+    "status": "void",
+    "void_alasan": "Salah input qty"
+  },
+  {
+    "id": 54,
+    "nomor": "INV-20261119-0054",
+    "tanggal": "2026-11-19",
+    "jam": "17:16",
+    "kasir": "Rina",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 10,
+        "nama": "Mie Sedaap Soto",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3300,
+        "subtotal": 3300
+      },
+      {
+        "produk_id": 13,
+        "nama": "Susu UHT Ultra 1L",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 19500,
+        "subtotal": 39000
+      },
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3000,
+        "subtotal": 3000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      }
+    ],
+    "subtotal": 46300,
+    "total": 46300,
+    "tunai": 50000,
+    "kembalian": 3700,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 53,
+    "nomor": "INV-20261119-0053",
+    "tanggal": "2026-11-19",
+    "jam": "17:08",
+    "kasir": "Siti",
+    "pelanggan": "Bu Rina",
+    "items": [
+      {
+        "produk_id": 23,
+        "nama": "Gas LPG 3kg (isi ulang)",
+        "satuan": "tabung",
+        "qty": 1,
+        "harga": 22000,
+        "subtotal": 22000
+      },
+      {
+        "produk_id": 25,
+        "nama": "Tepung Terigu 1kg",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12000,
+        "subtotal": 24000
+      }
+    ],
+    "subtotal": 46000,
+    "total": 46000,
+    "tunai": 50000,
+    "kembalian": 4000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 52,
+    "nomor": "INV-20261119-0052",
+    "tanggal": "2026-11-19",
+    "jam": "16:56",
+    "kasir": "Rina",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 8,
+        "nama": "Minyak Curah",
+        "satuan": "kg",
+        "qty": 1.25,
+        "harga": 17000,
+        "subtotal": 21250
+      },
+      {
+        "produk_id": 9,
+        "nama": "Indomie Goreng",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3500,
+        "subtotal": 7000
+      },
+      {
+        "produk_id": 10,
+        "nama": "Mie Sedaap Soto",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3300,
+        "subtotal": 3300
+      },
+      {
+        "produk_id": 21,
+        "nama": "Pasta Gigi 190g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12500,
+        "subtotal": 25000
+      }
+    ],
+    "subtotal": 56550,
+    "total": 56550,
+    "tunai": 60000,
+    "kembalian": 3450,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 51,
+    "nomor": "INV-20261119-0051",
+    "tanggal": "2026-11-19",
+    "jam": "16:47",
+    "kasir": "Siti",
+    "pelanggan": "Warung Sari",
+    "items": [
+      {
+        "produk_id": 21,
+        "nama": "Pasta Gigi 190g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12500,
+        "subtotal": 25000
+      },
+      {
+        "produk_id": 6,
+        "nama": "Gula Curah",
+        "satuan": "kg",
+        "qty": 2,
+        "harga": 15000,
+        "subtotal": 30000
+      },
+      {
+        "produk_id": 19,
+        "nama": "Sabun Lifebuoy 75g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4500,
+        "subtotal": 4500
+      }
+    ],
+    "subtotal": 59500,
+    "total": 59500,
+    "tunai": 60000,
+    "kembalian": 500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 50,
+    "nomor": "INV-20261119-0050",
+    "tanggal": "2026-11-19",
+    "jam": "16:37",
+    "kasir": "Siti",
+    "pelanggan": "Bu Rina",
+    "items": [
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3000,
+        "subtotal": 6000
+      },
+      {
+        "produk_id": 18,
+        "nama": "Teh Celup 25's",
+        "satuan": "kotak",
+        "qty": 1,
+        "harga": 7500,
+        "subtotal": 7500
+      },
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4000,
+        "subtotal": 4000
+      },
+      {
+        "produk_id": 9,
+        "nama": "Indomie Goreng",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3500,
+        "subtotal": 7000
+      }
+    ],
+    "subtotal": 24500,
+    "total": 24500,
+    "tunai": 25000,
+    "kembalian": 500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 49,
+    "nomor": "INV-20261119-0049",
+    "tanggal": "2026-11-19",
+    "jam": "16:28",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 8,
+        "nama": "Minyak Curah",
+        "satuan": "kg",
+        "qty": 1,
+        "harga": 17000,
+        "subtotal": 17000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      }
+    ],
+    "subtotal": 18000,
+    "total": 18000,
+    "tunai": 20000,
+    "kembalian": 2000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 48,
+    "nomor": "INV-20261119-0048",
+    "tanggal": "2026-11-19",
+    "jam": "16:19",
+    "kasir": "Siti",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3000,
+        "subtotal": 6000
+      },
+      {
+        "produk_id": 15,
+        "nama": "Saus Sambal 335ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12000,
+        "subtotal": 24000
+      }
+    ],
+    "subtotal": 30000,
+    "total": 30000,
+    "tunai": 30000,
+    "kembalian": 0,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 47,
+    "nomor": "INV-20261119-0047",
+    "tanggal": "2026-11-19",
+    "jam": "16:12",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 21,
+        "nama": "Pasta Gigi 190g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12500,
+        "subtotal": 25000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 1000,
+        "subtotal": 2000
+      }
+    ],
+    "subtotal": 27000,
+    "total": 27000,
+    "tunai": 30000,
+    "kembalian": 3000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 46,
+    "nomor": "INV-20261119-0046",
+    "tanggal": "2026-11-19",
+    "jam": "15:59",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 22,
+        "nama": "Deterjen 800g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 21000,
+        "subtotal": 21000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 1000,
+        "subtotal": 2000
+      },
+      {
+        "produk_id": 10,
+        "nama": "Mie Sedaap Soto",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3300,
+        "subtotal": 3300
+      }
+    ],
+    "subtotal": 26300,
+    "total": 26300,
+    "tunai": 30000,
+    "kembalian": 3700,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 45,
+    "nomor": "INV-20261119-0045",
+    "tanggal": "2026-11-19",
+    "jam": "15:47",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 1000,
+        "subtotal": 2000
+      },
+      {
+        "produk_id": 22,
+        "nama": "Deterjen 800g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 21000,
+        "subtotal": 42000
+      }
+    ],
+    "subtotal": 44000,
+    "total": 44000,
+    "tunai": 45000,
+    "kembalian": 1000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 44,
+    "nomor": "INV-20261119-0044",
+    "tanggal": "2026-11-19",
+    "jam": "15:40",
+    "kasir": "Rina",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 5,
+        "nama": "Gula Pasir 1kg",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 16500,
+        "subtotal": 16500
+      },
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3000,
+        "subtotal": 6000
+      },
+      {
+        "produk_id": 19,
+        "nama": "Sabun Lifebuoy 75g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 4500,
+        "subtotal": 9000
+      },
+      {
+        "produk_id": 4,
+        "nama": "Beras Curah",
+        "satuan": "kg",
+        "qty": 2,
+        "harga": 15500,
+        "subtotal": 31000
+      }
+    ],
+    "subtotal": 62500,
+    "total": 62500,
+    "tunai": 65000,
+    "kembalian": 2500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 43,
+    "nomor": "INV-20261119-0043",
+    "tanggal": "2026-11-19",
+    "jam": "15:33",
+    "kasir": "Siti",
+    "pelanggan": "Warung Sari",
+    "items": [
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4000,
+        "subtotal": 4000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      }
+    ],
+    "subtotal": 5000,
+    "total": 5000,
+    "tunai": 5000,
+    "kembalian": 0,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 42,
+    "nomor": "INV-20261119-0042",
+    "tanggal": "2026-11-19",
+    "jam": "15:20",
+    "kasir": "Siti",
+    "pelanggan": "Warung Sari",
+    "items": [
+      {
+        "produk_id": 5,
+        "nama": "Gula Pasir 1kg",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 16500,
+        "subtotal": 33000
+      },
+      {
+        "produk_id": 21,
+        "nama": "Pasta Gigi 190g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12500,
+        "subtotal": 12500
+      },
+      {
+        "produk_id": 25,
+        "nama": "Tepung Terigu 1kg",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12000,
+        "subtotal": 12000
+      }
+    ],
+    "subtotal": 57500,
+    "total": 57500,
+    "tunai": 60000,
+    "kembalian": 2500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 41,
+    "nomor": "INV-20261119-0041",
+    "tanggal": "2026-11-19",
+    "jam": "15:08",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 15,
+        "nama": "Saus Sambal 335ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12000,
+        "subtotal": 12000
+      },
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3000,
+        "subtotal": 3000
+      }
+    ],
+    "subtotal": 15000,
+    "total": 15000,
+    "tunai": 15000,
+    "kembalian": 0,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 40,
+    "nomor": "INV-20261119-0040",
+    "tanggal": "2026-11-19",
+    "jam": "14:55",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      },
+      {
+        "produk_id": 17,
+        "nama": "Kopi Kapal Api 165g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 14500,
+        "subtotal": 29000
+      },
+      {
+        "produk_id": 4,
+        "nama": "Beras Curah",
+        "satuan": "kg",
+        "qty": 0.5,
+        "harga": 15500,
+        "subtotal": 7750
+      },
+      {
+        "produk_id": 10,
+        "nama": "Mie Sedaap Soto",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3300,
+        "subtotal": 6600
+      }
+    ],
+    "subtotal": 44350,
+    "total": 44350,
+    "tunai": 45000,
+    "kembalian": 650,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 39,
+    "nomor": "INV-20261119-0039",
+    "tanggal": "2026-11-19",
+    "jam": "14:46",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 10,
+        "nama": "Mie Sedaap Soto",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3300,
+        "subtotal": 6600
+      },
+      {
+        "produk_id": 12,
+        "nama": "Telur 1 Rak",
+        "satuan": "rak",
+        "qty": 1,
+        "harga": 55000,
+        "subtotal": 55000
+      }
+    ],
+    "subtotal": 61600,
+    "total": 61600,
+    "tunai": 65000,
+    "kembalian": 3400,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 38,
+    "nomor": "INV-20261119-0038",
+    "tanggal": "2026-11-19",
+    "jam": "14:35",
+    "kasir": "Siti",
+    "pelanggan": "Bu Ani",
+    "items": [
+      {
+        "produk_id": 4,
+        "nama": "Beras Curah",
+        "satuan": "kg",
+        "qty": 1.5,
+        "harga": 15500,
+        "subtotal": 23250
+      },
+      {
+        "produk_id": 15,
+        "nama": "Saus Sambal 335ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12000,
+        "subtotal": 12000
+      }
+    ],
+    "subtotal": 35250,
+    "total": 35250,
+    "tunai": 40000,
+    "kembalian": 4750,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 37,
+    "nomor": "INV-20261119-0037",
+    "tanggal": "2026-11-19",
+    "jam": "14:28",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 18,
+        "nama": "Teh Celup 25's",
+        "satuan": "kotak",
+        "qty": 2,
+        "harga": 7500,
+        "subtotal": 15000
+      },
+      {
+        "produk_id": 5,
+        "nama": "Gula Pasir 1kg",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 16500,
+        "subtotal": 16500
+      },
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3000,
+        "subtotal": 3000
+      }
+    ],
+    "subtotal": 34500,
+    "total": 34500,
+    "tunai": 35000,
+    "kembalian": 500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 36,
+    "nomor": "INV-20261119-0036",
+    "tanggal": "2026-11-19",
+    "jam": "14:15",
+    "kasir": "Siti",
+    "pelanggan": "Warung Sari",
+    "items": [
+      {
+        "produk_id": 25,
+        "nama": "Tepung Terigu 1kg",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12000,
+        "subtotal": 24000
+      },
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3000,
+        "subtotal": 3000
+      }
+    ],
+    "subtotal": 27000,
+    "total": 27000,
+    "tunai": 30000,
+    "kembalian": 3000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 35,
+    "nomor": "INV-20261119-0035",
+    "tanggal": "2026-11-19",
+    "jam": "14:05",
+    "kasir": "Siti",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      },
+      {
+        "produk_id": 19,
+        "nama": "Sabun Lifebuoy 75g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4500,
+        "subtotal": 4500
+      }
+    ],
+    "subtotal": 5500,
+    "total": 5500,
+    "tunai": 10000,
+    "kembalian": 4500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 34,
+    "nomor": "INV-20261119-0034",
+    "tanggal": "2026-11-19",
+    "jam": "13:52",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 1,
+        "nama": "Beras Pandan Wangi 5kg",
+        "satuan": "karung",
+        "qty": 1,
+        "harga": 68000,
+        "subtotal": 68000
+      },
+      {
+        "produk_id": 21,
+        "nama": "Pasta Gigi 190g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12500,
+        "subtotal": 25000
+      }
+    ],
+    "subtotal": 93000,
+    "total": 93000,
+    "tunai": 95000,
+    "kembalian": 2000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 33,
+    "nomor": "INV-20261119-0033",
+    "tanggal": "2026-11-19",
+    "jam": "13:39",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 8,
+        "nama": "Minyak Curah",
+        "satuan": "kg",
+        "qty": 1.25,
+        "harga": 17000,
+        "subtotal": 21250
+      },
+      {
+        "produk_id": 2,
+        "nama": "Beras Pandan Wangi 10kg",
+        "satuan": "karung",
+        "qty": 2,
+        "harga": 132000,
+        "subtotal": 264000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 1000,
+        "subtotal": 2000
+      },
+      {
+        "produk_id": 18,
+        "nama": "Teh Celup 25's",
+        "satuan": "kotak",
+        "qty": 1,
+        "harga": 7500,
+        "subtotal": 7500
+      }
+    ],
+    "subtotal": 294750,
+    "total": 294750,
+    "tunai": 295000,
+    "kembalian": 250,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 32,
+    "nomor": "INV-20261119-0032",
+    "tanggal": "2026-11-19",
+    "jam": "13:29",
+    "kasir": "Siti",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 10,
+        "nama": "Mie Sedaap Soto",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3300,
+        "subtotal": 3300
+      },
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 4000,
+        "subtotal": 8000
+      },
+      {
+        "produk_id": 6,
+        "nama": "Gula Curah",
+        "satuan": "kg",
+        "qty": 0.5,
+        "harga": 15000,
+        "subtotal": 7500
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      }
+    ],
+    "subtotal": 19800,
+    "total": 19800,
+    "tunai": 20000,
+    "kembalian": 200,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 31,
+    "nomor": "INV-20261119-0031",
+    "tanggal": "2026-11-19",
+    "jam": "13:18",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 9,
+        "nama": "Indomie Goreng",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3500,
+        "subtotal": 3500
+      },
+      {
+        "produk_id": 14,
+        "nama": "Kecap Manis ABC 520ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 18000,
+        "subtotal": 18000
+      },
+      {
+        "produk_id": 22,
+        "nama": "Deterjen 800g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 21000,
+        "subtotal": 21000
+      }
+    ],
+    "subtotal": 42500,
+    "total": 42500,
+    "tunai": 45000,
+    "kembalian": 2500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 30,
+    "nomor": "INV-20261119-0030",
+    "tanggal": "2026-11-19",
+    "jam": "13:10",
+    "kasir": "Siti",
+    "pelanggan": "Bu Ani",
+    "items": [
+      {
+        "produk_id": 21,
+        "nama": "Pasta Gigi 190g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12500,
+        "subtotal": 12500
+      },
+      {
+        "produk_id": 22,
+        "nama": "Deterjen 800g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 21000,
+        "subtotal": 42000
+      }
+    ],
+    "subtotal": 54500,
+    "total": 54500,
+    "tunai": 55000,
+    "kembalian": 500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 29,
+    "nomor": "INV-20261119-0029",
+    "tanggal": "2026-11-19",
+    "jam": "13:00",
+    "kasir": "Siti",
+    "pelanggan": "Warung Sari",
+    "items": [
+      {
+        "produk_id": 18,
+        "nama": "Teh Celup 25's",
+        "satuan": "kotak",
+        "qty": 2,
+        "harga": 7500,
+        "subtotal": 15000
+      },
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3000,
+        "subtotal": 6000
+      }
+    ],
+    "subtotal": 21000,
+    "total": 21000,
+    "tunai": 25000,
+    "kembalian": 4000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 28,
+    "nomor": "INV-20261119-0028",
+    "tanggal": "2026-11-19",
+    "jam": "12:52",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3000,
+        "subtotal": 3000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      }
+    ],
+    "subtotal": 4000,
+    "total": 4000,
+    "tunai": 5000,
+    "kembalian": 1000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 27,
+    "nomor": "INV-20261119-0027",
+    "tanggal": "2026-11-19",
+    "jam": "12:40",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 11,
+        "nama": "Telur Ayam",
+        "satuan": "kg",
+        "qty": 1,
+        "harga": 28000,
+        "subtotal": 28000
+      },
+      {
+        "produk_id": 13,
+        "nama": "Susu UHT Ultra 1L",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 19500,
+        "subtotal": 39000
+      }
+    ],
+    "subtotal": 67000,
+    "total": 67000,
+    "tunai": 70000,
+    "kembalian": 3000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 26,
+    "nomor": "INV-20261119-0026",
+    "tanggal": "2026-11-19",
+    "jam": "12:33",
+    "kasir": "Rina",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 25,
+        "nama": "Tepung Terigu 1kg",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12000,
+        "subtotal": 12000
+      },
+      {
+        "produk_id": 11,
+        "nama": "Telur Ayam",
+        "satuan": "kg",
+        "qty": 1.5,
+        "harga": 28000,
+        "subtotal": 42000
+      },
+      {
+        "produk_id": 6,
+        "nama": "Gula Curah",
+        "satuan": "kg",
+        "qty": 1.5,
+        "harga": 15000,
+        "subtotal": 22500
+      },
+      {
+        "produk_id": 21,
+        "nama": "Pasta Gigi 190g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12500,
+        "subtotal": 12500
+      }
+    ],
+    "subtotal": 89000,
+    "total": 89000,
+    "tunai": 90000,
+    "kembalian": 1000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 25,
+    "nomor": "INV-20261119-0025",
+    "tanggal": "2026-11-19",
+    "jam": "12:20",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 22,
+        "nama": "Deterjen 800g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 21000,
+        "subtotal": 21000
+      },
+      {
+        "produk_id": 17,
+        "nama": "Kopi Kapal Api 165g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 14500,
+        "subtotal": 29000
+      },
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4000,
+        "subtotal": 4000
+      },
+      {
+        "produk_id": 1,
+        "nama": "Beras Pandan Wangi 5kg",
+        "satuan": "karung",
+        "qty": 1,
+        "harga": 68000,
+        "subtotal": 68000
+      }
+    ],
+    "subtotal": 122000,
+    "total": 122000,
+    "tunai": 125000,
+    "kembalian": 3000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 24,
+    "nomor": "INV-20261119-0024",
+    "tanggal": "2026-11-19",
+    "jam": "12:07",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 21,
+        "nama": "Pasta Gigi 190g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12500,
+        "subtotal": 12500
+      },
+      {
+        "produk_id": 18,
+        "nama": "Teh Celup 25's",
+        "satuan": "kotak",
+        "qty": 2,
+        "harga": 7500,
+        "subtotal": 15000
+      }
+    ],
+    "subtotal": 27500,
+    "total": 27500,
+    "tunai": 30000,
+    "kembalian": 2500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 23,
+    "nomor": "INV-20261119-0023",
+    "tanggal": "2026-11-19",
+    "jam": "11:57",
+    "kasir": "Siti",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3000,
+        "subtotal": 6000
+      },
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 4000,
+        "subtotal": 8000
+      },
+      {
+        "produk_id": 22,
+        "nama": "Deterjen 800g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 21000,
+        "subtotal": 42000
+      },
+      {
+        "produk_id": 5,
+        "nama": "Gula Pasir 1kg",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 16500,
+        "subtotal": 33000
+      }
+    ],
+    "subtotal": 89000,
+    "total": 89000,
+    "tunai": 90000,
+    "kembalian": 1000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 22,
+    "nomor": "INV-20261119-0022",
+    "tanggal": "2026-11-19",
+    "jam": "11:48",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 19,
+        "nama": "Sabun Lifebuoy 75g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4500,
+        "subtotal": 4500
+      },
+      {
+        "produk_id": 8,
+        "nama": "Minyak Curah",
+        "satuan": "kg",
+        "qty": 2,
+        "harga": 17000,
+        "subtotal": 34000
+      }
+    ],
+    "subtotal": 38500,
+    "total": 38500,
+    "tunai": 40000,
+    "kembalian": 1500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 21,
+    "nomor": "INV-20261119-0021",
+    "tanggal": "2026-11-19",
+    "jam": "11:41",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4000,
+        "subtotal": 4000
+      },
+      {
+        "produk_id": 25,
+        "nama": "Tepung Terigu 1kg",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12000,
+        "subtotal": 12000
+      },
+      {
+        "produk_id": 11,
+        "nama": "Telur Ayam",
+        "satuan": "kg",
+        "qty": 1,
+        "harga": 28000,
+        "subtotal": 28000
+      }
+    ],
+    "subtotal": 44000,
+    "total": 44000,
+    "tunai": 45000,
+    "kembalian": 1000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 20,
+    "nomor": "INV-20261119-0020",
+    "tanggal": "2026-11-19",
+    "jam": "11:32",
+    "kasir": "Siti",
+    "pelanggan": "Bu Rina",
+    "items": [
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3000,
+        "subtotal": 3000
+      },
+      {
+        "produk_id": 1,
+        "nama": "Beras Pandan Wangi 5kg",
+        "satuan": "karung",
+        "qty": 2,
+        "harga": 68000,
+        "subtotal": 136000
+      },
+      {
+        "produk_id": 15,
+        "nama": "Saus Sambal 335ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12000,
+        "subtotal": 12000
+      },
+      {
+        "produk_id": 5,
+        "nama": "Gula Pasir 1kg",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 16500,
+        "subtotal": 33000
+      }
+    ],
+    "subtotal": 184000,
+    "total": 184000,
+    "tunai": 185000,
+    "kembalian": 1000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 19,
+    "nomor": "INV-20261119-0019",
+    "tanggal": "2026-11-19",
+    "jam": "11:21",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3000,
+        "subtotal": 3000
+      },
+      {
+        "produk_id": 13,
+        "nama": "Susu UHT Ultra 1L",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 19500,
+        "subtotal": 39000
+      },
+      {
+        "produk_id": 22,
+        "nama": "Deterjen 800g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 21000,
+        "subtotal": 21000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      }
+    ],
+    "subtotal": 64000,
+    "total": 64000,
+    "tunai": 65000,
+    "kembalian": 1000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 18,
+    "nomor": "INV-20261119-0018",
+    "tanggal": "2026-11-19",
+    "jam": "11:10",
+    "kasir": "Siti",
+    "pelanggan": "Bu Rina",
+    "items": [
+      {
+        "produk_id": 14,
+        "nama": "Kecap Manis ABC 520ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 18000,
+        "subtotal": 18000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      },
+      {
+        "produk_id": 8,
+        "nama": "Minyak Curah",
+        "satuan": "kg",
+        "qty": 1.5,
+        "harga": 17000,
+        "subtotal": 25500
+      }
+    ],
+    "subtotal": 44500,
+    "total": 44500,
+    "tunai": 45000,
+    "kembalian": 500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 17,
+    "nomor": "INV-20261119-0017",
+    "tanggal": "2026-11-19",
+    "jam": "10:59",
+    "kasir": "Rina",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 8,
+        "nama": "Minyak Curah",
+        "satuan": "kg",
+        "qty": 2,
+        "harga": 17000,
+        "subtotal": 34000
+      },
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 4000,
+        "subtotal": 8000
+      },
+      {
+        "produk_id": 4,
+        "nama": "Beras Curah",
+        "satuan": "kg",
+        "qty": 0.75,
+        "harga": 15500,
+        "subtotal": 11625
+      },
+      {
+        "produk_id": 12,
+        "nama": "Telur 1 Rak",
+        "satuan": "rak",
+        "qty": 1,
+        "harga": 55000,
+        "subtotal": 55000
+      }
+    ],
+    "subtotal": 108625,
+    "total": 108625,
+    "tunai": 110000,
+    "kembalian": 1375,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 16,
+    "nomor": "INV-20261119-0016",
+    "tanggal": "2026-11-19",
+    "jam": "10:49",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      },
+      {
+        "produk_id": 9,
+        "nama": "Indomie Goreng",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3500,
+        "subtotal": 7000
+      }
+    ],
+    "subtotal": 8000,
+    "total": 8000,
+    "tunai": 10000,
+    "kembalian": 2000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 15,
+    "nomor": "INV-20261119-0015",
+    "tanggal": "2026-11-19",
+    "jam": "10:37",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 19,
+        "nama": "Sabun Lifebuoy 75g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 4500,
+        "subtotal": 9000
+      },
+      {
+        "produk_id": 12,
+        "nama": "Telur 1 Rak",
+        "satuan": "rak",
+        "qty": 1,
+        "harga": 55000,
+        "subtotal": 55000
+      }
+    ],
+    "subtotal": 64000,
+    "total": 64000,
+    "tunai": 65000,
+    "kembalian": 1000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 14,
+    "nomor": "INV-20261119-0014",
+    "tanggal": "2026-11-19",
+    "jam": "10:29",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 18,
+        "nama": "Teh Celup 25's",
+        "satuan": "kotak",
+        "qty": 1,
+        "harga": 7500,
+        "subtotal": 7500
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      }
+    ],
+    "subtotal": 8500,
+    "total": 8500,
+    "tunai": 10000,
+    "kembalian": 1500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 13,
+    "nomor": "INV-20261119-0013",
+    "tanggal": "2026-11-19",
+    "jam": "10:17",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 22,
+        "nama": "Deterjen 800g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 21000,
+        "subtotal": 42000
+      },
+      {
+        "produk_id": 24,
+        "nama": "Air Mineral 600ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3000,
+        "subtotal": 3000
+      },
+      {
+        "produk_id": 14,
+        "nama": "Kecap Manis ABC 520ml",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 18000,
+        "subtotal": 36000
+      }
+    ],
+    "subtotal": 81000,
+    "total": 81000,
+    "tunai": 85000,
+    "kembalian": 4000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 12,
+    "nomor": "INV-20261119-0012",
+    "tanggal": "2026-11-19",
+    "jam": "10:05",
+    "kasir": "Siti",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 9,
+        "nama": "Indomie Goreng",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 3500,
+        "subtotal": 7000
+      },
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4000,
+        "subtotal": 4000
+      }
+    ],
+    "subtotal": 11000,
+    "total": 11000,
+    "tunai": 15000,
+    "kembalian": 4000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 11,
+    "nomor": "INV-20261119-0011",
+    "tanggal": "2026-11-19",
+    "jam": "09:58",
+    "kasir": "Siti",
+    "pelanggan": "Bu Ani",
+    "items": [
+      {
+        "produk_id": 1,
+        "nama": "Beras Pandan Wangi 5kg",
+        "satuan": "karung",
+        "qty": 2,
+        "harga": 68000,
+        "subtotal": 136000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      },
+      {
+        "produk_id": 4,
+        "nama": "Beras Curah",
+        "satuan": "kg",
+        "qty": 0.5,
+        "harga": 15500,
+        "subtotal": 7750
+      }
+    ],
+    "subtotal": 144750,
+    "total": 144750,
+    "tunai": 145000,
+    "kembalian": 250,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 10,
+    "nomor": "INV-20261119-0010",
+    "tanggal": "2026-11-19",
+    "jam": "09:47",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 22,
+        "nama": "Deterjen 800g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 21000,
+        "subtotal": 42000
+      },
+      {
+        "produk_id": 17,
+        "nama": "Kopi Kapal Api 165g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 14500,
+        "subtotal": 14500
+      }
+    ],
+    "subtotal": 56500,
+    "total": 56500,
+    "tunai": 60000,
+    "kembalian": 3500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 9,
+    "nomor": "INV-20261119-0009",
+    "tanggal": "2026-11-19",
+    "jam": "09:36",
+    "kasir": "Siti",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 1000,
+        "subtotal": 1000
+      },
+      {
+        "produk_id": 15,
+        "nama": "Saus Sambal 335ml",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12000,
+        "subtotal": 12000
+      }
+    ],
+    "subtotal": 13000,
+    "total": 13000,
+    "tunai": 15000,
+    "kembalian": 2000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 8,
+    "nomor": "INV-20261119-0008",
+    "tanggal": "2026-11-19",
+    "jam": "09:24",
+    "kasir": "Siti",
+    "pelanggan": "Warung Sari",
+    "items": [
+      {
+        "produk_id": 19,
+        "nama": "Sabun Lifebuoy 75g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 4500,
+        "subtotal": 9000
+      },
+      {
+        "produk_id": 22,
+        "nama": "Deterjen 800g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 21000,
+        "subtotal": 42000
+      },
+      {
+        "produk_id": 18,
+        "nama": "Teh Celup 25's",
+        "satuan": "kotak",
+        "qty": 2,
+        "harga": 7500,
+        "subtotal": 15000
+      }
+    ],
+    "subtotal": 66000,
+    "total": 66000,
+    "tunai": 70000,
+    "kembalian": 4000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 7,
+    "nomor": "INV-20261119-0007",
+    "tanggal": "2026-11-19",
+    "jam": "09:12",
+    "kasir": "Rina",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 1000,
+        "subtotal": 2000
+      },
+      {
+        "produk_id": 25,
+        "nama": "Tepung Terigu 1kg",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12000,
+        "subtotal": 12000
+      }
+    ],
+    "subtotal": 14000,
+    "total": 14000,
+    "tunai": 15000,
+    "kembalian": 1000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 6,
+    "nomor": "INV-20261119-0006",
+    "tanggal": "2026-11-19",
+    "jam": "08:59",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 7,
+        "nama": "Minyak Goreng 2L",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 36000,
+        "subtotal": 72000
+      },
+      {
+        "produk_id": 8,
+        "nama": "Minyak Curah",
+        "satuan": "kg",
+        "qty": 1.25,
+        "harga": 17000,
+        "subtotal": 21250
+      },
+      {
+        "produk_id": 16,
+        "nama": "Garam Beryodium 500g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 4000,
+        "subtotal": 8000
+      }
+    ],
+    "subtotal": 101250,
+    "total": 101250,
+    "tunai": 105000,
+    "kembalian": 3750,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 5,
+    "nomor": "INV-20261119-0005",
+    "tanggal": "2026-11-19",
+    "jam": "08:50",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 12,
+        "nama": "Telur 1 Rak",
+        "satuan": "rak",
+        "qty": 1,
+        "harga": 55000,
+        "subtotal": 55000
+      },
+      {
+        "produk_id": 25,
+        "nama": "Tepung Terigu 1kg",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 12000,
+        "subtotal": 24000
+      }
+    ],
+    "subtotal": 79000,
+    "total": 79000,
+    "tunai": 80000,
+    "kembalian": 1000,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 4,
+    "nomor": "INV-20261119-0004",
+    "tanggal": "2026-11-19",
+    "jam": "08:40",
+    "kasir": "Siti",
+    "pelanggan": "Bu Ani",
+    "items": [
+      {
+        "produk_id": 10,
+        "nama": "Mie Sedaap Soto",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 3300,
+        "subtotal": 3300
+      },
+      {
+        "produk_id": 19,
+        "nama": "Sabun Lifebuoy 75g",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 4500,
+        "subtotal": 9000
+      },
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 1000,
+        "subtotal": 2000
+      },
+      {
+        "produk_id": 5,
+        "nama": "Gula Pasir 1kg",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 16500,
+        "subtotal": 33000
+      }
+    ],
+    "subtotal": 47300,
+    "total": 47300,
+    "tunai": 50000,
+    "kembalian": 2700,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 3,
+    "nomor": "INV-20261119-0003",
+    "tanggal": "2026-11-19",
+    "jam": "08:29",
+    "kasir": "Siti",
+    "pelanggan": "Warung Sari",
+    "items": [
+      {
+        "produk_id": 20,
+        "nama": "Shampo Sachet",
+        "satuan": "pcs",
+        "qty": 2,
+        "harga": 1000,
+        "subtotal": 2000
+      },
+      {
+        "produk_id": 5,
+        "nama": "Gula Pasir 1kg",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 16500,
+        "subtotal": 16500
+      },
+      {
+        "produk_id": 23,
+        "nama": "Gas LPG 3kg (isi ulang)",
+        "satuan": "tabung",
+        "qty": 2,
+        "harga": 22000,
+        "subtotal": 44000
+      }
+    ],
+    "subtotal": 62500,
+    "total": 62500,
+    "tunai": 65000,
+    "kembalian": 2500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 2,
+    "nomor": "INV-20261119-0002",
+    "tanggal": "2026-11-19",
+    "jam": "08:22",
+    "kasir": "Siti",
+    "pelanggan": "",
+    "items": [
+      {
+        "produk_id": 19,
+        "nama": "Sabun Lifebuoy 75g",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 4500,
+        "subtotal": 4500
+      },
+      {
+        "produk_id": 25,
+        "nama": "Tepung Terigu 1kg",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12000,
+        "subtotal": 12000
+      }
+    ],
+    "subtotal": 16500,
+    "total": 16500,
+    "tunai": 20000,
+    "kembalian": 3500,
+    "status": "selesai",
+    "void_alasan": null
+  },
+  {
+    "id": 1,
+    "nomor": "INV-20261119-0001",
+    "tanggal": "2026-11-19",
+    "jam": "08:15",
+    "kasir": "Rina",
+    "pelanggan": "Pak Budi",
+    "items": [
+      {
+        "produk_id": 25,
+        "nama": "Tepung Terigu 1kg",
+        "satuan": "pcs",
+        "qty": 1,
+        "harga": 12000,
+        "subtotal": 12000
+      },
+      {
+        "produk_id": 23,
+        "nama": "Gas LPG 3kg (isi ulang)",
+        "satuan": "tabung",
+        "qty": 2,
+        "harga": 22000,
+        "subtotal": 44000
+      }
+    ],
+    "subtotal": 56000,
+    "total": 56000,
+    "tunai": 60000,
+    "kembalian": 4000,
+    "status": "selesai",
+    "void_alasan": null
+  }
+]

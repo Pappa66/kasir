@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nama": "CV Sinar Pangan Sukabumi",
+    "telepon": "0266-221345",
+    "alamat": "Jl. Raya Cisaat No. 8, Sukabumi"
+  },
+  {
+    "id": 2,
+    "nama": "PT Sumber Makmur Distribusi",
+    "telepon": "0266-6251234",
+    "alamat": "Jl. Sudirman No. 112, Sukabumi"
+  },
+  {
+    "id": 3,
+    "nama": "Agen Beras Cianjur",
+    "telepon": "0813-2211-8890",
+    "alamat": "Pasar Cisaat, Sukabumi"
+  },
+  {
+    "id": 4,
+    "nama": "UD Barokah Sejahtera",
+    "telepon": "0857-2299-1010",
+    "alamat": "Jl. Siliwangi No. 27, Sukabumi"
+  }
+]

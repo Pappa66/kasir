@@ -1,0 +1,83 @@
+[
+  {
+    "id": 1,
+    "nomor": "OPN-20261119-01",
+    "tanggal": "2026-11-19",
+    "petugas": "Siti",
+    "status": "berjalan",
+    "catatan": "Hitung rak depan dan gudang belakang",
+    "items": [
+      {
+        "produk_id": 23,
+        "hitung": 1,
+        "alasan": "Tabung bocor, dikembalikan ke agen"
+      },
+      {
+        "produk_id": 7,
+        "hitung": 3,
+        "alasan": "Botol pecah saat penataan"
+      },
+      {
+        "produk_id": 1,
+        "hitung": 24,
+        "alasan": ""
+      },
+      {
+        "produk_id": 2,
+        "hitung": 12,
+        "alasan": ""
+      },
+      {
+        "produk_id": 3,
+        "hitung": 5,
+        "alasan": ""
+      },
+      {
+        "produk_id": 5,
+        "hitung": 36,
+        "alasan": ""
+      },
+      {
+        "produk_id": 9,
+        "hitung": 240,
+        "alasan": ""
+      },
+      {
+        "produk_id": 13,
+        "hitung": 14,
+        "alasan": ""
+      },
+      {
+        "produk_id": 16,
+        "hitung": 40,
+        "alasan": ""
+      },
+      {
+        "produk_id": 19,
+        "hitung": 52,
+        "alasan": ""
+      },
+      {
+        "produk_id": 20,
+        "hitung": 180,
+        "alasan": ""
+      },
+      {
+        "produk_id": 24,
+        "hitung": 96,
+        "alasan": ""
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "nomor": "OPN-20261030-01",
+    "tanggal": "2026-10-30",
+    "petugas": "Rina",
+    "status": "selesai",
+    "catatan": "Opname akhir bulan",
+    "selisih": 2,
+    "nilai_selisih": -31000,
+    "items": []
+  }
+]

@@ -1,0 +1,80 @@
+<template>
+  <div class="print-area bg-white" :style="{ width: lebar === 58 ? '212px' : '292px' }">
+    <div class="font-mono leading-[1.45] text-black" :class="lebar === 58 ? 'text-[9.5px]' : 'text-[11px]'">
+      <div class="text-center">
+        <div class="font-semibold uppercase tracking-wide">{{ toko.nama_toko }}</div>
+        <div class="mx-auto mt-0.5 max-w-[95%] text-[0.92em] leading-tight">{{ toko.alamat }}</div>
+        <div class="mt-0.5">{{ toko.telepon }}</div>
+      </div>
+
+      <div class="my-1.5 border-t border-dashed border-black" />
+
+      <div v-if="void" class="my-1.5 border-y border-black py-0.5 text-center font-semibold">
+        *** VOID ***
+      </div>
+
+      <div class="space-y-0.5">
+        <div class="flex justify-between gap-2">
+          <span>No.</span><span>{{ nomor }}</span>
+        </div>
+        <div class="flex justify-between gap-2">
+          <span>Tanggal</span><span>{{ tanggal }}{{ jam ? ' ' + jam : '' }}</span>
+        </div>
+        <div class="flex justify-between gap-2">
+          <span>Kasir</span><span>{{ kasir }}</span>
+        </div>
+      </div>
+
+      <div class="my-1.5 border-t border-dashed border-black" />
+
+      <div v-for="(i, idx) in items" :key="idx" class="mb-1">
+        <div class="truncate">{{ i.nama }}</div>
+        <div class="flex justify-between gap-2">
+          <span>{{ qtyLabel(i.qty) }} x {{ ribuan(i.harga) }}</span>
+          <span class="tnum">{{ ribuan(Math.round(i.qty * i.harga)) }}</span>
+        </div>
+      </div>
+
+      <div class="my-1.5 border-t border-dashed border-black" />
+
+      <div class="flex justify-between font-semibold">
+        <span>TOTAL</span><span class="tnum">{{ ribuan(total) }}</span>
+      </div>
+      <div class="mt-1 flex justify-between">
+        <span>Tunai</span><span class="tnum">{{ ribuan(tunai) }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span>Kembali</span><span class="tnum">{{ ribuan(kembalian) }}</span>
+      </div>
+
+      <div class="my-1.5 border-t border-dashed border-black" />
+
+      <div class="text-center text-[0.92em] leading-tight">
+        <div>Terima kasih</div>
+        <div>Barang yang sudah dibeli</div>
+        <div>tidak dapat ditukar</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { qty as fmtQty } from '../lib/format'
+
+const props = defineProps({
+  toko: { type: Object, required: true },
+  nomor: { type: String, default: '' },
+  tanggal: { type: String, default: '' },
+  jam: { type: String, default: '' },
+  kasir: { type: String, default: '' },
+  items: { type: Array, default: () => [] },
+  total: { type: Number, default: 0 },
+  tunai: { type: Number, default: 0 },
+  kembalian: { type: Number, default: 0 },
+  lebar: { type: Number, default: 80 },
+  void: { type: Boolean, default: false },
+})
+
+const ribuan = (n) => Math.round(Number(n) || 0).toLocaleString('id-ID')
+const qtyLabel = (n) => fmtQty(n)
+</script>

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+dist-ssr/
+*.log
+
+# Kredensial lokal — jangan pernah di-commit
+isi github
+
+.DS_Store

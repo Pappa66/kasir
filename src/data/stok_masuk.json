@@ -1,0 +1,75 @@
+[
+  {
+    "id": 6,
+    "nomor": "SM-20261119-001",
+    "tanggal": "2026-11-19",
+    "supplier_id": 3,
+    "status": "draft",
+    "items": [
+      { "produk_id": 1, "qty": 10, "harga_beli": 62000 },
+      { "produk_id": 3, "qty": 4, "harga_beli": 290000 },
+      { "produk_id": 4, "qty": 25, "harga_beli": 13800 }
+    ]
+  },
+  {
+    "id": 5,
+    "nomor": "SM-20261118-002",
+    "tanggal": "2026-11-18",
+    "supplier_id": 2,
+    "status": "diterima",
+    "items": [
+      { "produk_id": 7, "qty": 12, "harga_beli": 33000 },
+      { "produk_id": 5, "qty": 24, "harga_beli": 15000 },
+      { "produk_id": 25, "qty": 20, "harga_beli": 10500 }
+    ]
+  },
+  {
+    "id": 4,
+    "nomor": "SM-20261118-001",
+    "tanggal": "2026-11-18",
+    "supplier_id": 4,
+    "status": "diterima",
+    "items": [
+      { "produk_id": 19, "qty": 48, "harga_beli": 3700 },
+      { "produk_id": 20, "qty": 120, "harga_beli": 800 },
+      { "produk_id": 22, "qty": 12, "harga_beli": 18500 }
+    ]
+  },
+  {
+    "id": 3,
+    "nomor": "SM-20261117-002",
+    "tanggal": "2026-11-17",
+    "supplier_id": 1,
+    "status": "diterima",
+    "items": [
+      { "produk_id": 9, "qty": 80, "harga_beli": 2950 },
+      { "produk_id": 10, "qty": 80, "harga_beli": 2800 },
+      { "produk_id": 17, "qty": 24, "harga_beli": 12500 },
+      { "produk_id": 18, "qty": 24, "harga_beli": 6200 }
+    ]
+  },
+  {
+    "id": 2,
+    "nomor": "SM-20261116-001",
+    "tanggal": "2026-11-16",
+    "supplier_id": 2,
+    "status": "diterima",
+    "items": [
+      { "produk_id": 13, "qty": 24, "harga_beli": 17000 },
+      { "produk_id": 14, "qty": 12, "harga_beli": 15500 },
+      { "produk_id": 15, "qty": 12, "harga_beli": 10000 }
+    ]
+  },
+  {
+    "id": 1,
+    "nomor": "SM-20261115-001",
+    "tanggal": "2026-11-15",
+    "supplier_id": 4,
+    "status": "diterima",
+    "items": [
+      { "produk_id": 24, "qty": 48, "harga_beli": 2200 },
+      { "produk_id": 21, "qty": 12, "harga_beli": 10500 },
+      { "produk_id": 16, "qty": 36, "harga_beli": 3000 }
+    ]
+  }
+]
