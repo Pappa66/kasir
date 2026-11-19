@@ -44,11 +44,23 @@ Hanya ada dua peran sesuai spesifikasi: **Pemilik** (semua modul) dan **Kasir**
 
 ## Tur interaktif
 
-Tombol **Mulai tur interaktif** di Panduan menjalankan 6 langkah: menu, ganti
-peran, pencarian/scan, keranjang, pembayaran, dan struk. Navigasi lewat
-Lanjut/Kembali/Lewati, panah kiri-kanan, atau Esc. Tur berpindah ke halaman
-Kasir sendiri, menyorot elemen terkait, dan menghormati
+Tombol **Tur** di topbar (dan **Mulai tur interaktif** di Panduan) menjalankan 6
+langkah: menu, ganti peran, pencarian/scan, keranjang, pembayaran, dan struk.
+Navigasi lewat Lanjut/Kembali/Lewati, panah kiri-kanan, atau Esc. Tur berpindah
+ke halaman Kasir sendiri, menyorot elemen terkait, dan menghormati
 `prefers-reduced-motion`.
+
+## Label add-on
+
+Aplikasi membedakan **paket dasar** dan **add-on** tanpa menampilkan harga di
+dalam demo:
+
+- Paket dasar: Kasir, Produk, Stok Masuk, Invoice, Opname, Laporan,
+  Pengaturan, dan peran Pemilik/Kasir.
+- Add-on: piutang/bon, batch expired/FEFO, kirim struk WhatsApp, export
+  Excel/PDF. Label `ADD-ON` netral menandai fitur tambahan; penjelasan
+  lengkap ada di Panduan, tanpa angka harga.
+- Harga dan paket komersial dibahas terpisah, bukan di UI prototipe.
 
 ## Struktur penting
 
@@ -78,8 +90,9 @@ src/
   karakter + Enter langsung menambah barang.
 - Posting opname memakai PIN pemilik demo `1234`; setiap selisih wajib beralasan.
 - Tombol Cetak menyalin struk ke `#cetak-root` lalu memanggil `window.print()`,
-  sehingga hanya struk yang tercetak (satu halaman). Ukuran kertas mengikuti
-  driver printer (disarankan printer thermal 58/80 mm diset sebagai default).
+  sehingga hanya struk yang tercetak (satu halaman). Salinan itu disembunyikan
+  di layar dan hanya muncul saat media print. Ukuran kertas mengikuti driver
+  printer (disarankan printer thermal 58/80 mm diset sebagai default).
 
 ## Data contoh
 

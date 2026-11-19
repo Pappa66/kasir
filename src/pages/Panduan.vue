@@ -20,6 +20,51 @@
       </div>
     </div>
 
+    <section class="panel overflow-hidden">
+      <div class="border-b border-line p-4">
+        <div class="flex flex-wrap items-center gap-2.5">
+          <AddonTag class="!px-2.5 !py-1 !text-xs" />
+          <h3 class="text-base font-semibold text-ink">Apa itu add-on?</h3>
+        </div>
+        <p class="mt-2 max-w-3xl text-xs leading-relaxed text-ink-soft">
+          Add-on adalah fitur tambahan di luar paket dasar aplikasi. Paket dasar sudah mencakup
+          alur toko sehari-hari; add-on diaktifkan terpisah sesuai kebutuhan dan tidak mengubah
+          data dasar. Di prototipe ini label <span class="font-medium text-ink">ADD-ON</span>
+          dipakai untuk menandai fitur tambahan, dan tidak ada harga yang ditampilkan di aplikasi.
+        </p>
+      </div>
+      <div class="grid divide-y divide-line sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+        <div class="p-4">
+          <div class="text-2xs uppercase tracking-[0.06em] text-ink-soft">
+            Paket dasar · sudah termasuk
+          </div>
+          <ul class="mt-2 space-y-1.5 text-xs text-ink-soft">
+            <li v-for="b in dasar" :key="b" class="flex gap-2">
+              <Check :size="13" :stroke-width="1.8" class="mt-0.5 shrink-0 text-ok" />
+              <span>{{ b }}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="p-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <AddonTag />
+            <span class="text-2xs uppercase tracking-[0.06em] text-ink-soft">
+              Fitur tambahan
+            </span>
+          </div>
+          <ul class="mt-2 space-y-1.5 text-xs text-ink-soft">
+            <li v-for="a in addon" :key="a" class="flex gap-2">
+              <Plus :size="13" :stroke-width="1.8" class="mt-0.5 shrink-0 text-accent-2" />
+              <span>{{ a }}</span>
+            </li>
+          </ul>
+          <p class="mt-2 text-2xs leading-relaxed text-ink-soft">
+            Diaktifkan terpisah sesuai kebutuhan toko. Label pada Dashboard menandai fitur ini.
+          </p>
+        </div>
+      </div>
+    </section>
+
     <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div class="min-w-0 space-y-4">
         <section class="panel">
@@ -198,15 +243,18 @@
 <script setup>
 import { RouterLink, useRouter } from 'vue-router'
 import {
+  Check,
   ChevronRight,
   Minus,
   Monitor,
   Play,
+  Plus,
   Printer,
   ScanLine,
   ShieldCheck,
   ShoppingCart,
 } from 'lucide-vue-next'
+import AddonTag from '../components/AddonTag.vue'
 import { useSesi } from '../stores/sesi'
 import { useTour } from '../stores/tour'
 import { useUi } from '../stores/ui'
@@ -262,6 +310,23 @@ const batasan = [
   'Muat ulang halaman mengembalikan data contoh.',
   'Kirim WhatsApp, export Excel, dan audit log belum dibuat.',
   'Pembayaran hanya tunai; tanpa QRIS atau kartu.',
+]
+
+const dasar = [
+  'Kasir, keranjang, dan pembayaran tunai',
+  'Produk, stok, dan stok masuk',
+  'Invoice dan struk thermal 58/80 mm',
+  'Stock opname dengan alasan selisih',
+  'Laporan penjualan, stok, dan laba',
+  'Pengaturan toko dan pengguna',
+  'Peran Pemilik dan Kasir',
+]
+
+const addon = [
+  'Piutang dan bon pelanggan',
+  'Batch expired dan FEFO',
+  'Kirim struk lewat WhatsApp',
+  'Export Excel dan PDF',
 ]
 
 function masuk(role) {

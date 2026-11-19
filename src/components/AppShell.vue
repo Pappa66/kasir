@@ -63,6 +63,18 @@
           <span class="hidden text-xs text-ink-soft xl:inline">{{ toko.data.nama_toko }}</span>
           <span class="hidden h-4 w-px bg-line xl:block" aria-hidden="true" />
 
+          <button
+            v-if="!tour.aktif"
+            type="button"
+            class="btn btn-sm h-8"
+            title="Mulai tur interaktif"
+            aria-label="Mulai tur interaktif"
+            @click="tour.mulai()"
+          >
+            <Play :size="14" :stroke-width="1.8" />
+            <span class="hidden sm:inline">Tur</span>
+          </button>
+
           <div ref="akarPeran" class="relative" data-tour="peran">
             <button
               type="button"
@@ -148,17 +160,20 @@ import {
   ChevronDown,
   Check,
   LogOut,
+  Play,
 } from 'lucide-vue-next'
 import ToastHost from './ToastHost.vue'
 import { useToko } from '../stores/toko'
 import { useUi } from '../stores/ui'
 import { useSesi } from '../stores/sesi'
+import { useTour } from '../stores/tour'
 
 const route = useRoute()
 const router = useRouter()
 const toko = useToko()
 const ui = useUi()
 const sesi = useSesi()
+const tour = useTour()
 
 const menu = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, peran: ['pemilik'] },

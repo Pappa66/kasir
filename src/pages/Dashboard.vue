@@ -54,7 +54,7 @@
         <div class="flex items-baseline justify-between">
           <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Kadaluarsa &lt; 30 hari</span>
           <div class="flex items-center gap-2">
-            <span class="rounded border border-[#e3c9a8] px-1 text-[10px] text-warn">add-on</span>
+            <AddonTag />
             <span class="text-xl font-semibold tnum">{{ d.mendekatiExpired.length }}</span>
           </div>
         </div>
@@ -66,7 +66,7 @@
         <div class="flex items-baseline justify-between">
           <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Bon jatuh tempo</span>
           <div class="flex items-center gap-2">
-            <span class="rounded border border-line px-1 text-[10px] text-ink-soft">add-on</span>
+            <AddonTag />
             <span class="text-xl font-semibold tnum">3</span>
           </div>
         </div>
@@ -174,6 +174,7 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { ShoppingCart } from 'lucide-vue-next'
+import AddonTag from '../components/AddonTag.vue'
 import { getDashboard, HARI_INI } from '../data/adapter'
 import { rupiah, angka, qty, tanggalPanjang } from '../lib/format'
 

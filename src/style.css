@@ -182,6 +182,12 @@
   }
 }
 
+/* Struk untuk dicetak hanya boleh muncul di media print.
+   Tanpa aturan ini, salinan struk ikut tampil di dasar halaman. */
+#cetak-root {
+  display: none;
+}
+
 @media print {
   @page {
     margin: 0;
