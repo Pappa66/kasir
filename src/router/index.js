@@ -10,6 +10,7 @@ import OpnameSheet from '../pages/OpnameSheet.vue'
 import Laporan from '../pages/Laporan.vue'
 import Pengaturan from '../pages/Pengaturan.vue'
 import Panduan from '../pages/Panduan.vue'
+import PanduanMemilih from '../pages/PanduanMemilih.vue'
 import AksesTerbatas from '../pages/AksesTerbatas.vue'
 import Piutang from '../pages/Piutang.vue'
 import Kedaluwarsa from '../pages/Kedaluwarsa.vue'
@@ -107,6 +108,12 @@ const routes = [
     name: 'panduan',
     component: Panduan,
     meta: { title: 'Panduan', peran: SEMUA },
+  },
+  {
+    path: '/panduan-memilih',
+    name: 'panduan-memilih',
+    component: PanduanMemilih,
+    meta: { title: 'Panduan memilih', peran: SEMUA },
   },
   {
     path: '/akses-terbatas',

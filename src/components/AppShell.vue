@@ -174,6 +174,7 @@ import {
   BookOpen,
   Wallet,
   CalendarClock,
+  Scale,
   ChevronDown,
   Check,
   LogOut,
@@ -205,6 +206,7 @@ const menu = [
   { path: '/laporan', label: 'Laporan', icon: BarChart3, peran: ['pemilik'] },
   { path: '/pengaturan', label: 'Pengaturan', icon: Settings, peran: ['pemilik'] },
   { path: '/panduan', label: 'Panduan', icon: BookOpen, peran: ['pemilik', 'kasir'] },
+  { path: '/panduan-memilih', label: 'Panduan memilih', icon: Scale, peran: ['pemilik', 'kasir'] },
 ]
 
 const menuTampil = computed(() => {

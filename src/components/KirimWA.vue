@@ -8,6 +8,11 @@
         </span>
       </div>
 
+      <div class="rounded border border-line bg-surface px-3 py-2 text-2xs leading-relaxed text-ink-soft">
+        Di desktop, tautan biasanya membuka WhatsApp Web. Di HP, membuka aplikasi WhatsApp.
+        Pastikan nomor sudah benar sebelum menekan Kirim di WhatsApp.
+      </div>
+
       <div>
         <label class="label" for="wa-hp">Nomor WhatsApp</label>
         <input
@@ -39,16 +44,24 @@
       <span class="text-2xs text-ink-soft">Demo — tidak ada API WhatsApp.</span>
       <div class="flex flex-wrap gap-2">
         <button type="button" class="btn" @click="salin">Salin pesan</button>
-        <button type="button" class="btn btn-primary" :disabled="!nomorWA(hp)" @click="buka">
+        <a
+          :href="tautanSiap"
+          target="_blank"
+          rel="noopener"
+          class="btn btn-primary"
+          @click="cekBuka"
+        >
+          <MessageCircle :size="15" :stroke-width="1.6" />
           Buka WhatsApp
-        </button>
+        </a>
       </div>
     </template>
   </Modal>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { MessageCircle } from 'lucide-vue-next'
 import Modal from './Modal.vue'
 import AddonTag from './AddonTag.vue'
 import { nomorWA, tautanWA } from '../lib/ekspor'
@@ -65,6 +78,9 @@ defineEmits(['close'])
 
 const ui = useUi()
 const hp = ref(props.nomor || '')
+const tautanSiap = computed(() =>
+  nomorWA(hp.value) ? tautanWA(hp.value, props.pesan) : '',
+)
 
 watch(
   () => [props.open, props.nomor],
@@ -83,9 +99,12 @@ async function salin() {
   }
 }
 
-function buka() {
-  if (!nomorWA(hp.value)) return ui.kabari('Nomor WhatsApp belum diisi.', 'warn')
-  window.open(tautanWA(hp.value, props.pesan), '_blank', 'noopener')
+function cekBuka(e) {
+  if (!nomorWA(hp.value)) {
+    e.preventDefault()
+    ui.kabari('Nomor WhatsApp belum diisi.', 'warn')
+    return
+  }
   ui.kabari('WhatsApp dibuka di tab baru. Periksa pesan sebelum mengirim.', 'info')
 }
 </script>

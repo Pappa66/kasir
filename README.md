@@ -29,6 +29,7 @@ npm run preview  # cek hasil build
 | Laporan | Penjualan per jam & per kasir, nilai stok, produk terlaris, kategori, ekspor CSV/PDF |
 | Pengaturan | Identitas toko, lebar struk, tes cetak, daftar pengguna, muat ulang data |
 | Panduan | Alur demo 3 menit, tabel hak akses, catatan perangkat, mulai tur interaktif |
+| Panduan memilih | Perbandingan pilihan aplikasi, kelebihan/kekurangan jujur, checklist untuk penjual mana pun |
 | Akses terbatas | Halaman pengganti saat kasir membuka modul pemilik; tombol masuk sebagai pemilik |
 
 ## Peran demo
@@ -71,6 +72,9 @@ dalam demo:
 - Add-on: piutang/bon, batch expired/FEFO, kirim struk WhatsApp, export
   Excel/PDF. Label `ADD-ON` netral menandai fitur tambahan; penjelasan
   lengkap ada di Panduan, tanpa angka harga.
+- Jumlah add-on perangkat lunak ada empat. Setup thermal, input data awal,
+  dan maintenance adalah layanan pendampingan, bukan fitur yang muncul di
+  menu aplikasi.
 - Semua add-on sudah berfungsi di demo:
   - **Piutang/bon** — metode Bon di Kasir (DP, nomor HP, jatuh tempo),
     pelunasan di `/piutang` atau detail invoice, sisa bon ikut di struk.
