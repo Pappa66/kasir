@@ -38,7 +38,7 @@
           Cetak struk
         </button>
         <button
-          v-if="trx.status === 'selesai'"
+          v-if="trx.status === 'selesai' && sesi.pemilik"
           type="button"
           class="btn text-bad"
           @click="voidOpen = true"
@@ -46,6 +46,13 @@
           <Ban :size="15" :stroke-width="1.6" />
           Void
         </button>
+        <span
+          v-else-if="trx.status === 'selesai'"
+          class="self-center text-2xs text-ink-soft"
+          title="Void hanya dapat dilakukan pemilik"
+        >
+          Void hanya pemilik
+        </span>
       </div>
     </div>
 
@@ -243,11 +250,13 @@ import { qty, rupiah, tanggalPendek } from '../lib/format'
 import { useToko } from '../stores/toko'
 import { useCetak } from '../stores/cetak'
 import { useUi } from '../stores/ui'
+import { useSesi } from '../stores/sesi'
 
 const route = useRoute()
 const tokoStore = useToko()
 const ui = useUi()
 const cetakStore = useCetak()
+const sesi = useSesi()
 
 const toko = computed(() => tokoStore.data)
 const trx = getPenjualan().find((t) => t.nomor === route.params.nomor) || null
@@ -275,6 +284,7 @@ function cetak() {
 }
 
 function voidkan() {
+  if (!sesi.pemilik) return ui.kabari('Void hanya dapat dilakukan pemilik.', 'warn')
   if (!alasan.value.trim()) return ui.kabari('Alasan void wajib diisi.', 'warn')
   batalkanPenjualan(trx.nomor, alasan.value.trim())
   voidOpen.value = false

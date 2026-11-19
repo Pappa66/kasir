@@ -25,6 +25,30 @@ npm run preview  # cek hasil build
 | Stock Opname | Daftar sesi, lembar hitung fisik, selisih + alasan wajib, posting dengan PIN pemilik |
 | Laporan | Penjualan per jam & per kasir, nilai stok, produk terlaris, kategori |
 | Pengaturan | Identitas toko, lebar struk, tes cetak, daftar pengguna, muat ulang data |
+| Panduan | Alur demo 3 menit, tabel hak akses, catatan perangkat, mulai tur interaktif |
+| Akses terbatas | Halaman pengganti saat kasir membuka modul pemilik; tombol masuk sebagai pemilik |
+
+## Peran demo
+
+Hanya ada dua peran sesuai spesifikasi: **Pemilik** (semua modul) dan **Kasir**
+(Kasir, Produk lihat saja, Invoice, Panduan). Tiga akun contoh: H. Ahmad
+(Pemilik), Siti dan Rina (Kasir). Ganti peran lewat dropdown nama di kanan atas.
+
+- Kasir tidak melihat menu Dashboard, Stok Masuk, Opname, Laporan, Pengaturan.
+- URL modul pemilik yang dibuka langsung diarahkan ke `/akses-terbatas?dari=...`;
+  setelah masuk sebagai pemilik, halaman tujuan dibuka kembali.
+- Produk untuk kasir: tanpa tambah/import/ubah, tanpa harga beli dan nilai stok.
+- Void invoice hanya muncul untuk pemilik; kasir hanya bisa melihat dan mencetak.
+- Transaksi baru mencatat nama pengguna aktif sebagai kasir.
+- Ini simulasi, bukan autentikasi. Pilihan peran tersimpan di sessionStorage.
+
+## Tur interaktif
+
+Tombol **Mulai tur interaktif** di Panduan menjalankan 6 langkah: menu, ganti
+peran, pencarian/scan, keranjang, pembayaran, dan struk. Navigasi lewat
+Lanjut/Kembali/Lewati, panah kiri-kanan, atau Esc. Tur berpindah ke halaman
+Kasir sendiri, menyorot elemen terkait, dan menghormati
+`prefers-reduced-motion`.
 
 ## Struktur penting
 
@@ -33,10 +57,11 @@ src/
   data/adapter.js      ← SATU-SATUNYA pintu data. Ganti isi file ini dengan
                           panggilan API/Inertia Laravel; komponen tidak berubah.
   data/*.json          ← data contoh (25 produk, 68 transaksi, supplier, opname)
-  stores/              ← Pinia: keranjang, toko, ui (toast), opname, cetak
+  stores/              ← Pinia: keranjang, toko, ui (toast), opname, cetak,
+                          sesi (peran demo), tour (langkah tur)
   components/          ← AppShell, StrukPreview, CetakStruk, Modal, ToastHost,
-                          PrototypeBanner, EmptyState
-  pages/               ← 8 halaman + 2 halaman detail
+                          PrototypeBanner, EmptyState, TourGuide
+  pages/               ← 10 halaman + 2 halaman detail
   style.css            ← token warna, tabel, tombol, aturan cetak
 ```
 

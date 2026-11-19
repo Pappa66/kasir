@@ -7,8 +7,8 @@
   "kasir_aktif": "Siti",
   "role_aktif": "Kasir",
   "pengguna": [
-    { "nama": "Siti", "role": "Kasir", "aktif": true },
-    { "nama": "Rina", "role": "Kasir", "aktif": true },
-    { "nama": "H. Ahmad", "role": "Pemilik", "aktif": true }
+    { "id": 1, "nama": "Siti", "role": "Kasir", "aktif": true },
+    { "id": 2, "nama": "Rina", "role": "Kasir", "aktif": true },
+    { "id": 3, "nama": "H. Ahmad", "role": "Pemilik", "aktif": true }
   ]
 }

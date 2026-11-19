@@ -3,12 +3,15 @@
     <div class="flex flex-wrap items-end justify-between gap-3">
       <div>
         <h2 class="text-lg font-semibold text-ink">Daftar produk</h2>
-        <p class="mt-0.5 text-xs text-ink-soft">
-          {{ daftar.length }} produk · {{ kritis }} menipis · nilai stok
-          {{ rupiah(nilaiStok) }}
+        <p class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-soft">
+          <span>
+            {{ daftar.length }} produk · {{ kritis }} menipis<template v-if="bolehKelola">
+              · nilai stok {{ rupiah(nilaiStok) }}</template>
+          </span>
+          <span v-if="!bolehKelola" class="status text-warn">Hanya lihat</span>
         </p>
       </div>
-      <div class="flex gap-2">
+      <div v-if="bolehKelola" class="flex gap-2">
         <button type="button" class="btn" @click="impor">
           <Upload :size="15" :stroke-width="1.6" />
           <span class="hidden sm:inline">Import</span>
@@ -52,7 +55,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="p in hasil" :key="p.id" class="cursor-pointer" @click="bukaEdit(p)">
+            <tr v-for="p in hasil" :key="p.id" :class="bolehKelola ? 'cursor-pointer' : ''" @click="buka(p)">
               <td class="hidden font-mono text-xs text-ink-soft sm:table-cell">{{ p.kode }}</td>
               <td>
                 <div class="font-medium text-ink">{{ p.nama }}</div>
@@ -73,7 +76,7 @@
                 <span class="status" :class="statusWarna(p)">{{ statusTeks(p) }}</span>
               </td>
               <td class="hidden text-right sm:table-cell">
-                <button type="button" class="btn btn-sm btn-ghost" @click.stop="bukaEdit(p)">
+                <button v-if="bolehKelola" type="button" class="btn btn-sm btn-ghost" @click.stop="bukaEdit(p)">
                   Ubah
                 </button>
               </td>
@@ -88,7 +91,7 @@
           :key="p.id"
           type="button"
           class="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-surface"
-          @click="bukaEdit(p)"
+          @click="buka(p)"
         >
           <div class="min-w-0 flex-1">
             <div class="truncate text-sm font-medium text-ink">{{ p.nama }}</div>
@@ -102,7 +105,13 @@
               <span class="status" :class="statusWarna(p)">{{ statusTeks(p) }}</span>
             </div>
           </div>
-          <ChevronRight :size="16" :stroke-width="1.6" class="shrink-0 text-[#9aa8a5]" />
+          <Eye
+            v-if="!bolehKelola"
+            :size="16"
+            :stroke-width="1.6"
+            class="shrink-0 text-[#9aa8a5]"
+          />
+          <ChevronRight v-else :size="16" :stroke-width="1.6" class="shrink-0 text-[#9aa8a5]" />
         </button>
       </div>
 
@@ -113,10 +122,16 @@
     </section>
 
     <p class="text-xs text-ink-soft">
-      Perubahan produk pada prototipe ini hanya tersimpan selama tab terbuka.
+      <template v-if="bolehKelola">
+        Perubahan produk pada prototipe ini hanya tersimpan selama tab terbuka.
+      </template>
+      <template v-else>
+        Mode kasir: produk hanya untuk dilihat. Harga beli dan tombol kelola disembunyikan.
+      </template>
     </p>
 
     <Modal
+      v-if="bolehKelola"
       :open="formOpen"
       :title="mode === 'baru' ? 'Tambah produk' : 'Ubah produk'"
       :subtitle="mode === 'baru' ? 'Produk baru untuk daftar jual' : form.kode"
@@ -181,13 +196,16 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { ChevronRight, Plus, Search, Upload } from 'lucide-vue-next'
+import { ChevronRight, Eye, Plus, Search, Upload } from 'lucide-vue-next'
 import Modal from '../components/Modal.vue'
 import { getProduk } from '../data/adapter'
 import { rupiah, qty } from '../lib/format'
 import { useUi } from '../stores/ui'
+import { useSesi } from '../stores/sesi'
 
 const ui = useUi()
+const sesi = useSesi()
+const bolehKelola = computed(() => sesi.pemilik)
 const daftar = ref(getProduk())
 const cari = ref('')
 const kategori = ref('')
@@ -220,6 +238,7 @@ const statusTeks = (p) => (p.stok <= 0 ? 'Habis' : p.stok <= p.stok_minimum ? 'M
 const statusWarna = (p) => (p.stok <= 0 ? 'text-bad' : p.stok <= p.stok_minimum ? 'text-warn' : 'text-ok')
 
 function bukaBaru() {
+  if (!bolehKelola.value) return ui.kabari('Mode kasir: produk hanya bisa dilihat.', 'info')
   mode.value = 'baru'
   form.value = {
     nama: '',
@@ -234,7 +253,15 @@ function bukaBaru() {
   formOpen.value = true
 }
 
+function buka(p) {
+  if (!bolehKelola.value) {
+    return ui.kabari('Mode kasir: daftar produk hanya bisa dilihat.', 'info')
+  }
+  bukaEdit(p)
+}
+
 function bukaEdit(p) {
+  if (!bolehKelola.value) return
   mode.value = 'ubah'
   form.value = { ...p }
   formOpen.value = true

@@ -2,7 +2,7 @@
   <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_400px]">
     <!-- Kolom kiri: pencarian + keranjang -->
     <div class="min-w-0 space-y-4">
-      <div class="panel">
+      <div class="panel" data-tour="cari">
         <div class="relative p-3">
           <Search
             :size="16"
@@ -67,7 +67,7 @@
         </div>
       </div>
 
-      <div class="panel flex min-h-[300px] flex-col lg:min-h-[420px]">
+      <div class="panel flex min-h-[300px] flex-col lg:min-h-[420px]" data-tour="keranjang">
         <div class="panel-h shrink-0">
           <div class="flex items-center gap-2">
             <span class="panel-title">Keranjang</span>
@@ -171,7 +171,7 @@
 
     <!-- Kolom kanan: ringkasan pembayaran -->
     <aside class="min-w-0 space-y-4 lg:sticky lg:top-[68px]">
-      <div class="panel">
+      <div class="panel" data-tour="bayar">
         <div class="panel-h">
           <span class="panel-title">Pembayaran</span>
           <span class="text-xs text-ink-soft">Tunai</span>
@@ -240,7 +240,7 @@
         </div>
       </div>
 
-      <div class="panel px-4 py-3">
+      <div class="panel px-4 py-3" data-tour="pintasan">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Pintasan</div>
         <ul class="mt-1.5 space-y-1 text-xs text-ink-soft">
           <li class="flex justify-between gap-3"><span>Fokus pencarian</span><kbd class="rounded border border-line bg-surface px-1.5">/</kbd></li>
@@ -320,12 +320,14 @@ import Modal from '../components/Modal.vue'
 import { useKeranjang } from '../stores/keranjang'
 import { useToko } from '../stores/toko'
 import { useCetak } from '../stores/cetak'
+import { useSesi } from '../stores/sesi'
 import { getProduk, HARI_INI, nomorInvoiceBerikutnya, tambahPenjualan } from '../data/adapter'
 import { rupiah, qty, selisihHari, tanggalPendek } from '../lib/format'
 
 const keranjang = useKeranjang()
 const tokoStore = useToko()
 const cetakStore = useCetak()
+const sesi = useSesi()
 const toko = computed(() => tokoStore.data)
 const semuaProduk = getProduk()
 
@@ -426,7 +428,7 @@ function bayar() {
     nomor,
     tanggal: HARI_INI,
     jam: jamSekarang(),
-    kasir: tokoStore.data.kasir_aktif,
+    kasir: sesi.aktif.nama,
     pelanggan: keranjang.pelanggan || '',
     items,
     subtotal: keranjang.subtotal,

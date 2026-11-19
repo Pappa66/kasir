@@ -17,12 +17,12 @@
         </div>
       </div>
 
-      <nav class="flex-1 overflow-y-auto py-3">
+      <nav class="flex-1 overflow-y-auto py-3" data-tour="menu">
         <div class="mb-1 hidden px-4 text-2xs uppercase tracking-[0.08em] text-[#5f7a78] lg:block">
           Menu
         </div>
         <RouterLink
-          v-for="m in menu"
+          v-for="m in menuTampil"
           :key="m.path"
           :to="m.path"
           class="group relative flex h-10 items-center gap-3 px-4 text-sm transition-colors hover:bg-white/5 hover:text-white"
@@ -62,8 +62,64 @@
         <div class="flex shrink-0 items-center gap-2 sm:gap-3">
           <span class="hidden text-xs text-ink-soft xl:inline">{{ toko.data.nama_toko }}</span>
           <span class="hidden h-4 w-px bg-line xl:block" aria-hidden="true" />
-          <span class="text-sm text-ink">{{ toko.data.kasir_aktif }}</span>
-          <span class="hidden text-xs text-ink-soft sm:inline">{{ toko.data.role_aktif }}</span>
+
+          <div ref="akarPeran" class="relative" data-tour="peran">
+            <button
+              type="button"
+              class="flex h-8 items-center gap-2 rounded border border-line bg-paper px-2 text-left transition-colors hover:bg-surface"
+              :aria-expanded="peranOpen"
+              aria-haspopup="menu"
+              title="Ganti peran (demo)"
+              @click="peranOpen = !peranOpen"
+            >
+              <span class="max-w-[110px] truncate text-sm text-ink">{{ sesi.aktif.nama }}</span>
+              <span
+                class="rounded-sm bg-surface px-1.5 py-0.5 text-[10px] uppercase tracking-[0.04em]"
+                :class="sesi.pemilik ? 'text-accent-2' : 'text-warn'"
+              >
+                {{ sesi.aktif.role }}
+              </span>
+              <ChevronDown
+                :size="13"
+                :stroke-width="1.8"
+                class="text-ink-soft transition-transform"
+                :class="peranOpen ? 'rotate-180' : ''"
+              />
+            </button>
+
+            <div
+              v-if="peranOpen"
+              class="absolute right-0 top-[calc(100%+6px)] z-40 w-60 overflow-hidden rounded border border-line bg-paper shadow-[0_8px_28px_rgba(15,47,46,0.16)]"
+              role="menu"
+            >
+              <div class="border-b border-line px-3 py-2 text-2xs uppercase tracking-[0.06em] text-ink-soft">
+                Mode demo · masuk sebagai
+              </div>
+              <button
+                v-for="u in sesi.daftar"
+                :key="u.id"
+                type="button"
+                role="menuitem"
+                class="flex w-full items-center justify-between gap-2 px-3 py-2 text-left transition-colors hover:bg-surface"
+                :class="u.id === sesi.aktif.id ? 'bg-surface' : ''"
+                @click="pilih(u)"
+              >
+                <span class="min-w-0">
+                  <span class="block truncate text-sm text-ink">{{ u.nama }}</span>
+                  <span class="block text-2xs text-ink-soft">{{ u.role }}</span>
+                </span>
+                <Check
+                  v-if="u.id === sesi.aktif.id"
+                  :size="14"
+                  :stroke-width="1.8"
+                  class="shrink-0 text-accent-2"
+                />
+              </button>
+              <div class="border-t border-line bg-surface px-3 py-2 text-2xs leading-relaxed text-ink-soft">
+                Menu dan tombol menyesuaikan peran. Ini hanya simulasi, tanpa login.
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -77,8 +133,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -88,29 +144,67 @@ import {
   ClipboardCheck,
   BarChart3,
   Settings,
+  BookOpen,
+  ChevronDown,
+  Check,
   LogOut,
 } from 'lucide-vue-next'
 import ToastHost from './ToastHost.vue'
 import { useToko } from '../stores/toko'
 import { useUi } from '../stores/ui'
+import { useSesi } from '../stores/sesi'
 
 const route = useRoute()
+const router = useRouter()
 const toko = useToko()
 const ui = useUi()
+const sesi = useSesi()
 
 const menu = [
-  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/kasir', label: 'Kasir', icon: ShoppingCart },
-  { path: '/produk', label: 'Produk', icon: Package },
-  { path: '/stok-masuk', label: 'Stok Masuk', icon: ArrowDownToLine },
-  { path: '/invoice', label: 'Invoice', icon: ReceiptText },
-  { path: '/opname', label: 'Stock Opname', icon: ClipboardCheck },
-  { path: '/laporan', label: 'Laporan', icon: BarChart3 },
-  { path: '/pengaturan', label: 'Pengaturan', icon: Settings },
+  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, peran: ['pemilik'] },
+  { path: '/kasir', label: 'Kasir', icon: ShoppingCart, peran: ['pemilik', 'kasir'] },
+  { path: '/produk', label: 'Produk', icon: Package, peran: ['pemilik', 'kasir'] },
+  { path: '/stok-masuk', label: 'Stok Masuk', icon: ArrowDownToLine, peran: ['pemilik'] },
+  { path: '/invoice', label: 'Invoice', icon: ReceiptText, peran: ['pemilik', 'kasir'] },
+  { path: '/opname', label: 'Stock Opname', icon: ClipboardCheck, peran: ['pemilik'] },
+  { path: '/laporan', label: 'Laporan', icon: BarChart3, peran: ['pemilik'] },
+  { path: '/pengaturan', label: 'Pengaturan', icon: Settings, peran: ['pemilik'] },
+  { path: '/panduan', label: 'Panduan', icon: BookOpen, peran: ['pemilik', 'kasir'] },
 ]
+
+const menuTampil = computed(() => menu.filter((m) => m.peran.includes(sesi.peran)))
 
 const aktif = (path) => route.path === path || route.path.startsWith(path + '/')
 const judulHalaman = computed(() => route.meta.title || 'Kasir')
+
+const peranOpen = ref(false)
+const akarPeran = ref(null)
+
+function klikLuar(e) {
+  if (peranOpen.value && akarPeran.value && !akarPeran.value.contains(e.target)) {
+    peranOpen.value = false
+  }
+}
+function tombolEsc(e) {
+  if (e.key === 'Escape') peranOpen.value = false
+}
+
+onMounted(() => {
+  document.addEventListener('click', klikLuar)
+  document.addEventListener('keydown', tombolEsc)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('click', klikLuar)
+  document.removeEventListener('keydown', tombolEsc)
+})
+
+function pilih(u) {
+  sesi.ganti(u.id)
+  peranOpen.value = false
+  const izin = route.meta.peran
+  if (izin && !izin.includes(sesi.peran)) router.replace('/kasir')
+  ui.kabari(`Mode ${u.role.toLowerCase()}: ${u.nama}.`, 'info')
+}
 
 const inisial = computed(() => {
   const kata = toko.data.nama_toko.split(/\s+/).filter((w) => w.toLowerCase() !== 'toko')
@@ -122,6 +216,6 @@ const inisial = computed(() => {
 })
 
 function keluar() {
-  ui.kabari('Demo tanpa autentikasi. Sesi berakhir saat tab ditutup.', 'info')
+  ui.kabari('Demo tanpa autentikasi. Ganti peran lewat menu di kanan atas.', 'info')
 }
 </script>
