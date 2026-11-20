@@ -48,7 +48,7 @@
           <span>Metode</span><span class="font-semibold">BON</span>
         </div>
         <div v-if="dibayar > 0" class="flex justify-between">
-          <span>DP {{ kanal === 'qris' ? 'QRIS' : 'Tunai' }}</span><span class="tnum">{{ ribuan(dibayar) }}</span>
+          <span>Dibayar {{ kanal === 'qris' ? 'QRIS' : 'Tunai' }}</span><span class="tnum">{{ ribuan(dibayar) }}</span>
         </div>
         <div class="flex justify-between font-semibold">
           <span>Sisa</span><span class="tnum">{{ ribuan(sisa) }}</span>
