@@ -65,6 +65,7 @@ import {
   ShieldCheck,
   ShoppingCart,
   BookOpen,
+  Wallet,
 } from 'lucide-vue-next'
 import { useSesi } from '../stores/sesi'
 import { useUi } from '../stores/ui'
@@ -83,6 +84,7 @@ const menuKasir = [
   { to: '/kasir', label: 'Kasir', icon: ShoppingCart },
   { to: '/produk', label: 'Produk', icon: Package },
   { to: '/invoice', label: 'Invoice', icon: ReceiptText },
+  { to: '/piutang', label: 'Piutang', icon: Wallet },
   { to: '/panduan', label: 'Panduan', icon: BookOpen },
 ]
 

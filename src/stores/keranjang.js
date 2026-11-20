@@ -1,12 +1,13 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
-// Keranjang + pembayaran. Mendukung tunai dan bon (add-on piutang).
+// Keranjang + pembayaran. Mendukung tunai, QRIS statis toko, dan bon (add-on piutang).
 export const useKeranjang = defineStore('keranjang', () => {
   const items = ref([])
   const tunai = ref(0)
   const pelanggan = ref('')
   const metode = ref('tunai') // tunai | bon
+  const kanal = ref('tunai') // tunai | qris (uang masuk)
   const noHp = ref('')
   const jatuhTempo = ref('2026-11-26')
   const dp = ref(0)
@@ -24,6 +25,7 @@ export const useKeranjang = defineStore('keranjang', () => {
     if (metode.value === 'bon') {
       return !!pelanggan.value.trim() && (Number(dp.value) || 0) <= total.value
     }
+    if (kanal.value === 'qris') return true
     return (Number(tunai.value) || 0) >= total.value
   })
 
@@ -82,6 +84,7 @@ export const useKeranjang = defineStore('keranjang', () => {
     tunai.value = 0
     pelanggan.value = ''
     metode.value = 'tunai'
+    kanal.value = 'tunai'
     noHp.value = ''
     jatuhTempo.value = '2026-11-26'
     dp.value = 0
@@ -93,6 +96,11 @@ export const useKeranjang = defineStore('keranjang', () => {
 
   function setMetode(v) {
     metode.value = v === 'bon' ? 'bon' : 'tunai'
+    if (metode.value === 'tunai') kanal.value = 'tunai'
+  }
+
+  function setKanal(v) {
+    kanal.value = v === 'qris' ? 'qris' : 'tunai'
   }
 
   function setDp(v) {
@@ -104,6 +112,7 @@ export const useKeranjang = defineStore('keranjang', () => {
     tunai,
     pelanggan,
     metode,
+    kanal,
     noHp,
     jatuhTempo,
     dp,
@@ -122,6 +131,7 @@ export const useKeranjang = defineStore('keranjang', () => {
     kosongkan,
     setTunai,
     setMetode,
+    setKanal,
     setDp,
   }
 })

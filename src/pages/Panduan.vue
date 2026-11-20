@@ -4,8 +4,8 @@
       <div class="min-w-0">
         <h2 class="text-lg font-semibold text-ink">Panduan singkat</h2>
         <p class="mt-0.5 max-w-2xl text-xs text-ink-soft">
-          Alur demo tiga menit, hak akses tiap peran, dan catatan perangkat. Tidak perlu login —
-          peran bisa diganti kapan saja.
+          Alur demo tiga menit, hak akses tiap peran, dan catatan perangkat. Masuk lewat halaman
+          login dummy, lalu peran bisa diganti kapan saja.
         </p>
       </div>
       <div class="flex flex-wrap gap-2">
@@ -59,8 +59,9 @@
             </li>
           </ul>
           <p class="mt-2 text-2xs leading-relaxed text-ink-soft">
-            Semua add-on di bawah sudah bisa dicoba di demo ini. Piutang dan Kedaluwarsa khusus
-            pemilik; WhatsApp dan export bisa dibuka dari invoice dan laporan.
+            Semua add-on di bawah sudah bisa dicoba di demo ini. Kedaluwarsa khusus pemilik;
+            Piutang bisa dibuka kasir untuk mencatat pelunasan bon; WhatsApp dan export dibuka
+            dari invoice dan laporan.
           </p>
         </div>
       </div>
@@ -205,7 +206,7 @@
         <section class="panel">
           <div class="panel-h">
             <span class="panel-title">Peran demo</span>
-            <span class="text-xs text-ink-soft">tanpa login</span>
+            <span class="text-xs text-ink-soft">bisa diganti</span>
           </div>
           <div class="p-4">
             <div class="flex items-center justify-between gap-2">
@@ -397,17 +398,20 @@ const akses = [
   { modul: 'Produk', pemilik: 'Tambah & ubah', kasir: 'Lihat saja' },
   { modul: 'Invoice', pemilik: 'Termasuk void', kasir: 'Lihat & cetak' },
   { modul: 'Invoice publik', pemilik: 'Tautan bertoken', kasir: 'Tautan bertoken' },
-  { modul: 'Piutang & Bon', pemilik: 'Penuh', kasir: null },
+  { modul: 'Piutang & Bon', pemilik: 'Penuh', kasir: 'Bayar bon' },
   { modul: 'Kedaluwarsa & FEFO', pemilik: 'Penuh', kasir: null },
   { modul: 'Stok Masuk', pemilik: 'Penuh', kasir: null },
   { modul: 'Stock Opname', pemilik: 'Hitung & posting', kasir: null },
   { modul: 'Laporan', pemilik: 'Penuh', kasir: null },
   { modul: 'Pengaturan', pemilik: 'Penuh', kasir: null },
   { modul: 'Panduan', pemilik: 'Penuh', kasir: 'Penuh' },
+  { modul: 'Panduan memilih', pemilik: 'Penuh', kasir: 'Penuh' },
 ]
 
 const batasan = [
-  'Tanpa login, database, dan penyimpanan permanen.',
+  'Login dummy tanpa kata sandi; belum ada autentikasi asli.',
+  'Tanpa database dan penyimpanan permanen.',
+  'QRIS statis toko dicatat sebagai kanal; belum ada QRIS dinamis, kartu, atau transfer.',
   'Muat ulang halaman mengembalikan data contoh.',
   'WhatsApp dibuka lewat wa.me; demo tidak mengirim pesan otomatis.',
   'Ekspor CSV/PDF dibuat di browser, bukan dari server.',
@@ -415,7 +419,7 @@ const batasan = [
 ]
 
 const dasar = [
-  'Kasir, keranjang, dan pembayaran tunai',
+  'Kasir, keranjang, pembayaran tunai & QRIS statis',
   'Produk, stok, dan penerimaan barang',
   'Invoice dan struk thermal 58/80 mm',
   'Stock opname dengan alasan selisih',

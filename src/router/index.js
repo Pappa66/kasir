@@ -11,6 +11,7 @@ import Laporan from '../pages/Laporan.vue'
 import Pengaturan from '../pages/Pengaturan.vue'
 import Panduan from '../pages/Panduan.vue'
 import PanduanMemilih from '../pages/PanduanMemilih.vue'
+import Login from '../pages/Login.vue'
 import AksesTerbatas from '../pages/AksesTerbatas.vue'
 import Piutang from '../pages/Piutang.vue'
 import Kedaluwarsa from '../pages/Kedaluwarsa.vue'
@@ -22,8 +23,18 @@ const SEMUA = ['pemilik', 'kasir']
 
 const routes = [
   {
+    path: '/login',
+    name: 'login',
+    component: Login,
+    meta: { title: 'Masuk', publik: true, login: true },
+  },
+  {
     path: '/',
-    redirect: () => (useSesi().peran === 'pemilik' ? '/dashboard' : '/kasir'),
+    redirect: () => {
+      const sesi = useSesi()
+      if (!sesi.masuk) return '/login'
+      return sesi.peran === 'pemilik' ? '/dashboard' : '/kasir'
+    },
   },
   {
     path: '/dashboard',
@@ -65,7 +76,7 @@ const routes = [
     path: '/piutang',
     name: 'piutang',
     component: Piutang,
-    meta: { title: 'Piutang & Bon', peran: PEMILIK },
+    meta: { title: 'Piutang & Bon', peran: SEMUA },
   },
   {
     path: '/kedaluwarsa',
@@ -131,7 +142,19 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
-  if (to.meta.publik) return true
+  const sesi = useSesi()
+
+  if (to.meta.publik) {
+    if (to.meta.login && sesi.masuk) {
+      return { path: sesi.pemilik ? '/dashboard' : '/kasir' }
+    }
+    return true
+  }
+
+  if (!sesi.masuk) {
+    return { path: '/login', query: to.fullPath === '/' ? {} : { dari: to.fullPath } }
+  }
+
   const izin = to.meta.peran
   if (izin && !izin.includes(useSesi().peran)) {
     return { path: '/akses-terbatas', query: { dari: to.fullPath } }

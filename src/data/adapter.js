@@ -229,17 +229,22 @@ export function tautanPublik(nomor) {
 
 function normalisasiPenjualan(t) {
   const metode = t.metode || 'tunai'
+  const kanal = t.kanal === 'qris' ? 'qris' : 'tunai'
   const statusBayar =
     t.status === 'void' ? 'batal' : t.status_bayar || (metode === 'bon' ? 'belum' : 'lunas')
   return {
     ...t,
     items: t.items.map((i) => ({ ...i, batch: (i.batch || []).map((b) => ({ ...b })) })),
     metode,
+    kanal,
     status_bayar: statusBayar,
     dibayar: t.dibayar ?? (metode === 'tunai' ? t.total : 0),
     jatuh_tempo: t.jatuh_tempo ?? null,
     no_hp: t.no_hp || '',
-    pembayaran: (t.pembayaran || []).map((p) => ({ ...p })),
+    pembayaran: (t.pembayaran || []).map((p) => ({
+      ...p,
+      kanal: p.kanal === 'qris' || p.metode === 'qris' ? 'qris' : 'tunai',
+    })),
     batch_terpakai: (t.batch_terpakai || []).map((b) => ({ ...b })),
     token: tokenPublik(t.nomor),
   }
@@ -290,14 +295,15 @@ export function getPiutangRingkas() {
   }
 }
 
-export function bayarPiutang(nomor, nominal, metode = 'tunai') {
+export function bayarPiutang(nomor, nominal, kanal = 'tunai') {
   const t = getPenjualan().find((x) => x.nomor === nomor)
   if (!t || t.metode !== 'bon' || t.status === 'void') return null
   const sisa = Math.max(0, t.total - t.dibayar)
   const bayar = Math.min(bulat(nominal), sisa)
   if (bayar <= 0) return null
+  const cara = kanal === 'qris' ? 'qris' : 'tunai'
   t.dibayar = bulat(t.dibayar + bayar)
-  t.pembayaran.push({ tanggal: HARI_INI, nominal: bayar, metode })
+  t.pembayaran.push({ tanggal: HARI_INI, nominal: bayar, kanal: cara })
   t.status_bayar = t.dibayar >= t.total ? 'lunas' : 'sebagian'
   return t
 }
@@ -481,13 +487,14 @@ export function getLaporan() {
 
   const omzet = sah.reduce((s, t) => s + t.total, 0)
   const item = Math.round(sah.reduce((s, t) => s + t.items.reduce((a, i) => a + i.qty, 0), 0))
-  const laba = Math.round(
+  const hpp = Math.round(
     sah.reduce(
       (s, t) =>
-        s + t.items.reduce((a, i) => a + (i.harga - (hargaBeli.get(i.produk_id) || 0)) * i.qty, 0),
+        s + t.items.reduce((a, i) => a + (hargaBeli.get(i.produk_id) || 0) * i.qty, 0),
       0,
     ),
   )
+  const labaKotor = omzet - hpp
 
   const jamMap = new Map()
   for (const t of sah) {
@@ -533,21 +540,62 @@ export function getLaporan() {
   }
   const perKategori = [...kategoriMap.values()].sort((a, b) => b.nilai - a.nilai)
 
+  // Uang yang benar-benar masuk, dipisah kanal. Penjualan tunai masuk penuh;
+  // bon dihitung dari DP dan pelunasan yang tercatat.
+  const uangMasuk = { tunai: 0, qris: 0 }
+  for (const t of sah) {
+    if (t.metode === 'tunai') {
+      uangMasuk[t.kanal === 'qris' ? 'qris' : 'tunai'] += t.total
+    } else {
+      for (const p of t.pembayaran) {
+        uangMasuk[p.kanal === 'qris' ? 'qris' : 'tunai'] += p.nominal
+      }
+    }
+  }
+
   const piutang = getPiutangRingkas()
 
   return {
     omzet,
+    hpp,
+    labaKotor,
+    laba: labaKotor,
     transaksi: sah.length,
     item,
-    laba,
     perJam,
     perKasir,
     perKategori,
     terlaris,
     piutang,
+    uangMasuk,
     nilaiStokBeli: produk.reduce((s, p) => s + p.stok * p.harga_beli, 0),
     nilaiStokJual: produk.reduce((s, p) => s + p.stok * p.harga_jual, 0),
     jumlahSku: produk.length,
+  }
+}
+
+// Rincian transaksi untuk satu jam pada laporan. Dipakai saat baris jam
+// diklik; hanya transaksi selesai yang dihitung, sama seperti laporan.
+export function getRincianJam(jam) {
+  const target = String(jam).slice(0, 2).padStart(2, '0') + ':00'
+  const daftar = getPenjualan()
+    .filter((t) => t.status === 'selesai' && t.jam.slice(0, 2) + ':00' === target)
+    .map((t) => ({
+      nomor: t.nomor,
+      jam: t.jam,
+      pelanggan: t.pelanggan || '',
+      metode: t.metode,
+      kanal: t.kanal,
+      kasir: t.kasir,
+      total: t.total,
+      items: t.items.map((i) => ({ ...i })),
+    }))
+  return {
+    jam: target,
+    transaksi: daftar.length,
+    item: daftar.reduce((s, t) => s + t.items.reduce((a, i) => a + i.qty, 0), 0),
+    total: daftar.reduce((s, t) => s + t.total, 0),
+    daftar,
   }
 }
 

@@ -219,7 +219,65 @@
             <span class="text-3xl font-semibold leading-none tnum">{{ rupiah(keranjang.total) }}</span>
           </div>
 
-          <template v-if="keranjang.metode === 'tunai'">
+          <div class="border-t border-line pt-2.5">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">
+                {{ keranjang.metode === 'bon' ? 'Uang muka lewat' : 'Uang masuk lewat' }}
+              </span>
+              <div class="flex rounded border border-line p-0.5">
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-2xs transition-colors"
+                  :class="keranjang.kanal === 'tunai' ? 'bg-ink text-white' : 'text-ink-soft hover:bg-surface'"
+                  @click="keranjang.setKanal('tunai')"
+                >
+                  <Banknote :size="12" :stroke-width="1.8" />
+                  Tunai
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-2xs transition-colors"
+                  :class="keranjang.kanal === 'qris' ? 'bg-ink text-white' : 'text-ink-soft hover:bg-surface'"
+                  @click="keranjang.setKanal('qris')"
+                >
+                  <QrCode :size="12" :stroke-width="1.8" />
+                  QRIS toko
+                </button>
+              </div>
+            </div>
+            <p v-if="keranjang.kanal === 'qris'" class="mt-1.5 text-2xs leading-relaxed text-ink-soft">
+              QRIS statis toko. Nominal mengikuti total; pastikan notifikasi speaker berbunyi
+              sebelum menyimpan.
+            </p>
+          </div>
+
+          <template v-if="keranjang.metode === 'tunai' && keranjang.kanal === 'qris'">
+            <div class="rounded border border-line bg-surface p-3 text-center">
+              <QrCode :size="22" :stroke-width="1.5" class="mx-auto text-accent-2" />
+              <div class="mt-1.5 text-2xs uppercase tracking-[0.04em] text-ink-soft">Nominal QRIS</div>
+              <div class="mt-0.5 text-2xl font-semibold tnum">{{ rupiah(keranjang.total) }}</div>
+            </div>
+
+            <label class="flex cursor-pointer items-start gap-2 text-xs text-ink-soft">
+              <input
+                v-model="qrisMasuk"
+                type="checkbox"
+                class="mt-0.5 h-4 w-4 shrink-0 accent-[#0f3d3e]"
+              />
+              <span>Notifikasi QRIS sudah masuk di HP/speaker toko.</span>
+            </label>
+
+            <button
+              type="button"
+              class="btn btn-primary btn-lg mt-1 w-full"
+              :disabled="!keranjang.bisaBayar || !qrisMasuk"
+              @click="bayar"
+            >
+              Simpan bayar QRIS {{ rupiah(keranjang.total) }}
+            </button>
+          </template>
+
+          <template v-else-if="keranjang.metode === 'tunai'">
             <div class="pt-1">
               <label class="label" for="tunai">Uang diterima</label>
               <div class="relative">
@@ -392,6 +450,7 @@
           :pelanggan="struk.pelanggan"
           :no-hp="struk.no_hp"
           :metode="struk.metode"
+          :kanal="struk.kanal"
           :dibayar="struk.dibayar"
           :sisa="Math.max(0, struk.total - struk.dibayar)"
           :jatuh-tempo="struk.jatuh_tempo ? tanggalPendek(struk.jatuh_tempo) : ''"
@@ -446,7 +505,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import {
   Search,
@@ -457,6 +516,8 @@ import {
   Trash2,
   Printer,
   MessageCircle,
+  Banknote,
+  QrCode,
 } from 'lucide-vue-next'
 import StrukPreview from '../components/StrukPreview.vue'
 import Modal from '../components/Modal.vue'
@@ -495,6 +556,12 @@ const pesan = ref('')
 const struk = ref(null)
 const waOpen = ref(false)
 const lebar = ref(tokoStore.data.lebar_struk || 80)
+const qrisMasuk = ref(false)
+
+watch(
+  () => [keranjang.kanal, keranjang.metode],
+  () => (qrisMasuk.value = false),
+)
 
 let pesanTimer = null
 
@@ -588,8 +655,12 @@ const pesanWA = computed(() =>
 function bayar() {
   if (!keranjang.bisaBayar) return
   const metode = keranjang.metode
+  const kanal = keranjang.kanal
   if (metode === 'bon' && !keranjang.pelanggan.trim()) {
     return tampilPesan('Nama pelanggan wajib diisi untuk bon.')
+  }
+  if (metode === 'tunai' && kanal === 'qris' && !qrisMasuk.value) {
+    return tampilPesan('Konfirmasi notifikasi QRIS dulu.')
   }
 
   const nomor = nomorInvoiceBerikutnya()
@@ -610,7 +681,12 @@ function bayar() {
   })
 
   const total = keranjang.total
-  const dibayar = metode === 'bon' ? Number(keranjang.dp) || 0 : Number(keranjang.tunai) || 0
+  const dibayar =
+    metode === 'bon'
+      ? Number(keranjang.dp) || 0
+      : kanal === 'qris'
+        ? total
+        : Number(keranjang.tunai) || 0
   const batchTerpakai = items.flatMap((i) => i.batch || [])
 
   const transaksi = {
@@ -624,15 +700,16 @@ function bayar() {
     items,
     subtotal: keranjang.subtotal,
     total,
-    tunai: metode === 'tunai' ? dibayar : 0,
-    kembalian: metode === 'tunai' ? keranjang.kembalian : 0,
+    tunai: metode === 'tunai' && kanal === 'tunai' ? dibayar : 0,
+    kembalian: metode === 'tunai' && kanal === 'tunai' ? keranjang.kembalian : 0,
     metode,
+    kanal,
     status_bayar:
       metode === 'bon' ? (dibayar >= total ? 'lunas' : dibayar > 0 ? 'sebagian' : 'belum') : 'lunas',
     dibayar,
     jatuh_tempo: metode === 'bon' ? keranjang.jatuhTempo : null,
     pembayaran:
-      dibayar > 0 ? [{ tanggal: HARI_INI, nominal: dibayar, metode: 'tunai' }] : [],
+      dibayar > 0 ? [{ tanggal: HARI_INI, nominal: dibayar, kanal }] : [],
     batch_terpakai: batchTerpakai,
     status: 'selesai',
     void_alasan: null,
@@ -640,6 +717,7 @@ function bayar() {
 
   tambahPenjualan(transaksi)
   struk.value = transaksi
+  qrisMasuk.value = false
 
   const adaLewat = items.some((i) => i.batch_lewat > 0)
   if (adaLewat) ui.kabari('Ada batch yang sudah lewat expired dan ikut terpotong. Cek halaman Kedaluwarsa.', 'warn')
@@ -669,6 +747,7 @@ function cetak() {
     pelanggan: struk.value.pelanggan,
     noHp: struk.value.no_hp,
     metode: struk.value.metode,
+    kanal: struk.value.kanal,
     dibayar: struk.value.dibayar,
     sisa: Math.max(0, struk.value.total - struk.value.dibayar),
     jatuhTempo: struk.value.jatuh_tempo ? tanggalPendek(struk.value.jatuh_tempo) : '',

@@ -48,7 +48,7 @@
           <AddonTag class="!px-1.5 !py-0 !text-[9px]" />
         </button>
         <button
-          v-if="bisaBayar && sesi.pemilik"
+          v-if="bisaBayar"
           type="button"
           class="btn btn-primary"
           @click="bayarOpen = true"
@@ -165,6 +165,28 @@
               </template>
             </div>
           </div>
+
+          <div
+            v-if="trx.metode === 'bon' && trx.pembayaran.length"
+            class="border-t border-line px-4 py-3"
+          >
+            <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">
+              Riwayat uang masuk
+            </div>
+            <ul class="mt-1.5 space-y-1">
+              <li
+                v-for="(p, i) in trx.pembayaran"
+                :key="i"
+                class="flex items-baseline justify-between gap-2 text-xs"
+              >
+                <span class="text-ink-soft">
+                  {{ tanggalPendek(p.tanggal) }} ·
+                  {{ p.kanal === 'qris' ? 'QRIS toko' : 'Tunai' }}
+                </span>
+                <span class="tnum font-medium">{{ rupiah(p.nominal) }}</span>
+              </li>
+            </ul>
+          </div>
         </section>
 
         <section class="panel">
@@ -182,7 +204,9 @@
             </div>
             <div>
               <dt class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Metode bayar</dt>
-              <dd class="mt-0.5">{{ trx.metode === 'bon' ? 'Bon (bayar kemudian)' : 'Tunai' }}</dd>
+              <dd class="mt-0.5">
+                {{ trx.metode === 'bon' ? 'Bon (bayar kemudian)' : trx.kanal === 'qris' ? 'QRIS toko' : 'Tunai' }}
+              </dd>
             </div>
             <div>
               <dt class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Status bayar</dt>
@@ -243,6 +267,7 @@
               :pelanggan="trx.pelanggan"
               :no-hp="trx.no_hp"
               :metode="trx.metode"
+              :kanal="trx.kanal"
               :dibayar="trx.dibayar"
               :sisa="sisa"
               :jatuh-tempo="trx.jatuh_tempo ? tanggalPendek(trx.jatuh_tempo) : ''"
@@ -353,6 +378,33 @@
           </div>
         </div>
 
+        <div>
+          <span class="label">Uang masuk lewat</span>
+          <div class="flex rounded border border-line p-0.5">
+            <button
+              type="button"
+              class="inline-flex flex-1 items-center justify-center gap-1.5 rounded px-2 py-1 text-xs transition-colors"
+              :class="bayarKanal === 'tunai' ? 'bg-ink text-white' : 'text-ink-soft hover:bg-surface'"
+              @click="bayarKanal = 'tunai'"
+            >
+              <Banknote :size="13" :stroke-width="1.8" />
+              Tunai
+            </button>
+            <button
+              type="button"
+              class="inline-flex flex-1 items-center justify-center gap-1.5 rounded px-2 py-1 text-xs transition-colors"
+              :class="bayarKanal === 'qris' ? 'bg-ink text-white' : 'text-ink-soft hover:bg-surface'"
+              @click="bayarKanal = 'qris'"
+            >
+              <QrCode :size="13" :stroke-width="1.8" />
+              QRIS toko
+            </button>
+          </div>
+          <p v-if="bayarKanal === 'qris'" class="mt-1.5 text-2xs leading-relaxed text-ink-soft">
+            QRIS statis toko. Cek notifikasi speaker sebelum menyimpan.
+          </p>
+        </div>
+
         <p v-if="nominalBayar > sisa" class="text-xs text-warn">
           Jumlah melebihi sisa bon. Maksimal {{ rupiah(sisa) }}.
         </p>
@@ -362,7 +414,9 @@
       </div>
 
       <template #footer>
-        <span class="text-2xs text-ink-soft">Pembayaran tunai · {{ HARI_INI }}</span>
+        <span class="text-2xs text-ink-soft">
+          Pembayaran {{ bayarKanal === 'qris' ? 'QRIS toko' : 'tunai' }} · {{ HARI_INI }}
+        </span>
         <div class="flex gap-2">
           <button type="button" class="btn" @click="bayarOpen = false">Batal</button>
           <button
@@ -394,10 +448,12 @@ import {
   AlertTriangle,
   ArrowLeft,
   Ban,
+  Banknote,
   Download,
   FileQuestion,
   MessageCircle,
   Printer,
+  QrCode,
   Wallet,
 } from 'lucide-vue-next'
 import EmptyState from '../components/EmptyState.vue'
@@ -433,6 +489,7 @@ const voidOpen = ref(false)
 const alasan = ref('')
 const bayarOpen = ref(false)
 const bayarTeks = ref('')
+const bayarKanal = ref('tunai')
 const waOpen = ref(false)
 
 const totalQty = computed(() => (trx.value ? trx.value.items.reduce((s, i) => s + i.qty, 0) : 0))
@@ -478,7 +535,10 @@ const nominalBayar = computed(() => Number(String(bayarTeks.value).replace(/\D/g
 const bisaBayarNominal = computed(() => nominalBayar.value > 0 && nominalBayar.value <= sisa.value)
 
 watch(bayarOpen, (v) => {
-  if (v) bayarTeks.value = sisa.value.toLocaleString('id-ID')
+  if (v) {
+    bayarTeks.value = sisa.value.toLocaleString('id-ID')
+    bayarKanal.value = 'tunai'
+  }
 })
 
 function isiLunas() {
@@ -490,13 +550,20 @@ function isiSetengah() {
 
 function segarkan() {
   const t = getPenjualan().find((x) => x.nomor === route.params.nomor)
-  if (t) trx.value = t
+  if (!t) return
+  // Salinan baru supaya computed (sisa, status) ikut dihitung ulang; objek
+  // di cache adapter bukan reaktif.
+  trx.value = {
+    ...t,
+    items: t.items.map((i) => ({ ...i })),
+    pembayaran: t.pembayaran.map((p) => ({ ...p })),
+  }
 }
 
 function bayarBon() {
   if (!trx.value || !bisaBayarNominal.value) return
   const jumlah = nominalBayar.value
-  const t = bayarPiutang(trx.value.nomor, jumlah)
+  const t = bayarPiutang(trx.value.nomor, jumlah, bayarKanal.value)
   if (!t) return ui.kabari('Pembayaran tidak dapat dicatat.', 'warn')
   segarkan()
   bayarOpen.value = false
@@ -517,6 +584,7 @@ function cetak() {
     pelanggan: trx.value.pelanggan,
     noHp: trx.value.no_hp,
     metode: trx.value.metode,
+    kanal: trx.value.kanal,
     dibayar: trx.value.dibayar,
     sisa: sisa.value,
     jatuhTempo: trx.value.jatuh_tempo ? tanggalPendek(trx.value.jatuh_tempo) : '',
@@ -550,7 +618,8 @@ function ekspor() {
     ['Kasir', t.kasir],
     ['Pelanggan', t.pelanggan || ''],
     ['No. HP', t.no_hp || ''],
-    ['Metode', t.metode === 'bon' ? 'Bon' : 'Tunai'],
+    ['Metode', t.metode === 'bon' ? 'Bon' : t.kanal === 'qris' ? 'QRIS toko' : 'Tunai'],
+    ['Kanal uang masuk', t.kanal === 'qris' ? 'QRIS toko' : 'Tunai'],
     ['Status bayar', labelBayar.value],
     [],
     ['Produk', 'Qty', 'Satuan', 'Harga', 'Subtotal'],

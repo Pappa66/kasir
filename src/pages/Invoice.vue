@@ -87,6 +87,12 @@
                 >
                   sisa {{ rupiah(t.total - t.dibayar) }}
                 </div>
+                <div
+                  v-else-if="t.metode !== 'bon' && t.kanal === 'qris'"
+                  class="text-2xs font-normal text-accent-2"
+                >
+                  QRIS
+                </div>
               </td>
               <td>
                 <span class="status" :class="statusClass(t)">
@@ -226,7 +232,7 @@ function buka(t) {
 function ekspor() {
   if (!hasil.value.length) return ui.kabari('Tidak ada transaksi untuk diekspor.', 'warn')
   const baris = [
-    ['Nomor', 'Tanggal', 'Jam', 'Kasir', 'Pelanggan', 'No. HP', 'Metode', 'Status bayar', 'Total', 'Dibayar', 'Sisa', 'Status'],
+    ['Nomor', 'Tanggal', 'Jam', 'Kasir', 'Pelanggan', 'No. HP', 'Metode', 'Kanal', 'Status bayar', 'Total', 'Dibayar', 'Sisa', 'Status'],
     ...hasil.value.map((t) => [
       t.nomor,
       tanggalPendek(t.tanggal),
@@ -234,7 +240,8 @@ function ekspor() {
       t.kasir,
       t.pelanggan || '',
       t.no_hp || '',
-      t.metode === 'bon' ? 'Bon' : 'Tunai',
+      t.metode === 'bon' ? 'Bon' : 'Lunas',
+      t.kanal === 'qris' ? 'QRIS toko' : 'Tunai',
       t.status_bayar,
       t.total,
       t.dibayar,

@@ -127,7 +127,7 @@ const langkah = [
     rute: null,
     posisi: 'kanan',
     judul: 'Semua modul di satu tempat',
-    isi: 'Menu di kiri menyesuaikan peran. Pemilik melihat semua modul; kasir hanya Kasir, Produk, Invoice, dan Panduan.',
+    isi: 'Menu di kiri menyesuaikan peran. Pemilik melihat semua modul; kasir hanya Kasir, Produk, Invoice, Piutang, dan Panduan.',
   },
   {
     target: '[data-tour="peran"]',

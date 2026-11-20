@@ -143,7 +143,7 @@
                 />
               </button>
               <div class="border-t border-line bg-surface px-3 py-2 text-2xs leading-relaxed text-ink-soft">
-                Menu dan tombol menyesuaikan peran. Ini hanya simulasi, tanpa login.
+                Ganti peran tanpa keluar. Menu dan tombol menyesuaikan peran yang dipilih.
               </div>
             </div>
           </div>
@@ -200,7 +200,7 @@ const menu = [
   { path: '/produk', label: 'Produk', icon: Package, peran: ['pemilik', 'kasir'] },
   { path: '/stok-masuk', label: 'Stok Masuk', icon: ArrowDownToLine, peran: ['pemilik'] },
   { path: '/invoice', label: 'Invoice', icon: ReceiptText, peran: ['pemilik', 'kasir'] },
-  { path: '/piutang', label: 'Piutang', icon: Wallet, peran: ['pemilik'], addon: true, lencana: 'piutang' },
+  { path: '/piutang', label: 'Piutang', icon: Wallet, peran: ['pemilik', 'kasir'], addon: true, lencana: 'piutang' },
   { path: '/kedaluwarsa', label: 'Kedaluwarsa', icon: CalendarClock, peran: ['pemilik'], addon: true, lencana: 'expired' },
   { path: '/opname', label: 'Stock Opname', icon: ClipboardCheck, peran: ['pemilik'] },
   { path: '/laporan', label: 'Laporan', icon: BarChart3, peran: ['pemilik'] },
@@ -266,6 +266,9 @@ const inisial = computed(() => {
 })
 
 function keluar() {
-  ui.kabari('Demo tanpa autentikasi. Ganti peran lewat menu di kanan atas.', 'info')
+  tour.tutup()
+  sesi.keluar()
+  ui.kabari('Keluar dari demo. Pilih peran untuk masuk lagi.', 'info')
+  router.replace('/login')
 }
 </script>

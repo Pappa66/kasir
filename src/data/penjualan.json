@@ -44,7 +44,8 @@
     "pembayaran": [],
     "batch_terpakai": [],
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 70,
@@ -92,12 +93,13 @@
       {
         "tanggal": "2026-11-19",
         "nominal": 53000,
-        "metode": "tunai"
+        "kanal": "tunai"
       }
     ],
     "batch_terpakai": [],
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 69,
@@ -144,7 +146,8 @@
     "pembayaran": [],
     "batch_terpakai": [],
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 68,
@@ -184,7 +187,8 @@
     "tunai": 30000,
     "kembalian": 200,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 67,
@@ -232,7 +236,8 @@
     "tunai": 85000,
     "kembalian": 0,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 66,
@@ -280,7 +285,8 @@
     "tunai": 70000,
     "kembalian": 0,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 65,
@@ -328,7 +334,8 @@
     "tunai": 30000,
     "kembalian": 3500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 64,
@@ -360,7 +367,8 @@
     "tunai": 35000,
     "kembalian": 1000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 63,
@@ -392,7 +400,8 @@
     "tunai": 10000,
     "kembalian": 1400,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 62,
@@ -440,7 +449,8 @@
     "tunai": 80000,
     "kembalian": 0,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 61,
@@ -488,7 +498,8 @@
     "tunai": 70000,
     "kembalian": 4500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 60,
@@ -536,7 +547,8 @@
     "tunai": 55000,
     "kembalian": 500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 59,
@@ -576,7 +588,8 @@
     "tunai": 385000,
     "kembalian": 4000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 58,
@@ -616,7 +629,8 @@
     "tunai": 35000,
     "kembalian": 2700,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 57,
@@ -648,7 +662,8 @@
     "tunai": 50000,
     "kembalian": 4000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 56,
@@ -688,7 +703,8 @@
     "tunai": 125000,
     "kembalian": 1750,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 55,
@@ -736,7 +752,8 @@
     "tunai": 40000,
     "kembalian": 0,
     "status": "void",
-    "void_alasan": "Salah input qty"
+    "void_alasan": "Salah input qty",
+    "kanal": "tunai"
   },
   {
     "id": 54,
@@ -784,7 +801,8 @@
     "tunai": 50000,
     "kembalian": 3700,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 53,
@@ -816,7 +834,8 @@
     "tunai": 50000,
     "kembalian": 4000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 52,
@@ -864,7 +883,8 @@
     "tunai": 60000,
     "kembalian": 3450,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 51,
@@ -904,7 +924,8 @@
     "tunai": 60000,
     "kembalian": 500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 50,
@@ -952,7 +973,8 @@
     "tunai": 25000,
     "kembalian": 500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 49,
@@ -984,7 +1006,8 @@
     "tunai": 20000,
     "kembalian": 2000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 48,
@@ -1016,7 +1039,8 @@
     "tunai": 30000,
     "kembalian": 0,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 47,
@@ -1048,7 +1072,8 @@
     "tunai": 30000,
     "kembalian": 3000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 46,
@@ -1088,7 +1113,8 @@
     "tunai": 30000,
     "kembalian": 3700,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 45,
@@ -1120,7 +1146,8 @@
     "tunai": 45000,
     "kembalian": 1000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 44,
@@ -1168,7 +1195,8 @@
     "tunai": 65000,
     "kembalian": 2500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 43,
@@ -1200,7 +1228,8 @@
     "tunai": 5000,
     "kembalian": 0,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 42,
@@ -1240,7 +1269,8 @@
     "tunai": 60000,
     "kembalian": 2500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 41,
@@ -1272,7 +1302,8 @@
     "tunai": 15000,
     "kembalian": 0,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 40,
@@ -1320,7 +1351,8 @@
     "tunai": 45000,
     "kembalian": 650,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 39,
@@ -1352,7 +1384,8 @@
     "tunai": 65000,
     "kembalian": 3400,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 38,
@@ -1384,7 +1417,8 @@
     "tunai": 40000,
     "kembalian": 4750,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 37,
@@ -1424,7 +1458,8 @@
     "tunai": 35000,
     "kembalian": 500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 36,
@@ -1456,7 +1491,8 @@
     "tunai": 30000,
     "kembalian": 3000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 35,
@@ -1488,7 +1524,8 @@
     "tunai": 10000,
     "kembalian": 4500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 34,
@@ -1520,7 +1557,8 @@
     "tunai": 95000,
     "kembalian": 2000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 33,
@@ -1568,7 +1606,8 @@
     "tunai": 295000,
     "kembalian": 250,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 32,
@@ -1616,7 +1655,8 @@
     "tunai": 20000,
     "kembalian": 200,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 31,
@@ -1656,7 +1696,8 @@
     "tunai": 45000,
     "kembalian": 2500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 30,
@@ -1688,7 +1729,8 @@
     "tunai": 55000,
     "kembalian": 500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 29,
@@ -1720,7 +1762,8 @@
     "tunai": 25000,
     "kembalian": 4000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 28,
@@ -1752,7 +1795,8 @@
     "tunai": 5000,
     "kembalian": 1000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 27,
@@ -1784,7 +1828,8 @@
     "tunai": 70000,
     "kembalian": 3000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 26,
@@ -1832,7 +1877,8 @@
     "tunai": 90000,
     "kembalian": 1000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 25,
@@ -1880,7 +1926,8 @@
     "tunai": 125000,
     "kembalian": 3000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 24,
@@ -1912,7 +1959,8 @@
     "tunai": 30000,
     "kembalian": 2500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 23,
@@ -1960,7 +2008,8 @@
     "tunai": 90000,
     "kembalian": 1000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 22,
@@ -1992,7 +2041,8 @@
     "tunai": 40000,
     "kembalian": 1500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 21,
@@ -2032,7 +2082,8 @@
     "tunai": 45000,
     "kembalian": 1000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 20,
@@ -2080,7 +2131,8 @@
     "tunai": 185000,
     "kembalian": 1000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 19,
@@ -2128,7 +2180,8 @@
     "tunai": 65000,
     "kembalian": 1000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 18,
@@ -2168,7 +2221,8 @@
     "tunai": 45000,
     "kembalian": 500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 17,
@@ -2216,7 +2270,8 @@
     "tunai": 110000,
     "kembalian": 1375,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 16,
@@ -2248,7 +2303,8 @@
     "tunai": 10000,
     "kembalian": 2000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 15,
@@ -2280,7 +2336,8 @@
     "tunai": 65000,
     "kembalian": 1000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 14,
@@ -2312,7 +2369,8 @@
     "tunai": 10000,
     "kembalian": 1500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 13,
@@ -2352,7 +2410,8 @@
     "tunai": 85000,
     "kembalian": 4000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 12,
@@ -2384,7 +2443,8 @@
     "tunai": 15000,
     "kembalian": 4000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 11,
@@ -2424,7 +2484,8 @@
     "tunai": 145000,
     "kembalian": 250,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 10,
@@ -2456,7 +2517,8 @@
     "tunai": 60000,
     "kembalian": 3500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 9,
@@ -2488,7 +2550,8 @@
     "tunai": 15000,
     "kembalian": 2000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 8,
@@ -2528,7 +2591,8 @@
     "tunai": 70000,
     "kembalian": 4000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 7,
@@ -2560,7 +2624,8 @@
     "tunai": 15000,
     "kembalian": 1000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 6,
@@ -2600,7 +2665,8 @@
     "tunai": 105000,
     "kembalian": 3750,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 5,
@@ -2632,7 +2698,8 @@
     "tunai": 80000,
     "kembalian": 1000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 4,
@@ -2680,7 +2747,8 @@
     "tunai": 50000,
     "kembalian": 2700,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 3,
@@ -2720,7 +2788,8 @@
     "tunai": 65000,
     "kembalian": 2500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   },
   {
     "id": 2,
@@ -2752,7 +2821,8 @@
     "tunai": 20000,
     "kembalian": 3500,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "qris"
   },
   {
     "id": 1,
@@ -2784,6 +2854,7 @@
     "tunai": 60000,
     "kembalian": 4000,
     "status": "selesai",
-    "void_alasan": null
+    "void_alasan": null,
+    "kanal": "tunai"
   }
 ]

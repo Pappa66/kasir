@@ -19,34 +19,66 @@
       </div>
     </div>
 
-    <div class="panel grid grid-cols-2 overflow-hidden lg:grid-cols-4">
-      <div class="border-b border-r border-line p-4 lg:border-b-0">
+    <div class="panel grid grid-cols-2 gap-px overflow-hidden bg-line lg:grid-cols-3">
+      <div class="min-w-0 bg-paper p-4">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Omzet</div>
         <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
           {{ rupiah(l.omzet) }}
         </div>
-        <div class="mt-0.5 text-xs text-ink-soft">{{ l.transaksi }} transaksi</div>
+        <div class="mt-0.5 text-xs text-ink-soft">
+          {{ l.transaksi }} transaksi · rata-rata {{ rupiah(Math.round(l.omzet / l.transaksi)) }}
+        </div>
       </div>
-      <div class="border-b border-line p-4 lg:border-b-0 lg:border-r">
+      <div class="min-w-0 bg-paper p-4">
+        <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">HPP</div>
+        <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
+          {{ rupiah(l.hpp) }}
+        </div>
+        <div class="mt-0.5 text-xs text-ink-soft">modal barang terjual</div>
+      </div>
+      <div class="min-w-0 bg-paper p-4">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Laba kotor</div>
         <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
-          {{ rupiah(l.laba) }}
+          {{ rupiah(l.labaKotor) }}
         </div>
-        <div class="mt-0.5 text-xs text-ink-soft">estimasi dari harga beli</div>
+        <div class="mt-0.5 text-xs text-ink-soft">{{ persenMargin }}% dari omzet</div>
       </div>
-      <div class="border-b border-r border-line p-4 lg:border-b-0">
+      <div class="min-w-0 bg-paper p-4">
+        <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Biaya operasional</div>
+        <div class="relative mt-1.5">
+          <span class="absolute left-0 top-1/2 -translate-y-1/2 text-sm text-ink-soft">Rp</span>
+          <input
+            :value="biayaTeks"
+            type="text"
+            inputmode="numeric"
+            aria-label="Biaya operasional hari ini"
+            class="input h-8 w-full pl-7 text-sm tnum"
+            @input="ubahBiaya"
+          />
+        </div>
+        <div class="mt-0.5 text-xs text-ink-soft">isi manual · demo</div>
+      </div>
+      <div class="min-w-0 bg-paper p-4">
+        <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Laba bersih</div>
+        <div
+          class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl"
+          :class="labaBersih >= 0 ? 'text-ok' : 'text-bad'"
+        >
+          {{ rupiah(labaBersih) }}
+        </div>
+        <div class="mt-0.5 text-xs text-ink-soft">laba kotor − biaya</div>
+      </div>
+      <div class="min-w-0 bg-paper p-4">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Item terjual</div>
         <div class="mt-1.5 text-lg font-semibold tnum sm:text-2xl">{{ angka(l.item) }}</div>
         <div class="mt-0.5 text-xs text-ink-soft">unit, karung, dan kg</div>
       </div>
-      <div class="border-b border-line p-4 lg:border-b-0">
-        <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Rata-rata / transaksi</div>
-        <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
-          {{ rupiah(Math.round(l.omzet / l.transaksi)) }}
-        </div>
-        <div class="mt-0.5 text-xs text-ink-soft">per transaksi</div>
-      </div>
     </div>
+
+    <p class="text-xs leading-relaxed text-ink-soft" data-no-print>
+      Laba kotor = omzet − HPP. Laba bersih = laba kotor − biaya operasional. Biaya operasional
+      diisi manual di demo ini; di aplikasi final bisa dicatat per periode.
+    </p>
 
     <div class="flex flex-wrap items-center gap-2" data-no-print>
       <div class="flex rounded border border-line p-0.5">
@@ -70,8 +102,11 @@
     <section v-if="tab === 'penjualan'" class="grid gap-4 lg:grid-cols-3">
       <div class="panel min-w-0 lg:col-span-2">
         <div class="panel-h">
-          <span class="panel-title">Penjualan per jam</span>
-          <span class="text-xs text-ink-soft">jam operasional</span>
+          <div class="flex min-w-0 items-baseline gap-2">
+            <span class="panel-title">Penjualan per jam</span>
+            <span class="text-xs text-ink-soft">klik baris untuk rincian</span>
+          </div>
+          <ChevronRight :size="15" :stroke-width="1.6" class="shrink-0 text-[#9aa8a5]" />
         </div>
         <div class="overflow-x-auto">
           <table class="tbl">
@@ -82,11 +117,22 @@
                 <th class="num hidden w-20 sm:table-cell">Item</th>
                 <th class="num w-32">Omzet</th>
                 <th class="hidden w-32 md:table-cell"></th>
+                <th class="w-8"></th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="r in l.perJam" :key="r.jam">
-                <td class="tnum">{{ r.jam }}</td>
+              <tr
+                v-for="r in l.perJam"
+                :key="r.jam"
+                class="cursor-pointer transition-colors hover:bg-surface"
+                tabindex="0"
+                role="button"
+                :aria-label="`Lihat rincian jam ${r.jam}`"
+                @click="bukaRincian(r.jam)"
+                @keydown.enter.prevent="bukaRincian(r.jam)"
+                @keydown.space.prevent="bukaRincian(r.jam)"
+              >
+                <td class="tnum font-medium text-accent-2">{{ r.jam }}</td>
                 <td class="num text-ink-soft">{{ r.transaksi }}</td>
                 <td class="num hidden text-ink-soft sm:table-cell">{{ qty(r.item) }}</td>
                 <td class="num font-medium">{{ rupiah(r.total) }}</td>
@@ -95,9 +141,15 @@
                     <div class="h-full bg-accent-2" :style="{ width: (r.total / maksJam) * 100 + '%' }" />
                   </div>
                 </td>
+                <td class="text-right text-[#9aa8a5]">
+                  <ChevronRight :size="14" :stroke-width="1.8" />
+                </td>
               </tr>
             </tbody>
           </table>
+        </div>
+        <div class="border-t border-line bg-surface px-4 py-2 text-2xs text-ink-soft" data-no-print>
+          Klik jam mana pun untuk melihat transaksi dan item di jam tersebut.
         </div>
       </div>
 
@@ -115,6 +167,21 @@
               <div class="h-full bg-accent-2" :style="{ width: (k.total / l.omzet) * 100 + '%' }" />
             </div>
             <div class="mt-1 text-2xs text-ink-soft">{{ k.transaksi }} transaksi</div>
+          </div>
+
+          <div class="mt-4 border-t border-line pt-3">
+            <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Uang masuk</div>
+            <div class="mt-2 flex items-baseline justify-between text-xs">
+              <span class="text-ink-soft">Tunai</span>
+              <span class="tnum font-medium text-ink">{{ rupiah(l.uangMasuk.tunai) }}</span>
+            </div>
+            <div class="mt-1 flex items-baseline justify-between text-xs">
+              <span class="text-ink-soft">QRIS toko</span>
+              <span class="tnum font-medium text-ink">{{ rupiah(l.uangMasuk.qris) }}</span>
+            </div>
+            <p class="mt-1.5 text-2xs leading-relaxed text-ink-soft">
+              Sisa bon yang belum dibayar tidak dihitung.
+            </p>
           </div>
 
           <div class="mt-4 border-t border-line pt-3">
@@ -246,14 +313,90 @@
       Laporan dihitung dari transaksi contoh 19/11/2026. Ekspor CSV dan cetak PDF tersedia sebagai
       add-on; tombolnya bekerja penuh di demo ini.
     </p>
+
+    <Modal
+      :open="!!rincian"
+      :title="rincian ? `Penjualan jam ${rincian.jam}` : 'Rincian jam'"
+      :subtitle="rincian ? `${rincian.transaksi} transaksi · ${qty(rincian.item)} item` : ''"
+      lebar="max-w-3xl"
+      @close="rincian = null"
+    >
+      <div v-if="rincian" class="space-y-3 px-4 py-4">
+        <div class="grid grid-cols-3 gap-2 rounded border border-line bg-surface p-3 text-center">
+          <div>
+            <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Transaksi</div>
+            <div class="mt-1 text-sm font-semibold tnum">{{ rincian.transaksi }}</div>
+          </div>
+          <div>
+            <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Item</div>
+            <div class="mt-1 text-sm font-semibold tnum">{{ qty(rincian.item) }}</div>
+          </div>
+          <div>
+            <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Omzet</div>
+            <div class="mt-1 text-sm font-semibold tnum">{{ rupiah(rincian.total) }}</div>
+          </div>
+        </div>
+
+        <div v-if="!rincian.daftar.length" class="rounded border border-line p-4 text-xs text-ink-soft">
+          Tidak ada transaksi selesai pada jam ini.
+        </div>
+
+        <div v-for="t in rincian.daftar" :key="t.nomor" class="rounded border border-line">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-line bg-surface px-3 py-2">
+            <div class="min-w-0">
+              <RouterLink
+                :to="`/invoice/${t.nomor}`"
+                class="font-mono text-xs font-semibold text-accent-2 hover:underline"
+              >
+                {{ t.nomor }}
+              </RouterLink>
+              <div class="text-2xs text-ink-soft">
+                {{ t.jam }} · {{ t.kasir }}
+                <template v-if="t.pelanggan"> · {{ t.pelanggan }}</template>
+                <template v-if="t.metode === 'bon'"> · bon</template>
+                <template v-else-if="t.kanal === 'qris'"> · QRIS</template>
+              </div>
+            </div>
+            <span class="tnum text-sm font-semibold">{{ rupiah(t.total) }}</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>Produk</th>
+                  <th class="num w-20">Qty</th>
+                  <th class="num w-28">Harga</th>
+                  <th class="num w-32">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(i, idx) in t.items" :key="idx">
+                  <td class="truncate">{{ i.nama }}</td>
+                  <td class="num text-ink-soft">{{ qty(i.qty) }}</td>
+                  <td class="num text-ink-soft">{{ rupiah(i.harga) }}</td>
+                  <td class="num font-medium">{{ rupiah(i.subtotal ?? i.harga * i.qty) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <template #footer>
+        <span class="text-2xs text-ink-soft">Data contoh 19/11/2026</span>
+        <button type="button" class="btn" @click="rincian = null">Tutup</button>
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, ref } from 'vue'
-import { Download, Printer } from 'lucide-vue-next'
+import { ChevronRight, Download, Printer } from 'lucide-vue-next'
+import { RouterLink } from 'vue-router'
 import AddonTag from '../components/AddonTag.vue'
-import { getLaporan, getProduk, HARI_INI } from '../data/adapter'
+import Modal from '../components/Modal.vue'
+import { getLaporan, getProduk, getRincianJam, HARI_INI } from '../data/adapter'
 import { unduhCSV } from '../lib/ekspor'
 import { angka, qty, rupiah, tanggalPanjang, tanggalPendek } from '../lib/format'
 import { useUi } from '../stores/ui'
@@ -264,6 +407,17 @@ const produk = getProduk()
 
 const tab = ref('penjualan')
 const hanyaKritis = ref(false)
+const rincian = ref(null)
+
+// Biaya operasional diisi manual di demo. Di aplikasi final, biaya dicatat
+// per periode dan laba bersih dihitung dari situ.
+const biaya = ref(0)
+const biayaTeks = computed(() => angka(biaya.value))
+const persenMargin = computed(() =>
+  l.omzet ? Math.round((l.labaKotor / l.omzet) * 100) : 0,
+)
+const labaBersih = computed(() => l.labaKotor - biaya.value)
+
 const tabs = [
   { id: 'penjualan', label: 'Penjualan' },
   { id: 'stok', label: 'Stok' },
@@ -277,6 +431,16 @@ const stokTampil = computed(() =>
 const nilaiBeliTampil = computed(() => stokTampil.value.reduce((s, p) => s + p.stok * p.harga_beli, 0))
 const nilaiJualTampil = computed(() => stokTampil.value.reduce((s, p) => s + p.stok * p.harga_jual, 0))
 
+function ubahBiaya(e) {
+  const n = Number(String(e.target.value).replace(/\D/g, '')) || 0
+  biaya.value = n
+  e.target.value = angka(n)
+}
+
+function bukaRincian(jam) {
+  rincian.value = getRincianJam(jam)
+}
+
 function ekspor() {
   const baris = [
     ['Laporan Toko Putra Nusantara 18'],
@@ -284,12 +448,35 @@ function ekspor() {
     [],
     ['Ringkasan', 'Nilai'],
     ['Omzet', l.omzet],
-    ['Laba kotor', l.laba],
+    ['HPP', l.hpp],
+    ['Laba kotor', l.labaKotor],
+    ['Margin kotor (%)', persenMargin.value],
+    ['Biaya operasional', biaya.value],
+    ['Laba bersih', labaBersih.value],
     ['Transaksi', l.transaksi],
     ['Item terjual', l.item],
+    ['Uang masuk tunai', l.uangMasuk.tunai],
+    ['Uang masuk QRIS toko', l.uangMasuk.qris],
     [],
     ['Penjualan per jam', 'Transaksi', 'Item', 'Omzet'],
     ...l.perJam.map((r) => [r.jam, r.transaksi, r.item, r.total]),
+    [],
+    ['Rincian item per jam', 'Invoice', 'Jam', 'Kasir', 'Kanal', 'Produk', 'Qty', 'Harga', 'Subtotal'],
+    ...l.perJam.flatMap((r) =>
+      getRincianJam(r.jam).daftar.flatMap((t) =>
+        t.items.map((i) => [
+          r.jam,
+          t.nomor,
+          t.jam,
+          t.kasir,
+          t.metode === 'bon' ? 'Bon' : t.kanal === 'qris' ? 'QRIS toko' : 'Tunai',
+          i.nama,
+          i.qty,
+          i.harga,
+          i.subtotal ?? i.harga * i.qty,
+        ]),
+      ),
+    ),
     [],
     ['Per kasir', 'Transaksi', 'Omzet'],
     ...l.perKasir.map((r) => [r.kasir, r.transaksi, r.total]),

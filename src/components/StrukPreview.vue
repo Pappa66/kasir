@@ -48,7 +48,7 @@
           <span>Metode</span><span class="font-semibold">BON</span>
         </div>
         <div v-if="dibayar > 0" class="flex justify-between">
-          <span>DP</span><span class="tnum">{{ ribuan(dibayar) }}</span>
+          <span>DP {{ kanal === 'qris' ? 'QRIS' : 'Tunai' }}</span><span class="tnum">{{ ribuan(dibayar) }}</span>
         </div>
         <div class="flex justify-between font-semibold">
           <span>Sisa</span><span class="tnum">{{ ribuan(sisa) }}</span>
@@ -58,6 +58,14 @@
         </div>
         <div v-if="noHp" class="flex justify-between gap-2">
           <span>HP</span><span class="truncate text-right">{{ noHp }}</span>
+        </div>
+      </template>
+      <template v-else-if="kanal === 'qris'">
+        <div class="mt-1 flex justify-between">
+          <span>QRIS TOKO</span><span class="tnum">{{ ribuan(total) }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span>Status</span><span class="font-semibold">Lunas</span>
         </div>
       </template>
       <template v-else>
@@ -98,6 +106,7 @@ const props = defineProps({
   pelanggan: { type: String, default: '' },
   noHp: { type: String, default: '' },
   metode: { type: String, default: 'tunai' },
+  kanal: { type: String, default: 'tunai' },
   dibayar: { type: Number, default: 0 },
   sisa: { type: Number, default: 0 },
   jatuhTempo: { type: String, default: '' },

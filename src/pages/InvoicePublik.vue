@@ -56,7 +56,9 @@
             </div>
             <div>
               <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Metode</div>
-              <div class="mt-0.5">{{ trx.metode === 'bon' ? 'Bon (bayar kemudian)' : 'Tunai' }}</div>
+              <div class="mt-0.5">
+                {{ trx.metode === 'bon' ? 'Bon (bayar kemudian)' : trx.kanal === 'qris' ? 'QRIS toko' : 'Tunai' }}
+              </div>
             </div>
             <div>
               <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Kasir</div>
@@ -201,6 +203,7 @@ function cetak() {
     pelanggan: t.pelanggan,
     noHp: t.no_hp,
     metode: t.metode,
+    kanal: t.kanal,
     dibayar: t.dibayar,
     sisa: sisa.value,
     jatuhTempo: t.jatuh_tempo ? tanggalPendek(t.jatuh_tempo) : '',

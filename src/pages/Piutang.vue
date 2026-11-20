@@ -170,7 +170,8 @@
     </section>
 
     <p class="text-xs text-ink-soft">
-      Pelunasan pada demo memakai tunai dan langsung memperbarui sisa bon di seluruh halaman.
+      Pelunasan bisa tunai atau QRIS statis toko, dan langsung memperbarui sisa bon di seluruh
+      halaman.
     </p>
 
     <Modal
@@ -220,10 +221,39 @@
         <p v-else class="text-xs text-ink-soft">
           Pembayaran dicatat sebagai riwayat dan tidak mengubah total transaksi.
         </p>
+
+        <div>
+          <span class="label">Uang masuk lewat</span>
+          <div class="flex rounded border border-line p-0.5">
+            <button
+              type="button"
+              class="inline-flex flex-1 items-center justify-center gap-1.5 rounded px-2 py-1 text-xs transition-colors"
+              :class="kanal === 'tunai' ? 'bg-ink text-white' : 'text-ink-soft hover:bg-surface'"
+              @click="kanal = 'tunai'"
+            >
+              <Banknote :size="13" :stroke-width="1.8" />
+              Tunai
+            </button>
+            <button
+              type="button"
+              class="inline-flex flex-1 items-center justify-center gap-1.5 rounded px-2 py-1 text-xs transition-colors"
+              :class="kanal === 'qris' ? 'bg-ink text-white' : 'text-ink-soft hover:bg-surface'"
+              @click="kanal = 'qris'"
+            >
+              <QrCode :size="13" :stroke-width="1.8" />
+              QRIS toko
+            </button>
+          </div>
+          <p v-if="kanal === 'qris'" class="mt-1.5 text-2xs leading-relaxed text-ink-soft">
+            QRIS statis toko. Cek notifikasi speaker sebelum menyimpan.
+          </p>
+        </div>
       </div>
 
       <template #footer>
-        <span class="text-2xs text-ink-soft">Pembayaran tunai.</span>
+        <span class="text-2xs text-ink-soft">
+          Pembayaran {{ kanal === 'qris' ? 'QRIS toko' : 'tunai' }}.
+        </span>
         <div class="flex gap-2">
           <button type="button" class="btn" @click="tutupBayar">Batal</button>
           <button type="button" class="btn btn-primary" :disabled="!bisaBayar" @click="bayar">
@@ -238,7 +268,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { Search, ShoppingCart } from 'lucide-vue-next'
+import { Search, ShoppingCart, Banknote, QrCode } from 'lucide-vue-next'
 import Modal from '../components/Modal.vue'
 import AddonTag from '../components/AddonTag.vue'
 import { bayarPiutang, getPiutang } from '../data/adapter'
@@ -251,6 +281,7 @@ const tab = ref('aktif')
 const cari = ref('')
 const pilihan = ref(null)
 const bayarTeks = ref('')
+const kanal = ref('tunai')
 
 const ringkas = computed(() => {
   const belum = semua.value.filter((t) => t.sisa > 0)
@@ -309,6 +340,7 @@ const statusKelas = (t) =>
 function bukaBayar(t) {
   pilihan.value = t
   bayarTeks.value = t.sisa.toLocaleString('id-ID')
+  kanal.value = 'tunai'
 }
 function tutupBayar() {
   pilihan.value = null
@@ -328,7 +360,7 @@ function bayar() {
   if (!pilihan.value || !bisaBayar.value) return
   const nomor = pilihan.value.nomor
   const jumlahBayar = nominal.value
-  const t = bayarPiutang(nomor, jumlahBayar)
+  const t = bayarPiutang(nomor, jumlahBayar, kanal.value)
   if (!t) return ui.kabari('Pembayaran tidak dapat dicatat.', 'warn')
   semua.value = getPiutang()
   tutupBayar()

@@ -598,8 +598,8 @@ const kurang = [
     isi: 'Data contoh dan belum tersimpan permanen. Versi final memakai database.',
   },
   {
-    judul: 'Belum ada pembayaran non-tunai',
-    isi: 'QRIS, kartu, dan e-wallet belum termasuk dalam lingkup ini.',
+    judul: 'Belum ada QRIS dinamis dan kartu',
+    isi: 'QRIS yang didukung hanya QRIS statis toko. QRIS dinamis per transaksi, kartu, dan e-wallet belum termasuk.',
   },
   {
     judul: 'Belum multi-cabang',

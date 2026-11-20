@@ -17,7 +17,8 @@ npm run preview  # cek hasil build
 | Halaman | Isi |
 | --- | --- |
 | Dashboard | Ringkasan hari ini, stok menipis, mendekati expired, produk terlaris, transaksi terakhir |
-| Kasir | Cari/scan barcode, keranjang (qty desimal kg, batas stok), pembayaran tunai, struk 58/80 mm, cetak |
+| Login | Halaman masuk dummy: pilih Pemilik atau Kasir, tanpa kata sandi |
+| Kasir | Cari/scan barcode, keranjang (qty desimal kg, batas stok), pembayaran tunai atau QRIS statis toko, struk 58/80 mm, cetak |
 | Produk | Daftar 25 produk, cari/filter kategori, tambah & ubah produk, status stok |
 | Stok Masuk | Dokumen penerimaan, detail dokumen, buat draft, terima barang |
 | Invoice | Riwayat transaksi, filter lunas/bon/void, cari, ekspor CSV |
@@ -26,7 +27,7 @@ npm run preview  # cek hasil build
 | Kedaluwarsa & FEFO (add-on) | Batch per tanggal expired, sisa hari, nilai berisiko, tarik batch dari rak |
 | Invoice publik | Halaman tanpa shell untuk pelanggan; divalidasi token demo, bisa dicetak |
 | Stock Opname | Daftar sesi, lembar hitung fisik, selisih + alasan wajib, posting dengan PIN pemilik |
-| Laporan | Penjualan per jam & per kasir, nilai stok, produk terlaris, kategori, ekspor CSV/PDF |
+| Laporan | Omzet, HPP, laba kotor/bersih, penjualan per jam (klik untuk rincian item), per kasir, kanal tunai/QRIS, nilai stok, ekspor CSV/PDF |
 | Pengaturan | Identitas toko, lebar struk, tes cetak, daftar pengguna, muat ulang data |
 | Panduan | Alur demo 3 menit, tabel hak akses, catatan perangkat, mulai tur interaktif |
 | Panduan memilih | Perbandingan pilihan aplikasi, kelebihan/kekurangan jujur, checklist untuk penjual mana pun |
@@ -35,20 +36,27 @@ npm run preview  # cek hasil build
 ## Peran demo
 
 Hanya ada dua peran sesuai spesifikasi: **Pemilik** (semua modul) dan **Kasir**
-(Kasir, Produk lihat saja, Invoice, Panduan). Tiga akun contoh: H. Ahmad
-(Pemilik), Siti dan Rina (Kasir). Ganti peran lewat dropdown nama di kanan atas.
+(Kasir, Produk lihat saja, Invoice, Piutang/bon, Panduan). Tiga akun contoh: H. Ahmad
+(Pemilik), Siti dan Rina (Kasir). Masuk lewat halaman `/login` dengan memilih
+peran; setelah itu peran bisa diganti lewat dropdown nama di kanan atas.
 
+- Login hanya simulasi: tanpa kata sandi, status masuk disimpan di
+  `sessionStorage` sehingga hilang saat tab ditutup. Tombol Keluar kembali ke
+  `/login`.
 - Kasir tidak melihat menu Dashboard, Stok Masuk, Opname, Laporan, Pengaturan,
-  Piutang, dan Kedaluwarsa.
+  dan Kedaluwarsa.
 - URL modul pemilik yang dibuka langsung diarahkan ke `/akses-terbatas?dari=...`;
   setelah masuk sebagai pemilik, halaman tujuan dibuka kembali.
 - Produk untuk kasir: tanpa tambah/import/ubah, tanpa harga beli dan nilai stok.
 - Void invoice hanya muncul untuk pemilik; kasir hanya bisa melihat dan mencetak.
-- Pelunasan bon dan tarik batch hanya untuk pemilik.
+- Kasir boleh membuka Piutang dan mencatat pelunasan bon; tarik batch expired
+  tetap untuk pemilik.
 - Transaksi baru mencatat nama pengguna aktif sebagai kasir.
-- Ini simulasi, bukan autentikasi. Pilihan peran tersimpan di sessionStorage.
-- Halaman `/publik/:nomor?token=...` sengaja melewati guard peran karena dibuka
-  pelanggan tanpa login; isinya hanya divalidasi token demo.
+- Pembayaran memakai dua kanal: tunai dan QRIS statis toko. QRIS hanya label
+  pencatatan uang masuk (nominal mengikuti total, konfirmasi lewat notifikasi
+  speaker); tidak ada QRIS dinamis, kartu, atau transfer dengan bukti.
+- Halaman `/publik/:nomor?token=...` sengaja melewati guard login dan peran
+  karena dibuka pelanggan; isinya hanya divalidasi token demo.
 
 ## Tur interaktif
 
