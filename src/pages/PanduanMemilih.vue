@@ -43,7 +43,7 @@
 
     <!-- Perbandingan -->
     <template v-if="tab === 'banding'">
-      <div class="grid gap-3 md:grid-cols-3">
+      <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
         <section
           v-for="p in pilihan"
           :key="p.judul"
@@ -155,7 +155,7 @@
 
     <!-- Kelebihan & kekurangan -->
     <template v-else-if="tab === 'nilai'">
-      <div class="grid items-start gap-4 lg:grid-cols-2">
+      <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
         <section class="panel overflow-hidden">
           <div class="panel-h">
             <span class="panel-title">Yang sudah bisa dicoba</span>
@@ -285,7 +285,7 @@
         <span class="panel-title">Buktikan di demo</span>
         <span class="hidden text-xs text-ink-soft sm:inline">invoice publik tanpa login</span>
       </div>
-      <div class="grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-3">
+      <div class="grid grid-cols-1 gap-px bg-line sm:grid-cols-2 lg:grid-cols-3">
         <a
           :href="tautanBon"
           target="_blank"

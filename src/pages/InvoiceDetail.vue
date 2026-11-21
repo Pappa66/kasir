@@ -32,7 +32,7 @@
           </p>
         </div>
       </div>
-      <div class="flex flex-wrap shrink-0 gap-2">
+      <div class="flex w-full flex-wrap gap-2 sm:w-auto sm:shrink-0" data-tour="detail-aksi">
         <button type="button" class="btn" @click="cetak">
           <Printer :size="15" :stroke-width="1.6" />
           Cetak struk
@@ -57,7 +57,8 @@
           Bayar bon
         </button>
         <button
-          v-if="trx.status === 'selesai' && sesi.pemilik"
+          v-if="trx.status === 'selesai' && aturanVoid.boleh"
+          data-tour="detail-void"
           type="button"
           class="btn text-bad"
           @click="voidOpen = true"
@@ -67,10 +68,11 @@
         </button>
         <span
           v-else-if="trx.status === 'selesai'"
+          data-tour="detail-void"
           class="self-center text-2xs text-ink-soft"
-          title="Void hanya dapat dilakukan pemilik"
+          :title="aturanVoid.alasan"
         >
-          Void hanya pemilik
+          Void: {{ aturanVoid.alasan }}
         </span>
       </div>
     </div>
@@ -89,9 +91,9 @@
       </div>
     </div>
 
-    <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+    <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div class="min-w-0 space-y-4">
-        <section class="panel">
+        <section class="panel" data-tour="detail-rincian">
           <div class="panel-h">
             <span class="panel-title">Rincian transaksi</span>
             <span class="text-xs text-ink-soft">
@@ -189,7 +191,7 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel" data-tour="detail-info">
           <div class="panel-h">
             <span class="panel-title">Informasi</span>
           </div>
@@ -285,7 +287,7 @@
             Cetak ulang memakai ukuran {{ lebar }} mm
           </div>
 
-          <div class="space-y-2 border-t border-line px-3 py-3">
+          <div class="space-y-2 border-t border-line px-3 py-3" data-tour="detail-publik">
             <div class="flex items-center gap-2">
               <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Tautan publik</span>
               <AddonTag class="!px-1.5 !py-0 !text-[9px]" />
@@ -314,6 +316,35 @@
         <div class="rounded border border-[#e3c9a8] bg-[#fdf6ec] p-3 text-xs text-warn">
           Void tidak menghapus riwayat. Stok dikembalikan dan transaksi ditandai batal.
         </div>
+
+        <div class="rounded border border-line bg-surface p-3 text-2xs leading-relaxed text-ink-soft">
+          <template v-if="sesi.pemilik">
+            Sebagai pemilik, void tidak dibatasi. Tetap isi alasan agar jejak audit lengkap.
+          </template>
+          <template v-else>
+            Batas kasir: hanya transaksi hari ini, maks {{ BATAS_VOID.menit }} menit setelah
+            transaksi, maks {{ BATAS_VOID.maks }} void per hari, dan bukan bon yang sudah dibayar.
+            Void di atas {{ rupiah(BATAS_VOID.nominal) }} tetap bisa, tetapi ditandai untuk ditinjau
+            pemilik.
+          </template>
+        </div>
+
+        <div>
+          <span class="label">Alasan cepat</span>
+          <div class="flex flex-wrap gap-1.5">
+            <button
+              v-for="a in alasanCepat"
+              :key="a"
+              type="button"
+              class="btn btn-sm"
+              :class="alasan === a ? 'btn-primary' : ''"
+              @click="alasan = a"
+            >
+              {{ a }}
+            </button>
+          </div>
+        </div>
+
         <div>
           <label class="label" for="void-alasan">Alasan void</label>
           <input
@@ -323,13 +354,29 @@
             placeholder="cth. Salah input qty"
           />
         </div>
+
+        <label
+          v-if="aturanVoid.perluTinjauan"
+          class="flex cursor-pointer items-start gap-2 rounded border border-[#e3c9a8] bg-[#fdf6ec] p-2.5 text-xs text-warn"
+        >
+          <input v-model="konfirmasiVoid" type="checkbox" class="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Saya sudah memeriksa. Void ini di atas {{ rupiah(BATAS_VOID.nominal) }} dan akan masuk
+            daftar tinjauan pemilik.
+          </span>
+        </label>
       </div>
 
       <template #footer>
         <span class="text-2xs text-ink-soft">Wajib diisi.</span>
-        <div class="flex gap-2">
+        <div class="flex flex-wrap gap-2">
           <button type="button" class="btn" @click="voidOpen = false">Batal</button>
-          <button type="button" class="btn btn-primary" :disabled="!alasan.trim()" @click="voidkan">
+          <button
+            type="button"
+            class="btn btn-primary"
+            :disabled="!alasan.trim() || (aturanVoid.perluTinjauan && !konfirmasiVoid)"
+            @click="voidkan"
+          >
             Void transaksi
           </button>
         </div>
@@ -462,8 +509,10 @@ import StrukPreview from '../components/StrukPreview.vue'
 import AddonTag from '../components/AddonTag.vue'
 import KirimWA from '../components/KirimWA.vue'
 import {
+  BATAS_VOID,
   batalkanPenjualan,
   bayarPiutang,
+  cekVoid,
   getPenjualan,
   HARI_INI,
   tautanPublik,
@@ -487,6 +536,18 @@ const trx = ref(getPenjualan().find((t) => t.nomor === route.params.nomor) || nu
 const lebar = ref(tokoStore.data.lebar_struk === 58 ? 58 : 80)
 const voidOpen = ref(false)
 const alasan = ref('')
+const konfirmasiVoid = ref(false)
+const alasanCepat = ['Salah produk', 'Salah qty', 'Dobel scan', 'Salah harga', 'Lain-lain']
+const aturanVoid = computed(() =>
+  trx.value
+    ? cekVoid(trx.value, { peran: sesi.peran, nama: sesi.aktif.nama })
+    : { boleh: false, alasan: '', perluTinjauan: false },
+)
+watch(voidOpen, (v) => {
+  if (!v) return
+  alasan.value = ''
+  konfirmasiVoid.value = false
+})
 const bayarOpen = ref(false)
 const bayarTeks = ref('')
 const bayarKanal = ref('tunai')
@@ -600,13 +661,21 @@ function cetak() {
 
 function voidkan() {
   if (!trx.value) return
-  if (!sesi.pemilik) return ui.kabari('Void hanya dapat dilakukan pemilik.', 'warn')
-  if (!alasan.value.trim()) return ui.kabari('Alasan void wajib diisi.', 'warn')
-  batalkanPenjualan(trx.value.nomor, alasan.value.trim())
+  if (aturanVoid.value.perluTinjauan && !konfirmasiVoid.value) {
+    return ui.kabari('Centang konfirmasi untuk void di atas batas.', 'warn')
+  }
+  const hasil = batalkanPenjualan(trx.value.nomor, alasan.value, {
+    peran: sesi.peran,
+    nama: sesi.aktif.nama,
+  })
+  if (!hasil.ok) return ui.kabari(hasil.pesan, 'warn')
   segarkan()
   voidOpen.value = false
   alasan.value = ''
-  ui.kabari(`${trx.value.nomor} dibatalkan. Stok dan batch dikembalikan.`, 'ok')
+  ui.kabari(
+    `${trx.value.nomor} dibatalkan${hasil.perluTinjauan ? ' dan ditandai perlu tinjauan' : ''}.`,
+    'ok',
+  )
 }
 
 function ekspor() {

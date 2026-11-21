@@ -7,8 +7,47 @@
   "kasir_aktif": "Siti",
   "role_aktif": "Kasir",
   "pengguna": [
-    { "id": 1, "nama": "Siti", "role": "Kasir", "aktif": true },
-    { "id": 2, "nama": "Rina", "role": "Kasir", "aktif": true },
-    { "id": 3, "nama": "H. Ahmad", "role": "Pemilik", "aktif": true }
+    {
+      "id": 1,
+      "nama": "Siti",
+      "role": "Kasir",
+      "aktif": true
+    },
+    {
+      "id": 2,
+      "nama": "Rina",
+      "role": "Kasir",
+      "aktif": true
+    },
+    {
+      "id": 3,
+      "nama": "H. Ahmad",
+      "role": "Pemilik",
+      "aktif": true
+    }
+  ],
+  "kategori": [
+    "Beras & Gula",
+    "Bumbu",
+    "Gas & Lain",
+    "Kopi & Teh",
+    "Mie & Makanan",
+    "Minuman",
+    "Minyak",
+    "Perawatan",
+    "Telur",
+    "Lainnya"
+  ],
+  "satuan": [
+    "pcs",
+    "kg",
+    "karung",
+    "rak",
+    "kotak",
+    "tabung",
+    "botol",
+    "pack",
+    "liter",
+    "dus"
   ]
 }

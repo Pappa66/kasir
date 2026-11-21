@@ -10,13 +10,13 @@
           Bon pelanggan yang belum lunas. Catat pembayaran sebagian atau pelunasan penuh.
         </p>
       </div>
-      <RouterLink to="/kasir?bon=1" class="btn btn-primary">
+      <RouterLink to="/kasir?bon=1" class="btn btn-primary" data-tour="piutang-aksi">
         <ShoppingCart :size="15" :stroke-width="1.6" />
         Buat bon baru
       </RouterLink>
     </div>
 
-    <div class="panel grid grid-cols-2 overflow-hidden lg:grid-cols-4">
+    <div class="panel grid grid-cols-2 overflow-hidden lg:grid-cols-4" data-tour="piutang-kpi">
       <div class="border-b border-r border-line p-4 lg:border-b-0">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Total piutang</div>
         <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
@@ -44,7 +44,7 @@
     </div>
 
     <section class="panel">
-      <div class="flex flex-wrap items-center gap-2 border-b border-line p-3">
+      <div class="flex flex-wrap items-center gap-2 border-b border-line p-3" data-tour="piutang-cari">
         <div class="flex flex-wrap rounded border border-line p-0.5">
           <button
             v-for="t in tabs"
@@ -69,7 +69,7 @@
         </div>
       </div>
 
-      <div class="hidden overflow-x-auto md:block">
+      <div class="hidden overflow-x-auto md:block" data-tour="piutang-tabel">
         <table class="tbl">
           <thead>
             <tr>

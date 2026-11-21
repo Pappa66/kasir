@@ -49,7 +49,7 @@
         </div>
 
         <section class="panel overflow-hidden">
-          <div class="grid gap-3 border-b border-line p-4 text-sm sm:grid-cols-3">
+          <div class="grid grid-cols-1 gap-3 border-b border-line p-4 text-sm sm:grid-cols-3">
             <div>
               <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Pelanggan</div>
               <div class="mt-0.5">{{ trx.pelanggan || 'Tanpa nama (walk-in)' }}</div>

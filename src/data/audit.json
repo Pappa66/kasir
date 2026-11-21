@@ -1,0 +1,10 @@
+[
+  { "id": 8, "tanggal": "2026-11-19", "jam": "19:12", "pengguna": "Siti", "peran": "Kasir", "aksi": "Login", "objek": "Sesi kasir", "detail": "Masuk dari perangkat toko", "alasan": "" },
+  { "id": 7, "tanggal": "2026-11-19", "jam": "18:40", "pengguna": "H. Ahmad", "peran": "Pemilik", "aksi": "Void invoice", "objek": "INV-20261119-0042", "detail": "Nilai Rp 85.000", "alasan": "Salah input qty" },
+  { "id": 6, "tanggal": "2026-11-19", "jam": "17:05", "pengguna": "H. Ahmad", "peran": "Pemilik", "aksi": "Ubah harga", "objek": "Beras Pandan Wangi 5kg", "detail": "Rp 66.000 → Rp 68.000", "alasan": "Harga supplier naik" },
+  { "id": 5, "tanggal": "2026-11-19", "jam": "15:30", "pengguna": "H. Ahmad", "peran": "Pemilik", "aksi": "Posting opname", "objek": "OPN-20261119-01", "detail": "4 baris selisih", "alasan": "Selisih hitung fisik" },
+  { "id": 4, "tanggal": "2026-11-19", "jam": "13:20", "pengguna": "Rina", "peran": "Kasir", "aksi": "Bayar bon", "objek": "INV-20261119-0021", "detail": "Rp 50.000 tunai", "alasan": "" },
+  { "id": 3, "tanggal": "2026-11-19", "jam": "11:48", "pengguna": "Siti", "peran": "Kasir", "aksi": "Void invoice", "objek": "INV-20261119-0033", "detail": "Nilai Rp 42.000", "alasan": "Dobel scan" },
+  { "id": 2, "tanggal": "2026-11-19", "jam": "09:15", "pengguna": "H. Ahmad", "peran": "Pemilik", "aksi": "Penyesuaian stok", "objek": "Gas LPG 3kg", "detail": "7 → 6 tabung", "alasan": "Tabung rusak" },
+  { "id": 1, "tanggal": "2026-11-19", "jam": "08:02", "pengguna": "Rina", "peran": "Kasir", "aksi": "Login", "objek": "Sesi kasir", "detail": "Masuk dari perangkat toko", "alasan": "" }
+]

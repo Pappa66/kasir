@@ -7,7 +7,7 @@
           Barang datang dari supplier, stok bertambah setelah dokumen diterima.
         </p>
       </div>
-      <button type="button" class="btn btn-primary" @click="bukaForm">
+      <button type="button" class="btn btn-primary" @click="bukaForm" data-tour="stok-aksi">
         <Plus :size="15" :stroke-width="1.8" />
         Penerimaan baru
       </button>
@@ -33,7 +33,7 @@
       </div>
     </div>
 
-    <section class="panel">
+    <section class="panel" data-tour="stok-dokumen">
       <div class="panel-h">
         <span class="panel-title">Dokumen penerimaan</span>
         <span class="text-xs text-ink-soft">terbaru di atas</span>
@@ -115,7 +115,7 @@
       @close="detail = null"
     >
       <div v-if="detail" class="px-4 py-4">
-        <div class="grid gap-3 border-b border-line pb-4 sm:grid-cols-3">
+        <div class="grid grid-cols-1 gap-3 border-b border-line pb-4 sm:grid-cols-3">
           <div>
             <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Supplier</div>
             <div class="mt-0.5 text-sm text-ink">{{ detail.supplier }}</div>
@@ -189,7 +189,7 @@
       @close="formOpen = false"
     >
       <div class="space-y-4 px-4 py-4">
-        <div class="grid gap-3 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label class="label" for="sm-supplier">Supplier</label>
             <select id="sm-supplier" v-model="supplierId" class="input">
@@ -203,7 +203,7 @@
         </div>
 
         <div class="rounded border border-line bg-surface p-3">
-          <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_80px_120px_140px_auto]">
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_80px_120px_140px_auto]">
             <div class="min-w-0">
               <label class="label" for="sm-produk">Produk</label>
               <select id="sm-produk" v-model="pilih" class="input" @change="pilihProduk">

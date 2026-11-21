@@ -7,13 +7,21 @@
       aria-modal="true"
       aria-labelledby="tour-judul"
     >
+      <div
+        v-if="kotak.tanpaTarget"
+        class="tour-tirai fixed inset-0 bg-[#0f2f2e]/70"
+        aria-hidden="true"
+      />
+
       <!-- tirai: empat sisi supaya target tetap terlihat -->
       <div
+        v-else
         class="tour-tirai fixed bg-[#0f2f2e]/60"
         :style="{ top: '0px', left: '0px', right: '0px', height: Math.max(0, kotak.top) + 'px' }"
         aria-hidden="true"
       />
       <div
+        v-if="!kotak.tanpaTarget"
         class="tour-tirai fixed bg-[#0f2f2e]/60"
         :style="{
           top: kotak.top + kotak.height + 'px',
@@ -24,6 +32,7 @@
         aria-hidden="true"
       />
       <div
+        v-if="!kotak.tanpaTarget"
         class="tour-tirai fixed bg-[#0f2f2e]/60"
         :style="{
           top: kotak.top + 'px',
@@ -34,6 +43,7 @@
         aria-hidden="true"
       />
       <div
+        v-if="!kotak.tanpaTarget"
         class="tour-tirai fixed bg-[#0f2f2e]/60"
         :style="{
           top: kotak.top + 'px',
@@ -46,6 +56,7 @@
 
       <!-- sorotan target -->
       <div
+        v-if="!kotak.tanpaTarget"
         class="tour-sorot pointer-events-none fixed rounded-md ring-2 ring-[#7fc4bd]"
         :style="{
           top: kotak.top + 'px',
@@ -67,18 +78,18 @@
           <div>
             <div class="flex items-center gap-2">
               <span class="text-2xs uppercase tracking-[0.08em] text-ink-soft">
-                Langkah {{ nomor }} dari {{ langkah.length }}
+                Langkah {{ nomor }} dari {{ tour.jumlah }}
               </span>
               <span class="flex gap-1" aria-hidden="true">
                 <span
-                  v-for="(l, i) in langkah"
+                  v-for="(l, i) in tour.langkah"
                   :key="i"
                   class="h-1 w-3 rounded-full transition-colors"
                   :class="i <= tour.indeks ? 'bg-accent-2' : 'bg-[#dce3e1]'"
                 />
               </span>
             </div>
-            <h3 id="tour-judul" class="mt-1.5 text-sm font-semibold text-ink">{{ kini.judul }}</h3>
+            <h3 id="tour-judul" class="mt-1.5 text-sm font-semibold text-ink">{{ tour.kini.judul }}</h3>
           </div>
           <button
             type="button"
@@ -90,7 +101,7 @@
           </button>
         </div>
 
-        <p class="mt-1.5 text-xs leading-relaxed text-ink-soft">{{ kini.isi }}</p>
+        <p class="mt-1.5 text-xs leading-relaxed text-ink-soft">{{ tour.kini.isi }}</p>
 
         <div class="mt-4 flex items-center justify-between gap-2 border-t border-line pt-3">
           <button type="button" class="btn btn-ghost btn-sm" @click="lewati">Lewati</button>
@@ -104,8 +115,8 @@
               class="btn btn-sm btn-primary"
               @click="lanjut"
             >
-              {{ terakhir ? 'Selesai' : 'Lanjut' }}
-              <ArrowRight v-if="!terakhir" :size="14" :stroke-width="1.8" />
+              {{ tour.terakhir ? 'Selesai' : 'Lanjut' }}
+              <ArrowRight v-if="!tour.terakhir" :size="14" :stroke-width="1.8" />
             </button>
           </div>
         </div>
@@ -121,50 +132,6 @@ import { ArrowRight, X } from 'lucide-vue-next'
 import { useTour } from '../stores/tour'
 import { useUi } from '../stores/ui'
 
-const langkah = [
-  {
-    target: '[data-tour="menu"]',
-    rute: null,
-    posisi: 'kanan',
-    judul: 'Semua modul di satu tempat',
-    isi: 'Menu di kiri menyesuaikan peran. Pemilik melihat semua modul; kasir hanya Kasir, Produk, Invoice, Piutang, dan Panduan.',
-  },
-  {
-    target: '[data-tour="peran"]',
-    rute: null,
-    posisi: 'bawah',
-    judul: 'Coba peran lain',
-    isi: 'Klik nama pengguna di kanan atas untuk masuk sebagai Pemilik atau Kasir. Halaman yang tidak diizinkan akan menampilkan pesan akses terbatas.',
-  },
-  {
-    target: '[data-tour="cari"]',
-    rute: '/kasir',
-    posisi: 'bawah',
-    judul: 'Cari atau scan barang',
-    isi: 'Ketik nama atau kode, atau tembakkan barcode gun USB. Tekan Enter untuk menambah ke keranjang. Kolom ini fokus otomatis saat halaman Kasir dibuka.',
-  },
-  {
-    target: '[data-tour="keranjang"]',
-    rute: '/kasir',
-    posisi: 'kanan',
-    judul: 'Keranjang dan qty',
-    isi: 'Qty kg bisa desimal (contoh 0,25). Sistem menolak jumlah melebihi stok. Hapus item lewat ikon silang di ujung baris.',
-  },
-  {
-    target: '[data-tour="bayar"]',
-    rute: '/kasir',
-    posisi: 'kiri',
-    judul: 'Pembayaran tunai',
-    isi: 'Masukkan uang diterima atau tekan Uang pas. Kembalian dihitung otomatis, dan tombol Bayar aktif setelah uang cukup.',
-  },
-  {
-    target: '[data-tour="pintasan"]',
-    rute: '/kasir',
-    posisi: 'kiri',
-    judul: 'Struk 58 / 80 mm',
-    isi: 'Setelah bayar, struk muncul dan bisa dicetak. Pilih lebar 58 atau 80 mm; hanya struk yang keluar saat print, satu halaman.',
-  },
-]
 
 const tour = useTour()
 const ui = useUi()
@@ -178,18 +145,17 @@ let timerAuto = null
 const kotak = ref(null)
 const kartuEl = ref(null)
 const tombolLanjut = ref(null)
-const vw = ref(window.innerWidth)
+const vw = ref(document.documentElement.clientWidth)
 const vh = ref(window.innerHeight)
 
-const kini = computed(() => langkah[tour.indeks] || langkah[0])
 const nomor = computed(() => tour.indeks + 1)
-const terakhir = computed(() => tour.indeks === langkah.length - 1)
 const gayaKartu = computed(() => {
   if (!kotak.value) return {}
   return {
     top: kotak.value.kartuTop + 'px',
     left: kotak.value.kartuLeft + 'px',
     width: kotak.value.kartuLebar + 'px',
+    maxWidth: 'calc(100vw - 24px)',
   }
 })
 
@@ -197,19 +163,47 @@ let percobaan = null
 let jedaUkur = null
 let kunci = 0
 
-function ukur() {
-  if (!tour.aktif) return
-  const el = document.querySelector(kini.value.target)
-  if (!el) {
-    kotak.value = null
-    return
+function kartuTengah(lebar) {
+  // Target tidak ada / tidak terlihat di layar ini (mis. tabel desktop di HP):
+  // tampilkan kartu di tengah tanpa sorotan agar tur tidak berhenti.
+  const tinggiKartu = kartuEl.value?.offsetHeight || 240
+  kotak.value = {
+    tanpaTarget: true,
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 0,
+    kartuLeft: Math.max(12, (vw.value - lebar) / 2),
+    kartuTop: Math.max(12, vh.value / 2 - tinggiKartu / 2),
+    kartuLebar: lebar,
   }
-  const r = el.getBoundingClientRect()
+}
+
+function ukur() {
+  if (!tour.aktif || !tour.kini) return
+  const lebar = Math.min(340, Math.max(200, vw.value - 24))
+  let el = document.querySelector(tour.kini.target)
+  if (!el) return kartuTengah(lebar)
+  let r = el.getBoundingClientRect()
+  if (r.width < 2 || r.height < 2) {
+    // Elemen ada tetapi disembunyikan (mis. tabel desktop saat di HP).
+    // Naik ke wadah terdekat yang terlihat agar sorotan tetap masuk akal.
+    let p = el.parentElement
+    while (p && p !== document.body) {
+      const b = p.getBoundingClientRect()
+      if (b.width > 2 && b.height > 2) {
+        el = p
+        r = b
+        break
+      }
+      p = p.parentElement
+    }
+    if (r.width < 2 || r.height < 2) return kartuTengah(lebar)
+  }
   const pad = 6
-  const lebar = Math.min(340, vw.value - 24)
   const tinggi = kartuEl.value?.offsetHeight || 218
   const jarak = 12
-  const posisi = kini.value.posisi || 'bawah'
+  const posisi = tour.kini.posisi || 'bawah'
 
   let kx
   let ky
@@ -254,12 +248,12 @@ function jadwalkanUkur() {
 function targetkan(ulang = 0) {
   clearTimeout(percobaan)
   nextTick(() => {
-    const el = document.querySelector(kini.value.target)
+    const el = document.querySelector(tour.kini.target)
     if (!el) {
       if (ulang < 24) {
         percobaan = setTimeout(() => targetkan(ulang + 1), 70)
       } else {
-        kotak.value = null
+        ukur()
       }
       return
     }
@@ -279,8 +273,8 @@ function targetkan(ulang = 0) {
 async function muat(ulang = 0) {
   if (!tour.aktif) return
   const token = ++kunci
-  if (kini.value.rute && route.path !== kini.value.rute) {
-    await router.push(kini.value.rute)
+  if (tour.kini.rute && route.path !== tour.kini.rute) {
+    await router.push(tour.kini.rute)
     if (token !== kunci || !tour.aktif) return
     await new Promise((r) => setTimeout(r, 260))
   }
@@ -289,16 +283,16 @@ async function muat(ulang = 0) {
 }
 
 function lanjut() {
-  if (terakhir.value) {
+  if (tour.terakhir) {
     tour.tutup()
     ui.kabari('Tur selesai. Coba transaksi pertama Anda.', 'ok')
     return
   }
-  tour.indeks += 1
+  tour.lanjut()
 }
 
 function sebelum() {
-  if (tour.indeks > 0) tour.indeks -= 1
+  tour.sebelumnya()
 }
 
 function lewati() {
@@ -320,7 +314,7 @@ function tombol(e) {
 }
 
 function ukuran() {
-  vw.value = window.innerWidth
+  vw.value = document.documentElement.clientWidth
   vh.value = window.innerHeight
   jadwalkanUkur()
 }
@@ -329,6 +323,8 @@ watch(
   () => tour.aktif,
   (v) => {
     if (v) {
+      vw.value = document.documentElement.clientWidth
+      vh.value = window.innerHeight
       sessionStorage.setItem(KUNCI_TERLIHAT, '1')
       document.addEventListener('keydown', tombol)
       window.addEventListener('resize', ukuran)
@@ -351,18 +347,23 @@ watch(
   },
 )
 
-onMounted(() => {
+function cobaAuto() {
   // Tur otomatis: sekali per tab, bisa dimatikan dari Panduan.
-  // Halaman publik (invoice ber-token) tidak pernah memulai tur.
-  const auto = localStorage.getItem(KUNCI_AUTO) !== '0'
-  const sudah = sessionStorage.getItem(KUNCI_TERLIHAT) === '1'
-  if (!auto || sudah || route.meta.publik) return
+  // Halaman publik (invoice ber-token) dan login tidak memulai tur;
+  // setelah masuk ke aplikasi, percobaan diulang lewat watch rute.
+  clearTimeout(timerAuto)
+  if (localStorage.getItem(KUNCI_AUTO) === '0') return
+  if (sessionStorage.getItem(KUNCI_TERLIHAT) === '1') return
+  if (tour.aktif || route.meta.publik || route.meta.login) return
   timerAuto = setTimeout(() => {
-    if (tour.aktif || route.meta.publik) return
+    if (tour.aktif || route.meta.publik || route.meta.login) return
     if (sessionStorage.getItem(KUNCI_TERLIHAT) === '1') return
-    tour.mulai()
-  }, 900)
-})
+    tour.mulaiBab('mulai')
+  }, 1200)
+}
+
+onMounted(cobaAuto)
+watch(() => route.path, cobaAuto)
 
 onBeforeUnmount(() => {
   clearTimeout(timerAuto)

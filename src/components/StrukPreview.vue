@@ -1,5 +1,8 @@
 <template>
-  <div class="print-area bg-white" :style="{ width: lebar === 58 ? '212px' : '292px' }">
+  <div
+  class="print-area bg-white"
+  :style="{ width: lebar === 58 ? '212px' : '292px', maxWidth: '100%' }"
+>
     <div class="font-mono leading-[1.45] text-black" :class="lebar === 58 ? 'text-[9.5px]' : 'text-[11px]'">
       <div class="text-center">
         <div class="font-semibold uppercase tracking-wide">{{ toko.nama_toko }}</div>

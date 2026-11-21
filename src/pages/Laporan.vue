@@ -5,7 +5,7 @@
         <h2 class="text-lg font-semibold text-ink">Penjualan &amp; stok</h2>
         <p class="mt-0.5 text-xs text-ink-soft">{{ tanggalPanjang(HARI_INI) }} · data contoh</p>
       </div>
-      <div class="flex flex-wrap gap-2" data-no-print>
+      <div class="flex flex-wrap gap-2" data-no-print data-tour="lap-aksi">
         <button type="button" class="btn" @click="ekspor">
           <Download :size="15" :stroke-width="1.6" />
           Ekspor CSV
@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <div class="panel grid grid-cols-2 gap-px overflow-hidden bg-line lg:grid-cols-3">
+    <div class="panel grid grid-cols-2 gap-px overflow-hidden bg-line lg:grid-cols-3" data-tour="lap-kpi">
       <div class="min-w-0 bg-paper p-4">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Omzet</div>
         <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
@@ -80,7 +80,51 @@
       diisi manual di demo ini; di aplikasi final bisa dicatat per periode.
     </p>
 
-    <div class="flex flex-wrap items-center gap-2" data-no-print>
+    <section class="panel" data-tour="lap-void">
+      <div class="panel-h">
+        <span class="panel-title">Void hari ini</span>
+        <span class="text-xs" :class="l.void.jumlah ? 'text-bad' : 'text-ink-soft'">
+          {{ l.void.jumlah }} transaksi · {{ rupiah(l.void.nilai) }}
+          <template v-if="l.void.tinjau"> · {{ l.void.tinjau }} perlu tinjauan</template>
+        </span>
+      </div>
+      <div v-if="!l.void.daftar.length" class="px-4 py-3 text-xs text-ink-soft">
+        Tidak ada transaksi void hari ini.
+      </div>
+      <div v-else class="overflow-x-auto">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th class="w-16">Jam</th>
+              <th>Invoice</th>
+              <th>Kasir</th>
+              <th class="num w-28">Nilai</th>
+              <th>Alasan</th>
+              <th class="w-24">Tinjau</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="v in l.void.daftar" :key="v.nomor">
+              <td class="font-mono text-xs">{{ v.jam }}</td>
+              <td>
+                <RouterLink :to="`/invoice/${v.nomor}`" class="font-mono text-xs text-accent-2">
+                  {{ v.nomor }}
+                </RouterLink>
+              </td>
+              <td>{{ v.kasir }}</td>
+              <td class="num">{{ rupiah(v.total) }}</td>
+              <td class="text-xs">{{ v.alasan || '—' }}</td>
+              <td>
+                <span v-if="v.tinjau" class="status text-warn">Perlu tinjauan</span>
+                <span v-else class="text-2xs text-ink-soft">—</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="flex flex-wrap items-center gap-2" data-no-print data-tour="lap-tab">
       <div class="flex rounded border border-line p-0.5">
         <button
           v-for="t in tabs"
@@ -99,8 +143,8 @@
       </span>
     </div>
 
-    <section v-if="tab === 'penjualan'" class="grid gap-4 lg:grid-cols-3">
-      <div class="panel min-w-0 lg:col-span-2">
+    <section v-if="tab === 'penjualan'" class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div class="panel min-w-0 lg:col-span-2" data-tour="lap-jam">
         <div class="panel-h">
           <div class="flex min-w-0 items-baseline gap-2">
             <span class="panel-title">Penjualan per jam</span>
@@ -153,7 +197,7 @@
         </div>
       </div>
 
-      <div class="panel min-w-0">
+      <div class="panel min-w-0" data-tour="lap-kasir">
         <div class="panel-h">
           <span class="panel-title">Per kasir</span>
         </div>
@@ -200,7 +244,7 @@
       </div>
     </section>
 
-    <section v-if="tab === 'stok'" class="space-y-4">
+    <section v-if="tab === 'stok'" class="space-y-4" data-tour="lap-stok">
       <div class="panel grid grid-cols-2 overflow-hidden lg:grid-cols-4">
         <div class="border-b border-r border-line p-4 lg:border-b-0">
           <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Jumlah SKU</div>
@@ -276,7 +320,7 @@
       </div>
     </section>
 
-    <section v-if="tab === 'terlaris'" class="panel min-w-0">
+    <section v-if="tab === 'terlaris'" class="panel min-w-0" data-tour="lap-produk">
       <div class="panel-h">
         <span class="panel-title">Produk terlaris</span>
         <span class="text-xs text-ink-soft">berdasarkan nilai penjualan</span>
@@ -457,6 +501,18 @@ function ekspor() {
     ['Item terjual', l.item],
     ['Uang masuk tunai', l.uangMasuk.tunai],
     ['Uang masuk QRIS toko', l.uangMasuk.qris],
+    ['Void hari ini', l.void.jumlah],
+    ['Nilai void', l.void.nilai],
+    [],
+    ['Void', 'Jam', 'Kasir', 'Nilai', 'Alasan', 'Tinjau'],
+    ...l.void.daftar.map((v) => [
+      v.nomor,
+      v.jam,
+      v.kasir,
+      v.total,
+      v.alasan,
+      v.tinjau ? 'Perlu tinjauan' : '-',
+    ]),
     [],
     ['Penjualan per jam', 'Transaksi', 'Item', 'Omzet'],
     ...l.perJam.map((r) => [r.jam, r.transaksi, r.item, r.total]),

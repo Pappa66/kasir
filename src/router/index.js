@@ -8,6 +8,7 @@ import InvoiceDetail from '../pages/InvoiceDetail.vue'
 import Opname from '../pages/Opname.vue'
 import OpnameSheet from '../pages/OpnameSheet.vue'
 import Laporan from '../pages/Laporan.vue'
+import Jejak from '../pages/Jejak.vue'
 import Pengaturan from '../pages/Pengaturan.vue'
 import Panduan from '../pages/Panduan.vue'
 import PanduanMemilih from '../pages/PanduanMemilih.vue'
@@ -15,6 +16,7 @@ import Login from '../pages/Login.vue'
 import AksesTerbatas from '../pages/AksesTerbatas.vue'
 import Piutang from '../pages/Piutang.vue'
 import Kedaluwarsa from '../pages/Kedaluwarsa.vue'
+import Tema from '../pages/Tema.vue'
 import InvoicePublik from '../pages/InvoicePublik.vue'
 import { useSesi } from '../stores/sesi'
 
@@ -113,6 +115,18 @@ const routes = [
     name: 'pengaturan',
     component: Pengaturan,
     meta: { title: 'Pengaturan', peran: PEMILIK },
+  },
+  {
+    path: '/jejak',
+    name: 'jejak',
+    component: Jejak,
+    meta: { title: 'Jejak Aktivitas', peran: PEMILIK },
+  },
+  {
+    path: '/tema',
+    name: 'tema',
+    component: Tema,
+    meta: { title: 'Pilihan tampilan', peran: SEMUA },
   },
   {
     path: '/panduan',

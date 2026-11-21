@@ -36,3 +36,8 @@ export const selisihHari = (iso, dari) => {
   const b = new Date(dari + 'T00:00:00').getTime()
   return Math.round((a - b) / 86400000)
 }
+
+export const jamSekarang = () => {
+  const d = new Date()
+  return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0')
+}

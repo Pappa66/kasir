@@ -7,15 +7,15 @@
           Identitas, struk, dan pengguna. Perubahan berlaku selama sesi demo.
         </p>
       </div>
-      <button type="button" class="btn btn-primary" @click="simpan">
+      <button type="button" class="btn btn-primary" data-tour="set-simpan" @click="simpan">
         <Check :size="15" :stroke-width="1.8" />
         Simpan pengaturan
       </button>
     </div>
 
-    <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+    <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div class="min-w-0 space-y-4">
-        <section class="panel">
+        <section class="panel" data-tour="set-identitas">
           <div class="panel-h">
             <span class="panel-title">Identitas toko</span>
             <span class="text-xs text-ink-soft">tercetak di struk</span>
@@ -40,7 +40,7 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel" data-tour="set-struk">
           <div class="panel-h">
             <span class="panel-title">Struk &amp; printer</span>
             <span class="text-xs text-ink-soft">thermal 58 / 80 mm</span>
@@ -88,7 +88,7 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel" data-tour="set-pengguna">
           <div class="panel-h">
             <span class="panel-title">Pengguna</span>
             <span class="text-xs text-ink-soft">{{ form.pengguna.length }} akun</span>
@@ -117,6 +117,90 @@
           </div>
           <div class="border-t border-line px-4 py-2.5 text-xs text-ink-soft">
             Tambah pengguna dan atur PIN pemilik tersedia di aplikasi asli.
+          </div>
+        </section>
+
+        <section class="panel" data-tour="set-kategori">
+          <div class="panel-h">
+            <span class="panel-title">Kategori produk</span>
+            <span class="text-xs text-ink-soft">{{ kategoriList.length }} kategori</span>
+          </div>
+          <div class="p-4">
+            <div class="flex flex-wrap gap-2">
+              <input
+                v-model="kategoriBaru"
+                class="input h-9 min-w-0 flex-1"
+                placeholder="cth. Frozen Food"
+                @keydown.enter.prevent="tambahKategoriBaru"
+              />
+              <button type="button" class="btn btn-primary" @click="tambahKategoriBaru">
+                <Check :size="15" :stroke-width="1.8" />
+                Tambah
+              </button>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span
+                v-for="k in kategoriList"
+                :key="k"
+                class="inline-flex items-center gap-1 rounded border border-line bg-surface px-2 py-1 text-xs text-ink"
+              >
+                {{ k }}
+                <button
+                  type="button"
+                  class="text-ink-soft transition-colors hover:text-bad"
+                  :title="`Hapus kategori ${k}`"
+                  @click="hapusKategoriBaru(k)"
+                >
+                  <X :size="12" :stroke-width="2" />
+                </button>
+              </span>
+            </div>
+            <p class="mt-2 text-2xs leading-relaxed text-ink-soft">
+              Kategori yang masih dipakai produk tidak bisa dihapus. Perubahan langsung berlaku di
+              form produk dan filter.
+            </p>
+          </div>
+        </section>
+
+        <section class="panel" data-tour="set-satuan">
+          <div class="panel-h">
+            <span class="panel-title">Satuan produk</span>
+            <span class="text-xs text-ink-soft">{{ satuanList.length }} satuan</span>
+          </div>
+          <div class="p-4">
+            <div class="flex flex-wrap gap-2">
+              <input
+                v-model="satuanBaru"
+                class="input h-9 min-w-0 flex-1"
+                placeholder="cth. bungkus"
+                @keydown.enter.prevent="tambahSatuanBaru"
+              />
+              <button type="button" class="btn btn-primary" @click="tambahSatuanBaru">
+                <Check :size="15" :stroke-width="1.8" />
+                Tambah
+              </button>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <span
+                v-for="s in satuanList"
+                :key="s"
+                class="inline-flex items-center gap-1 rounded border border-line bg-surface px-2 py-1 text-xs text-ink"
+              >
+                {{ s }}
+                <button
+                  type="button"
+                  class="text-ink-soft transition-colors hover:text-bad"
+                  :title="`Hapus satuan ${s}`"
+                  @click="hapusSatuanBaru(s)"
+                >
+                  <X :size="12" :stroke-width="2" />
+                </button>
+              </span>
+            </div>
+            <p class="mt-2 text-2xs leading-relaxed text-ink-soft">
+              Satuan menentukan cara qty ditampilkan di kasir dan struk. Satuan yang masih dipakai
+              produk tidak bisa dihapus.
+            </p>
           </div>
         </section>
       </div>
@@ -198,10 +282,18 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { Check, Printer, RotateCcw } from 'lucide-vue-next'
+import { Check, Printer, RotateCcw, X } from 'lucide-vue-next'
 import Modal from '../components/Modal.vue'
 import StrukPreview from '../components/StrukPreview.vue'
-import { HARI_INI } from '../data/adapter'
+import {
+  getKategori,
+  getSatuan,
+  HARI_INI,
+  hapusKategori,
+  hapusSatuan,
+  tambahKategori,
+  tambahSatuan,
+} from '../data/adapter'
 import { tanggalPendek } from '../lib/format'
 import { useToko } from '../stores/toko'
 import { useCetak } from '../stores/cetak'
@@ -212,6 +304,40 @@ const toko = useToko()
 const cetakStore = useCetak()
 const form = ref({ ...toko.data })
 const tesOpen = ref(false)
+const kategoriList = ref(getKategori())
+const satuanList = ref(getSatuan())
+const kategoriBaru = ref('')
+const satuanBaru = ref('')
+
+function tambahKategoriBaru() {
+  const h = tambahKategori(kategoriBaru.value)
+  if (!h.ok) return ui.kabari(h.pesan, 'warn')
+  kategoriBaru.value = ''
+  kategoriList.value = getKategori()
+  ui.kabari(`Kategori ${h.nama} ditambahkan.`, 'ok')
+}
+
+function hapusKategoriBaru(nama) {
+  const h = hapusKategori(nama)
+  if (!h.ok) return ui.kabari(h.pesan, 'warn')
+  kategoriList.value = getKategori()
+  ui.kabari(`Kategori ${nama} dihapus.`, 'info')
+}
+
+function tambahSatuanBaru() {
+  const h = tambahSatuan(satuanBaru.value)
+  if (!h.ok) return ui.kabari(h.pesan, 'warn')
+  satuanBaru.value = ''
+  satuanList.value = getSatuan()
+  ui.kabari(`Satuan ${h.nama} ditambahkan.`, 'ok')
+}
+
+function hapusSatuanBaru(nama) {
+  const h = hapusSatuan(nama)
+  if (!h.ok) return ui.kabari(h.pesan, 'warn')
+  satuanList.value = getSatuan()
+  ui.kabari(`Satuan ${nama} dihapus.`, 'info')
+}
 
 const contoh = [
   { nama: 'Beras Pandan Wangi 5kg', qty: 1, satuan: 'karung', harga: 68000 },

@@ -22,7 +22,7 @@
     </header>
 
     <main class="mx-auto flex w-full max-w-5xl flex-1 items-center px-4 py-8 pb-16 sm:px-6 sm:py-12 sm:pb-16">
-      <div class="grid w-full items-start gap-6 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
+      <div class="grid w-full grid-cols-1 items-start gap-6 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
         <section class="min-w-0">
           <span class="status text-accent-2">
             <ShieldCheck :size="12" :stroke-width="1.8" />
@@ -60,7 +60,7 @@
           </p>
         </section>
 
-        <section class="grid gap-3">
+        <section class="grid grid-cols-1 gap-3">
           <button
             v-for="p in pilihan"
             :key="p.peran"

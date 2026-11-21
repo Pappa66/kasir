@@ -8,6 +8,7 @@ import supplierData from './supplier.json'
 import stokMasukData from './stok_masuk.json'
 import opnameData from './opname.json'
 import batchData from './batch.json'
+import auditData from './audit.json'
 import { selisihHari } from '../lib/format'
 
 export const HARI_INI = '2026-11-19'
@@ -17,6 +18,53 @@ const salin = (o) => JSON.parse(JSON.stringify(o))
 
 export function getPengaturan() {
   return { ...pengaturanData }
+}
+
+// ------------------------------------------------------- kategori & satuan
+const unik = (a) => [...new Set(a.map((x) => String(x).trim()).filter(Boolean))]
+
+export function getKategori() {
+  return unik([...(pengaturanData.kategori || []), ...getProduk().map((p) => p.kategori)])
+}
+
+export function getSatuan() {
+  return unik([...(pengaturanData.satuan || []), ...getProduk().map((p) => p.satuan)])
+}
+
+export function tambahKategori(nama) {
+  const n = String(nama || '').trim()
+  if (!n) return { ok: false, pesan: 'Nama kategori wajib diisi.' }
+  if (getKategori().some((k) => k.toLowerCase() === n.toLowerCase())) {
+    return { ok: false, pesan: 'Kategori itu sudah ada.' }
+  }
+  pengaturanData.kategori = [...(pengaturanData.kategori || []), n]
+  return { ok: true, nama: n }
+}
+
+export function hapusKategori(nama) {
+  const dipakai = getProduk().filter((p) => p.kategori === nama).length
+  if (dipakai) return { ok: false, pesan: `Masih dipakai ${dipakai} produk. Pindahkan dulu produknya.` }
+  pengaturanData.kategori = (pengaturanData.kategori || []).filter((k) => k !== nama)
+  return { ok: true }
+}
+
+export function tambahSatuan(nama) {
+  const n = String(nama || '').trim().toLowerCase()
+  if (!n) return { ok: false, pesan: 'Nama satuan wajib diisi.' }
+  if (getSatuan().some((s) => s.toLowerCase() === n)) {
+    return { ok: false, pesan: 'Satuan itu sudah ada.' }
+  }
+  pengaturanData.satuan = [...(pengaturanData.satuan || []), n]
+  return { ok: true, nama: n }
+}
+
+export function hapusSatuan(nama) {
+  const dipakai = getProduk().filter((p) => p.satuan === nama).length
+  if (dipakai) {
+    return { ok: false, pesan: `Masih dipakai ${dipakai} produk. Ganti satuan produknya dulu.` }
+  }
+  pengaturanData.satuan = (pengaturanData.satuan || []).filter((s) => s !== nama)
+  return { ok: true }
 }
 
 // ------------------------------------------------------------------ produk
@@ -259,17 +307,110 @@ export function tambahPenjualan(transaksi) {
   getPenjualan().unshift(normalisasiPenjualan(transaksi))
 }
 
-export function batalkanPenjualan(nomor, alasan) {
+// ------------------------------------------------------------------ audit
+let cacheLog = null
+
+export function getLog() {
+  if (!cacheLog) cacheLog = auditData.map((x) => ({ ...x }))
+  return cacheLog
+}
+
+export function catatLog({ aksi, pengguna, peran = '', objek = '', detail = '', alasan = '' }) {
+  getLog().unshift({
+    id: Date.now() + Math.random(),
+    tanggal: HARI_INI,
+    jam: jamDemo(),
+    pengguna: pengguna || 'Sistem',
+    peran,
+    aksi,
+    objek,
+    detail,
+    alasan,
+  })
+}
+
+// ------------------------------------------------------------------ void
+// Batas void untuk kasir. Pemilik tidak dibatasi.
+export const BATAS_VOID = { nominal: 100000, menit: 15, maks: 3 }
+
+const menitDariJam = (jam) => {
+  const [h, m] = String(jam || '00:00').split(':').map(Number)
+  return (h || 0) * 60 + (m || 0)
+}
+
+// Jam demo: transaksi terakhir + 5 menit. Dipakai agar data contoh
+// tetap bisa diuji tanpa bergantung pada jam sistem.
+export function jamDemo() {
+  const daftar = getPenjualan()
+    .filter((t) => t.tanggal === HARI_INI)
+    .map((t) => t.jam)
+    .sort()
+  const akhir = daftar[daftar.length - 1] || '20:00'
+  const total = Math.min(23 * 60 + 59, menitDariJam(akhir) + 5)
+  return String(Math.floor(total / 60)).padStart(2, '0') + ':' + String(total % 60).padStart(2, '0')
+}
+
+export function cekVoid(t, { peran = 'pemilik', nama = '' } = {}) {
+  if (!t) return { boleh: false, alasan: 'Transaksi tidak ditemukan.', perluTinjauan: false }
+  if (t.status === 'void') return { boleh: false, alasan: 'Transaksi sudah void.', perluTinjauan: false }
+  if (peran === 'pemilik') return { boleh: true, alasan: '', perluTinjauan: false }
+  if (t.tanggal !== HARI_INI) {
+    return { boleh: false, alasan: 'Hanya transaksi hari ini yang bisa di-void kasir.', perluTinjauan: false }
+  }
+  if (t.metode === 'bon' && t.dibayar > 0) {
+    return {
+      boleh: false,
+      alasan: 'Bon yang sudah ada pembayaran hanya bisa di-void pemilik.',
+      perluTinjauan: false,
+    }
+  }
+  const lewat = menitDariJam(jamDemo()) - menitDariJam(t.jam)
+  if (lewat > BATAS_VOID.menit) {
+    return {
+      boleh: false,
+      alasan: `Sudah lewat ${BATAS_VOID.menit} menit. Void harus oleh pemilik.`,
+      perluTinjauan: false,
+    }
+  }
+  const jumlah = getPenjualan().filter(
+    (x) => x.status === 'void' && x.tanggal === HARI_INI && x.void_oleh === nama,
+  ).length
+  if (jumlah >= BATAS_VOID.maks) {
+    return {
+      boleh: false,
+      alasan: `Batas ${BATAS_VOID.maks} void per hari sudah tercapai.`,
+      perluTinjauan: false,
+    }
+  }
+  return { boleh: true, alasan: '', perluTinjauan: t.total > BATAS_VOID.nominal }
+}
+
+export function batalkanPenjualan(nomor, alasan, opsi = {}) {
   const t = getPenjualan().find((x) => x.nomor === nomor)
-  if (!t) return null
-  if (t.status === 'void') return t
+  if (!t) return { ok: false, pesan: 'Transaksi tidak ditemukan.' }
+  const cek = cekVoid(t, opsi)
+  if (!cek.boleh) return { ok: false, pesan: cek.alasan }
+  if (!alasan || !alasan.trim()) return { ok: false, pesan: 'Alasan void wajib diisi.' }
+
   t.status = 'void'
-  t.void_alasan = alasan
+  t.void_alasan = alasan.trim()
+  t.void_oleh = opsi.nama || 'Pemilik'
+  t.void_peran = opsi.peran || 'pemilik'
+  t.void_jam = jamDemo()
+  t.void_perlu_tinjauan = cek.perluTinjauan
   t.status_bayar = 'batal'
   // Kembalikan stok dan batch supaya angka konsisten setelah void.
   for (const i of t.items) tambahStok(i.produk_id, i.qty)
   kembalikanBatch(t.batch_terpakai)
-  return t
+  catatLog({
+    aksi: 'Void invoice',
+    pengguna: t.void_oleh,
+    peran: t.void_peran,
+    objek: t.nomor,
+    detail: `Nilai ${t.total}${cek.perluTinjauan ? ' · perlu tinjauan' : ''}`,
+    alasan: t.void_alasan,
+  })
+  return { ok: true, trx: t, perluTinjauan: cek.perluTinjauan }
 }
 
 // ------------------------------------------------------------------ piutang
@@ -555,6 +696,18 @@ export function getLaporan() {
 
   const piutang = getPiutangRingkas()
 
+  const daftarVoid = getPenjualan()
+    .filter((t) => t.status === 'void')
+    .map((t) => ({
+      nomor: t.nomor,
+      jam: t.jam,
+      kasir: t.kasir,
+      total: t.total,
+      alasan: t.void_alasan || '',
+      oleh: t.void_oleh || 'Pemilik',
+      tinjau: !!t.void_perlu_tinjauan,
+    }))
+
   return {
     omzet,
     hpp,
@@ -568,6 +721,12 @@ export function getLaporan() {
     terlaris,
     piutang,
     uangMasuk,
+    void: {
+      jumlah: daftarVoid.length,
+      nilai: daftarVoid.reduce((s, t) => s + t.total, 0),
+      tinjau: daftarVoid.filter((t) => t.tinjau).length,
+      daftar: daftarVoid,
+    },
     nilaiStokBeli: produk.reduce((s, p) => s + p.stok * p.harga_beli, 0),
     nilaiStokJual: produk.reduce((s, p) => s + p.stok * p.harga_jual, 0),
     jumlahSku: produk.length,

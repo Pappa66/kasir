@@ -41,6 +41,7 @@
             v-if="m.addon"
             class="ml-auto hidden shrink-0 rounded border border-[#59a9a2]/50 px-1 py-px text-[8px] uppercase tracking-[0.06em] text-[#7fc4bd] lg:block"
             title="Fitur tambahan di luar paket dasar"
+            data-tour="lencana"
           >
             add-on<template v-if="lencana(m)"> · {{ lencana(m) }}</template>
           </span>
@@ -68,15 +69,77 @@
 
     <div class="pl-[56px] lg:pl-[232px]" data-shell-body>
       <header
-        class="sticky top-0 z-20 flex h-[52px] items-center justify-between gap-3 border-b border-line bg-paper px-3 sm:px-4 lg:px-6"
+        class="sticky top-0 z-20 flex h-[52px] items-center justify-between gap-2 border-b border-line bg-paper px-2 sm:gap-3 sm:px-4 lg:px-6"
         data-shell-head
       >
-        <div class="flex min-w-0 items-center gap-3">
+        <div class="flex min-w-0 flex-1 items-center gap-3">
           <h1 class="truncate text-base font-semibold text-ink">{{ judulHalaman }}</h1>
         </div>
         <div class="flex shrink-0 items-center gap-2 sm:gap-3">
           <span class="hidden text-xs text-ink-soft xl:inline">{{ toko.data.nama_toko }}</span>
           <span class="hidden h-4 w-px bg-line xl:block" aria-hidden="true" />
+
+          <div ref="akarTema" class="relative hidden sm:block" data-tour="tema">
+            <button
+              type="button"
+              class="btn btn-sm h-8"
+              title="Pilihan tampilan"
+              aria-haspopup="menu"
+              :aria-expanded="temaOpen"
+              @click="temaOpen = !temaOpen"
+            >
+              <Palette :size="14" :stroke-width="1.8" />
+              <span class="hidden md:inline">{{ namaTema }}</span>
+            </button>
+            <div
+              v-if="temaOpen"
+              class="absolute right-0 top-[calc(100%+6px)] z-40 w-64 overflow-hidden rounded border border-line bg-paper shadow-[0_8px_28px_rgba(15,47,46,0.16)]"
+              role="menu"
+            >
+              <div class="border-b border-line px-3 py-2 text-2xs uppercase tracking-[0.06em] text-ink-soft">
+                Tema demo
+              </div>
+              <button
+                v-for="t in tema.daftar"
+                :key="t.id"
+                type="button"
+                role="menuitem"
+                class="flex w-full items-start justify-between gap-2 px-3 py-2 text-left transition-colors hover:bg-surface"
+                :class="t.id === tema.aktif ? 'bg-surface' : ''"
+                @click="pilihTema(t.id)"
+              >
+                <span class="min-w-0">
+                  <span class="block text-sm text-ink">{{ t.nama }}</span>
+                  <span class="block text-2xs leading-snug text-ink-soft">{{ t.ket }}</span>
+                </span>
+                <Check
+                  v-if="t.id === tema.aktif"
+                  :size="14"
+                  :stroke-width="1.8"
+                  class="mt-1 shrink-0 text-accent-2"
+                />
+              </button>
+              <RouterLink
+                to="/tema"
+                class="block border-t border-line px-3 py-2 text-2xs text-accent-2 hover:bg-surface"
+                @click="temaOpen = false"
+              >
+                Bandingkan ketiganya →
+              </RouterLink>
+            </div>
+          </div>
+
+          <button
+            v-if="!tour.aktif && tour.adaBab(route.path)"
+            type="button"
+            class="btn btn-sm h-8"
+            title="Jelaskan halaman ini"
+            aria-label="Jelaskan halaman ini"
+            data-tour="bantuan"
+            @click="tour.mulaiHalaman(route.path)"
+          >
+            <CircleHelp :size="14" :stroke-width="1.8" />
+          </button>
 
           <button
             v-if="!tour.aktif"
@@ -84,7 +147,8 @@
             class="btn btn-sm h-8"
             title="Mulai tur interaktif"
             aria-label="Mulai tur interaktif"
-            @click="tour.mulai()"
+            data-tour="tur"
+            @click="tour.mulaiKilat()"
           >
             <Play :size="14" :stroke-width="1.8" />
             <span class="hidden sm:inline">Tur</span>
@@ -99,7 +163,7 @@
               title="Ganti peran (demo)"
               @click="peranOpen = !peranOpen"
             >
-              <span class="max-w-[110px] truncate text-sm text-ink">{{ sesi.aktif.nama }}</span>
+              <span class="max-w-[84px] truncate text-sm text-ink sm:max-w-[110px]">{{ sesi.aktif.nama }}</span>
               <span
                 class="rounded-sm bg-surface px-1.5 py-0.5 text-[10px] uppercase tracking-[0.04em]"
                 :class="sesi.pemilik ? 'text-accent-2' : 'text-warn'"
@@ -179,6 +243,9 @@ import {
   Check,
   LogOut,
   Play,
+  Palette,
+  ScrollText,
+  CircleHelp,
 } from 'lucide-vue-next'
 import ToastHost from './ToastHost.vue'
 import { getKedaluwarsaRingkas, getPiutangRingkas } from '../data/adapter'
@@ -186,6 +253,7 @@ import { useToko } from '../stores/toko'
 import { useUi } from '../stores/ui'
 import { useSesi } from '../stores/sesi'
 import { useTour } from '../stores/tour'
+import { useTema } from '../stores/tema'
 
 const route = useRoute()
 const router = useRouter()
@@ -193,6 +261,7 @@ const toko = useToko()
 const ui = useUi()
 const sesi = useSesi()
 const tour = useTour()
+const tema = useTema()
 
 const menu = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, peran: ['pemilik'] },
@@ -204,9 +273,11 @@ const menu = [
   { path: '/kedaluwarsa', label: 'Kedaluwarsa', icon: CalendarClock, peran: ['pemilik'], addon: true, lencana: 'expired' },
   { path: '/opname', label: 'Stock Opname', icon: ClipboardCheck, peran: ['pemilik'] },
   { path: '/laporan', label: 'Laporan', icon: BarChart3, peran: ['pemilik'] },
+  { path: '/jejak', label: 'Jejak Aktivitas', icon: ScrollText, peran: ['pemilik'] },
   { path: '/pengaturan', label: 'Pengaturan', icon: Settings, peran: ['pemilik'] },
   { path: '/panduan', label: 'Panduan', icon: BookOpen, peran: ['pemilik', 'kasir'] },
   { path: '/panduan-memilih', label: 'Panduan memilih', icon: Scale, peran: ['pemilik', 'kasir'] },
+  { path: '/tema', label: 'Pilihan tampilan', icon: Palette, peran: ['pemilik', 'kasir'] },
 ]
 
 const menuTampil = computed(() => {
@@ -229,14 +300,32 @@ const judulHalaman = computed(() => route.meta.title || 'Kasir')
 
 const peranOpen = ref(false)
 const akarPeran = ref(null)
+const temaOpen = ref(false)
+const akarTema = ref(null)
+const namaTema = computed(
+  () => tema.daftar.find((t) => t.id === tema.aktif)?.nama || 'Kasir',
+)
+
+function pilihTema(id) {
+  tema.pakai(id)
+  temaOpen.value = false
+  const nama = tema.daftar.find((t) => t.id === tema.aktif)?.nama || 'Kasir'
+  ui.kabari(`Tampilan ${nama} dipakai. Data tidak berubah.`, 'info')
+}
 
 function klikLuar(e) {
   if (peranOpen.value && akarPeran.value && !akarPeran.value.contains(e.target)) {
     peranOpen.value = false
   }
+  if (temaOpen.value && akarTema.value && !akarTema.value.contains(e.target)) {
+    temaOpen.value = false
+  }
 }
 function tombolEsc(e) {
-  if (e.key === 'Escape') peranOpen.value = false
+  if (e.key === 'Escape') {
+    peranOpen.value = false
+    temaOpen.value = false
+  }
 }
 
 onMounted(() => {

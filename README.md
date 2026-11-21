@@ -22,15 +22,17 @@ npm run preview  # cek hasil build
 | Produk | Daftar 25 produk, cari/filter kategori, tambah & ubah produk, status stok |
 | Stok Masuk | Dokumen penerimaan, detail dokumen, buat draft, terima barang |
 | Invoice | Riwayat transaksi, filter lunas/bon/void, cari, ekspor CSV |
-| Detail Invoice | Rincian item, status bon, pelunasan, tautan publik, WA, CSV, cetak ulang, void dengan alasan |
+| Detail Invoice | Rincian item, status bon, pelunasan, tautan publik, WA, CSV, cetak ulang, void berjenjang dengan alasan |
 | Piutang & Bon (add-on) | Bon berjalan, lewat tempo, pelunasan sebagian/penuh |
 | Kedaluwarsa & FEFO (add-on) | Batch per tanggal expired, sisa hari, nilai berisiko, tarik batch dari rak |
 | Invoice publik | Halaman tanpa shell untuk pelanggan; divalidasi token demo, bisa dicetak |
 | Stock Opname | Daftar sesi, lembar hitung fisik, selisih + alasan wajib, posting dengan PIN pemilik |
 | Laporan | Omzet, HPP, laba kotor/bersih, penjualan per jam (klik untuk rincian item), per kasir, kanal tunai/QRIS, nilai stok, ekspor CSV/PDF |
-| Pengaturan | Identitas toko, lebar struk, tes cetak, daftar pengguna, muat ulang data |
-| Panduan | Alur demo 3 menit, tabel hak akses, catatan perangkat, mulai tur interaktif |
+| Pengaturan | Identitas toko, lebar struk, tes cetak, pengguna, kategori & satuan produk, muat ulang data |
+| Panduan | Alur demo 3 menit, 15 bab tur, tabel hak akses, catatan perangkat, tur otomatis |
 | Panduan memilih | Perbandingan pilihan aplikasi, kelebihan/kekurangan jujur, checklist untuk penjual mana pun |
+| Jejak aktivitas | Catatan siapa melakukan apa (void, ubah harga, opname, pelunasan), filter + ekspor; khusus pemilik |
+| Pilihan tampilan | Perbandingan tiga tema demo (Kasir, Brutal, Elegan) berdampingan |
 | Akses terbatas | Halaman pengganti saat kasir membuka modul pemilik; tombol masuk sebagai pemilik |
 
 ## Peran demo
@@ -48,7 +50,12 @@ peran; setelah itu peran bisa diganti lewat dropdown nama di kanan atas.
 - URL modul pemilik yang dibuka langsung diarahkan ke `/akses-terbatas?dari=...`;
   setelah masuk sebagai pemilik, halaman tujuan dibuka kembali.
 - Produk untuk kasir: tanpa tambah/import/ubah, tanpa harga beli dan nilai stok.
-- Void invoice hanya muncul untuk pemilik; kasir hanya bisa melihat dan mencetak.
+- Void berjenjang. Kasir boleh void transaksi hari ini, maksimal 15 menit setelah
+  transaksi, maksimal 3 kali sehari, dan bukan bon yang sudah dibayar. Void di atas
+  Rp 100.000 tetap bisa tetapi ditandai **perlu tinjauan** pemilik. Pemilik tidak
+  dibatasi. Tidak ada PIN pemilik: pemilik tidak selalu berada di toko.
+- Jejak aktivitas hanya bisa dibaca pemilik. Setiap void, ubah harga, opname, dan
+  pelunasan bon menulis catatan baru; catatan tidak bisa dihapus dari aplikasi.
 - Kasir boleh membuka Piutang dan mencatat pelunasan bon; tarik batch expired
   tetap untuk pemilik.
 - Transaksi baru mencatat nama pengguna aktif sebagai kasir.
@@ -60,15 +67,17 @@ peran; setelah itu peran bisa diganti lewat dropdown nama di kanan atas.
 
 ## Tur interaktif
 
-Tombol **Tur** di topbar (dan **Mulai tur interaktif** di Panduan) menjalankan 6
-langkah: menu, ganti peran, pencarian/scan, keranjang, pembayaran, dan struk.
+Tombol **Tur** menjalankan tur lengkap **15 bab / 79 langkah** dari menu sampai
+pilihan tampilan. Tombol tanda tanya di topbar hanya menjelaskan halaman yang
+sedang dibuka, dan Panduan punya daftar bab yang bisa dijalankan sendiri-sendiri.
 Navigasi lewat Lanjut/Kembali/Lewati, panah kiri-kanan, atau Esc. Tur berpindah
-ke halaman Kasir sendiri, menyorot elemen terkait, dan menghormati
-`prefers-reduced-motion`.
+halaman sendiri, menyorot elemen terkait, dan menghormati
+`prefers-reduced-motion`. Bila target tidak tersedia di layar kecil (mis. tombol
+khusus desktop), kartu tur tampil di tengah tanpa sorotan.
 
-Tur juga berjalan otomatis sekali per tab saat demo pertama dibuka. Bisa
-dimatikan dari Panduan; tombol Tur tetap tersedia. Tur otomatis tidak muncul di
-halaman invoice publik.
+Tur juga berjalan otomatis sekali per tab saat demo pertama dibuka, tetapi hanya
+bab pengantar (8 langkah), bukan seluruh 79 langkah. Bisa dimatikan dari Panduan;
+tombol Tur tetap tersedia. Tur otomatis tidak muncul di halaman invoice publik.
 
 ## Label add-on
 
@@ -108,7 +117,7 @@ src/
                           PrototypeBanner, EmptyState, TourGuide, AddonTag,
                           KirimWA
   lib/                 ← format, ekspor (CSV/WA), pesan (template WhatsApp)
-  pages/               ← 12 halaman + 4 halaman detail/publik
+  pages/               ← halaman aplikasi, detail invoice, publik, jejak, tema
   style.css            ← token warna, tabel, tombol, aturan cetak
 ```
 
@@ -121,6 +130,12 @@ src/
   pengaturan) hanya bertahan selama tab terbuka; muat ulang mengembalikan data
   contoh.
 - Penjualan memotong stok dan batch FEFO; void mengembalikan keduanya.
+- Void memakai jam demo (transaksi terakhir + 5 menit) supaya batas 15 menit pada
+  data contoh tetap bisa diuji.
+- Kategori dan satuan produk diatur di Pengaturan. Kategori/satuan yang masih
+  dipakai produk tidak bisa dihapus.
+- Tema disimpan di `localStorage['demo-tema']` dan hanya mengubah tampilan;
+  warna status serta struk thermal tetap sama di semua tema.
 - Menerima dokumen Stok Masuk menambah stok dan membuat batch bila tanggal
   expired diisi.
 - Tautan invoice publik berbentuk `/#/publik/<nomor>?token=<token demo>` dan

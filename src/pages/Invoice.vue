@@ -7,7 +7,7 @@
           {{ tanggalPanjang(HARI_INI) }} · {{ semua.length }} transaksi
         </p>
       </div>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-2" data-tour="invoice-aksi">
         <button type="button" class="btn" @click="ekspor">
           <Download :size="15" :stroke-width="1.6" />
           Ekspor CSV
@@ -21,7 +21,7 @@
     </div>
 
     <section class="panel">
-      <div class="flex flex-wrap items-center gap-2 border-b border-line p-3">
+      <div class="flex flex-wrap items-center gap-2 border-b border-line p-3" data-tour="invoice-cari">
         <div class="flex rounded border border-line p-0.5">
           <button
             v-for="t in tabs"
@@ -46,7 +46,7 @@
         </div>
       </div>
 
-      <div class="hidden overflow-x-auto md:block">
+      <div class="hidden overflow-x-auto md:block" data-tour="invoice-tabel">
         <table class="tbl">
           <thead>
             <tr>

@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="panel grid grid-cols-2 overflow-hidden lg:grid-cols-4">
+    <div class="panel grid grid-cols-2 overflow-hidden lg:grid-cols-4" data-tour="dash-kpi">
       <div class="border-b border-r border-line p-4 lg:border-b-0">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Penjualan hari ini</div>
         <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">{{ rupiah(d.total) }}</div>
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="grid gap-4 md:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3" data-tour="dash-perhatian">
       <div class="panel border-l-2 border-l-warn p-4">
         <div class="flex items-baseline justify-between">
           <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Stok kritis</span>
@@ -76,8 +76,8 @@
       </RouterLink>
     </div>
 
-    <div class="grid gap-4 lg:grid-cols-5">
-      <section class="panel min-w-0 lg:col-span-3">
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-5">
+      <section class="panel min-w-0 lg:col-span-3" data-tour="dash-terlaris">
         <div class="panel-h">
           <span class="panel-title">Produk terlaris</span>
           <span class="text-xs text-ink-soft">7 hari terakhir</span>
@@ -104,7 +104,7 @@
         </div>
       </section>
 
-      <section class="panel min-w-0 lg:col-span-2">
+      <section class="panel min-w-0 lg:col-span-2" data-tour="dash-terakhir">
         <div class="panel-h">
           <span class="panel-title">Transaksi terakhir</span>
           <RouterLink to="/invoice" class="text-xs text-accent-2 hover:underline">Semua</RouterLink>
@@ -145,7 +145,7 @@
       </section>
     </div>
 
-    <section class="panel">
+    <section class="panel" data-tour="dash-perlu">
       <div class="panel-h">
         <span class="panel-title">Perlu dipesan</span>
         <span class="text-xs text-ink-soft">stok sama atau di bawah minimum</span>

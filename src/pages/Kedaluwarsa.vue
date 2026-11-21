@@ -17,7 +17,7 @@
       </RouterLink>
     </div>
 
-    <div class="panel grid grid-cols-2 overflow-hidden lg:grid-cols-4">
+    <div class="panel grid grid-cols-2 overflow-hidden lg:grid-cols-4" data-tour="exp-kpi">
       <div class="border-b border-r border-line p-4 lg:border-b-0">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Sudah expired</div>
         <div class="mt-1.5 text-lg font-semibold tnum sm:text-2xl" :class="ringkas.expired ? 'text-bad' : ''">
@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <section class="panel border-l-2 border-l-accent-2 p-4">
+    <section class="panel border-l-2 border-l-accent-2 p-4" data-tour="exp-fefo">
       <div class="flex flex-wrap items-center gap-2">
         <span class="text-sm font-semibold text-ink">Cara kerja FEFO</span>
         <span class="rounded border border-line px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-ink-soft">
@@ -93,7 +93,7 @@
         </div>
       </div>
 
-      <div class="hidden overflow-x-auto md:block">
+      <div class="hidden overflow-x-auto md:block" data-tour="exp-tabel">
         <table class="tbl">
           <thead>
             <tr>

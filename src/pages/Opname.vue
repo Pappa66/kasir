@@ -7,13 +7,13 @@
           Hitung fisik, catat selisih, lalu posting oleh pemilik.
         </p>
       </div>
-      <button type="button" class="btn btn-primary" @click="mulaiBaru">
+      <button type="button" class="btn btn-primary" @click="mulaiBaru" data-tour="opname-aksi">
         <Plus :size="15" :stroke-width="1.8" />
         Sesi baru
       </button>
     </div>
 
-    <div class="panel grid grid-cols-1 overflow-hidden sm:grid-cols-3">
+    <div class="panel grid grid-cols-1 overflow-hidden sm:grid-cols-3" data-tour="opname-kpi">
       <div class="border-b border-line p-4 sm:border-b-0 sm:border-r">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Sedang berjalan</div>
         <div class="mt-1.5 text-xl font-semibold tnum sm:text-2xl">{{ berjalan.length }}</div>
@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <section class="panel">
+    <section class="panel" data-tour="opname-daftar">
       <div class="panel-h">
         <span class="panel-title">Daftar sesi</span>
         <span class="text-xs text-ink-soft">terbaru di atas</span>

@@ -11,12 +11,12 @@
           <span v-if="!bolehKelola" class="status text-warn">Hanya lihat</span>
         </p>
       </div>
-      <div v-if="bolehKelola" class="flex gap-2">
-        <button type="button" class="btn" @click="impor">
+      <div v-if="bolehKelola" class="flex gap-2" data-tour="produk-aksi">
+        <button type="button" class="btn" @click="impor" data-tour="produk-impor">
           <Upload :size="15" :stroke-width="1.6" />
           <span class="hidden sm:inline">Import</span>
         </button>
-        <button type="button" class="btn btn-primary" @click="bukaBaru">
+        <button type="button" class="btn btn-primary" @click="bukaBaru" data-tour="produk-tambah">
           <Plus :size="15" :stroke-width="1.8" />
           Tambah produk
         </button>
@@ -24,7 +24,7 @@
     </div>
 
     <section class="panel">
-      <div class="flex flex-wrap items-center gap-2 border-b border-line p-3">
+      <div class="flex flex-wrap items-center gap-2 border-b border-line p-3" data-tour="produk-cari">
         <div class="relative w-full min-w-0 sm:max-w-xs">
           <Search
             :size="15"
@@ -40,7 +40,7 @@
         <span class="ml-auto text-xs text-ink-soft">{{ hasil.length }} hasil</span>
       </div>
 
-      <div class="hidden overflow-x-auto md:block">
+      <div class="hidden overflow-x-auto md:block" data-tour="produk-tabel">
         <table class="tbl">
           <thead>
             <tr>
@@ -198,7 +198,7 @@
 import { computed, ref } from 'vue'
 import { ChevronRight, Eye, Plus, Search, Upload } from 'lucide-vue-next'
 import Modal from '../components/Modal.vue'
-import { getProduk, tambahProduk, ubahProduk } from '../data/adapter'
+import { getKategori, getProduk, getSatuan, tambahProduk, ubahProduk } from '../data/adapter'
 import { rupiah, qty } from '../lib/format'
 import { useUi } from '../stores/ui'
 import { useSesi } from '../stores/sesi'
@@ -213,8 +213,8 @@ const formOpen = ref(false)
 const mode = ref('baru')
 const form = ref({})
 
-const kategoriList = computed(() => [...new Set(daftar.value.map((p) => p.kategori))])
-const satuanList = ['pcs', 'kg', 'karung', 'rak', 'kotak', 'tabung', 'botol', 'pack']
+const kategoriList = ref(getKategori())
+const satuanList = ref(getSatuan())
 
 const hasil = computed(() => {
   const q = cari.value.trim().toLowerCase()

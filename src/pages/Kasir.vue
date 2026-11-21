@@ -1,5 +1,5 @@
 <template>
-  <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_400px]">
+  <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_360px] xl:grid-cols-[minmax(0,1fr)_400px]">
     <!-- Kolom kiri: pencarian + keranjang -->
     <div class="min-w-0 space-y-4">
       <div class="panel" data-tour="cari">
@@ -68,7 +68,7 @@
       </div>
 
       <div class="panel flex min-h-[300px] flex-col lg:min-h-[420px]" data-tour="keranjang">
-        <div class="panel-h shrink-0">
+        <div class="panel-h shrink-0" data-tour="kasir-qty">
           <div class="flex items-center gap-2">
             <span class="panel-title">Keranjang</span>
             <span class="text-xs text-ink-soft">{{ keranjang.jumlahItem }} item</span>
@@ -174,7 +174,7 @@
       <div class="panel" data-tour="bayar">
         <div class="panel-h">
           <span class="panel-title">Pembayaran</span>
-          <div class="flex rounded border border-line p-0.5">
+          <div class="flex rounded border border-line p-0.5" data-tour="kasir-metode">
             <button
               type="button"
               class="rounded px-2.5 py-0.5 text-2xs transition-colors"
@@ -214,13 +214,13 @@
             <span class="tnum text-ink-soft">Rp 0</span>
           </div>
 
-          <div class="!mt-3 flex items-end justify-between border-t border-line pt-3">
+          <div class="!mt-3 flex items-end justify-between border-t border-line pt-3" data-tour="kasir-total">
             <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Total</span>
             <span class="text-3xl font-semibold leading-none tnum">{{ rupiah(keranjang.total) }}</span>
           </div>
 
           <div class="border-t border-line pt-2.5">
-            <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center justify-between gap-2" data-tour="kasir-kanal">
               <span class="text-2xs uppercase tracking-[0.04em] text-ink-soft">
                 {{ keranjang.metode === 'bon' ? 'Uang muka lewat' : 'Uang masuk lewat' }}
               </span>
@@ -278,7 +278,7 @@
           </template>
 
           <template v-else-if="keranjang.metode === 'tunai'">
-            <div class="pt-1">
+            <div class="pt-1" data-tour="kasir-uang">
               <label class="label" for="tunai">Uang diterima</label>
               <div class="relative">
                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ink-soft">Rp</span>
@@ -310,6 +310,7 @@
             <button
               type="button"
               class="btn btn-primary btn-lg mt-1 w-full"
+              data-tour="kasir-aksi"
               :disabled="!keranjang.bisaBayar"
               @click="bayar"
             >
@@ -531,6 +532,7 @@ import { useUi } from '../stores/ui'
 import {
   getProduk,
   HARI_INI,
+  jamDemo,
   nomorInvoiceBerikutnya,
   tambahPenjualan,
   kurangiStok,
@@ -642,11 +644,6 @@ function tambahUang(nominal) {
   keranjang.setTunai((Number(keranjang.tunai) || 0) + nominal)
 }
 
-const jamSekarang = () => {
-  const d = new Date()
-  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
-}
-
 const tautanStruk = computed(() => (struk.value ? tautanPublik(struk.value.nomor) : ''))
 const pesanWA = computed(() =>
   struk.value ? pesanInvoice(struk.value, toko.value, tautanStruk.value) : '',
@@ -693,7 +690,7 @@ function bayar() {
     id: Date.now(),
     nomor,
     tanggal: HARI_INI,
-    jam: jamSekarang(),
+    jam: jamDemo(),
     kasir: sesi.aktif.nama,
     pelanggan: keranjang.pelanggan.trim(),
     no_hp: keranjang.noHp.trim(),

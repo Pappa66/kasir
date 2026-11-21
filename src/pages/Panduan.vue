@@ -13,14 +13,14 @@
           <ShoppingCart :size="15" :stroke-width="1.6" />
           Buka Kasir
         </RouterLink>
-        <button type="button" class="btn btn-primary" @click="tour.mulai()">
+        <button type="button" class="btn btn-primary" @click="tour.mulaiSemua()">
           <Play :size="14" :stroke-width="1.8" />
           Mulai tur interaktif
         </button>
       </div>
     </div>
 
-    <section class="panel overflow-hidden">
+    <section class="panel overflow-hidden" data-tour="panduan-addon">
       <div class="border-b border-line p-4">
         <div class="flex flex-wrap items-center gap-2.5">
           <AddonTag class="!px-2.5 !py-1 !text-xs" />
@@ -33,7 +33,7 @@
           dipakai untuk menandai fitur tambahan, dan tidak ada harga yang ditampilkan di aplikasi.
         </p>
       </div>
-      <div class="grid divide-y divide-line sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+      <div class="grid grid-cols-1 divide-y divide-line sm:grid-cols-2 sm:divide-x sm:divide-y-0">
         <div class="p-4">
           <div class="text-2xs uppercase tracking-[0.06em] text-ink-soft">
             Paket dasar · sudah termasuk
@@ -66,7 +66,7 @@
         </div>
       </div>
 
-      <div class="grid gap-px border-t border-line bg-line sm:grid-cols-2">
+      <div class="grid grid-cols-1 gap-px border-t border-line bg-line sm:grid-cols-2">
         <RouterLink
           v-for="a in addonDetail"
           :key="a.judul"
@@ -94,9 +94,9 @@
       </div>
     </section>
 
-    <div class="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+    <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div class="min-w-0 space-y-4">
-        <section class="panel">
+        <section class="panel" data-tour="panduan-alur">
           <div class="panel-h">
             <span class="panel-title">Alur demo 3 menit</span>
             <span class="hidden text-xs text-ink-soft sm:inline">klik untuk langsung membuka</span>
@@ -127,7 +127,34 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel" data-tour="panduan-bab">
+          <div class="panel-h">
+            <span class="panel-title">Bab tur</span>
+            <span class="text-xs text-ink-soft">{{ babTur.length }} bab · {{ totalLangkah }} langkah</span>
+          </div>
+          <div class="divide-y divide-line">
+            <button
+              v-for="b in babTur"
+              :key="b.id"
+              type="button"
+              class="flex w-full items-start gap-3 px-4 py-2.5 text-left transition-colors hover:bg-surface"
+              @click="tour.mulaiBab(b.id)"
+            >
+              <span class="mt-0.5 min-w-0 flex-1">
+                <span class="block text-sm font-medium text-ink">{{ b.judul }}</span>
+                <span class="mt-0.5 block text-2xs leading-relaxed text-ink-soft">{{ b.ket }}</span>
+              </span>
+              <span class="shrink-0 text-2xs text-ink-soft">{{ b.langkah.length }} langkah</span>
+              <Play :size="14" :stroke-width="1.8" class="mt-0.5 shrink-0 text-accent-2" />
+            </button>
+          </div>
+          <div class="border-t border-line bg-surface px-4 py-2.5 text-2xs leading-relaxed text-ink-soft">
+            Tombol tanda tanya di topbar menjelaskan halaman yang sedang dibuka. Tombol Tur
+            menjalankan semua bab berurutan.
+          </div>
+        </section>
+
+        <section class="panel" data-tour="panduan-akses">
           <div class="panel-h">
             <span class="panel-title">Hak akses per peran</span>
             <span class="text-xs text-ink-soft">maks. 3 akun</span>
@@ -162,12 +189,12 @@
           </p>
         </section>
 
-        <section class="panel">
+        <section class="panel" data-tour="panduan-perangkat">
           <div class="panel-h">
             <span class="panel-title">Catatan perangkat</span>
             <span class="text-xs text-ink-soft">toko, bukan gudang</span>
           </div>
-          <div class="grid divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          <div class="grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             <div class="p-4">
               <div class="flex items-center gap-2 text-sm font-medium text-ink">
                 <ScanLine :size="16" :stroke-width="1.6" class="text-accent-2" />
@@ -242,7 +269,7 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel" data-tour="panduan-tur">
           <div class="panel-h">
             <span class="panel-title">Tur otomatis</span>
             <span class="text-xs text-ink-soft">sekali per tab</span>
@@ -336,6 +363,7 @@ import {
   Wallet,
 } from 'lucide-vue-next'
 import AddonTag from '../components/AddonTag.vue'
+import { BAB_TUR } from '../data/tur'
 import { useSesi } from '../stores/sesi'
 import { useTour } from '../stores/tour'
 import { useUi } from '../stores/ui'
@@ -344,6 +372,8 @@ const router = useRouter()
 const sesi = useSesi()
 const tour = useTour()
 const ui = useUi()
+const babTur = BAB_TUR
+const totalLangkah = BAB_TUR.reduce((n, b) => n + b.langkah.length, 0)
 
 const autoTur = ref(localStorage.getItem('demo-tur-otomatis') !== '0')
 watch(autoTur, (v) => {
@@ -365,7 +395,7 @@ const alur = [
   {
     to: '/invoice',
     judul: 'Buka invoice terakhir',
-    isi: 'Transaksi barusan masuk ke daftar. Void hanya bisa dilakukan pemilik dan wajib beralasan.',
+    isi: 'Transaksi barusan masuk ke daftar. Void wajib beralasan; kasir dibatasi 15 menit dan Rp 100.000, pemilik tidak dibatasi.',
   },
   {
     to: '/stok-masuk',
@@ -396,7 +426,8 @@ const alur = [
 const akses = [
   { modul: 'Kasir', pemilik: 'Penuh', kasir: 'Penuh' },
   { modul: 'Produk', pemilik: 'Tambah & ubah', kasir: 'Lihat saja' },
-  { modul: 'Invoice', pemilik: 'Termasuk void', kasir: 'Lihat & cetak' },
+  { modul: 'Invoice', pemilik: 'Termasuk void', kasir: 'Void terbatas' },
+  { modul: 'Jejak aktivitas', pemilik: 'Baca & ekspor', kasir: null },
   { modul: 'Invoice publik', pemilik: 'Tautan bertoken', kasir: 'Tautan bertoken' },
   { modul: 'Piutang & Bon', pemilik: 'Penuh', kasir: 'Bayar bon' },
   { modul: 'Kedaluwarsa & FEFO', pemilik: 'Penuh', kasir: null },
@@ -406,6 +437,7 @@ const akses = [
   { modul: 'Pengaturan', pemilik: 'Penuh', kasir: null },
   { modul: 'Panduan', pemilik: 'Penuh', kasir: 'Penuh' },
   { modul: 'Panduan memilih', pemilik: 'Penuh', kasir: 'Penuh' },
+  { modul: 'Pilihan tampilan', pemilik: 'Ganti tema', kasir: 'Ganti tema' },
 ]
 
 const batasan = [
@@ -424,9 +456,9 @@ const dasar = [
   'Invoice dan struk thermal 58/80 mm',
   'Stock opname dengan alasan selisih',
   'Laporan penjualan, stok, dan laba',
-  'Pengaturan toko dan pengguna',
+  'Pengaturan toko, pengguna, kategori & satuan',
   'Peran Pemilik dan Kasir',
-  'Void bertanda alasan, hanya pemilik',
+  'Void berjenjang dengan alasan + jejak audit',
 ]
 
 const addon = [
