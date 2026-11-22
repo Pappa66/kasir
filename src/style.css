@@ -235,6 +235,17 @@
   .no-print {
     display: none !important;
   }
+  /* Struk panjang: alirkan terus di kertas thermal, jangan potong
+     satu baris barang di tengah halaman. */
+  #cetak-root,
+  #cetak-root .print-area {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  #cetak-root .struk-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 
   /* Mode cetak laporan: tampilkan isi halaman, sembunyikan kerangka aplikasi. */
   body.cetak-laporan {

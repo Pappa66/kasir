@@ -71,25 +71,24 @@
       <!-- kartu penjelasan -->
       <div
         ref="kartuEl"
-        class="tour-kartu fixed rounded-lg border border-line bg-paper p-4 shadow-[0_18px_48px_rgba(15,47,46,0.28)]"
+        class="tour-kartu fixed max-h-[calc(100vh-16px)] max-h-[calc(100dvh-16px)] overflow-y-auto overscroll-contain rounded-lg border border-line bg-paper p-4 shadow-[0_18px_48px_rgba(15,47,46,0.28)]"
         :style="gayaKartu"
       >
         <div class="flex items-start justify-between gap-3">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-2xs uppercase tracking-[0.08em] text-ink-soft">
-                Langkah {{ nomor }} dari {{ tour.jumlah }}
+          <div class="min-w-0 flex-1">
+            <div class="flex items-baseline justify-between gap-2">
+              <span class="truncate text-2xs uppercase tracking-[0.08em] text-ink-soft">
+                {{ tour.babJudul || 'Tur' }}
               </span>
-              <span class="flex gap-1" aria-hidden="true">
-                <span
-                  v-for="(l, i) in tour.langkah"
-                  :key="i"
-                  class="h-1 w-3 rounded-full transition-colors"
-                  :class="i <= tour.indeks ? 'bg-accent-2' : 'bg-[#dce3e1]'"
-                />
-              </span>
+              <span class="shrink-0 text-2xs tnum text-ink-soft">{{ nomor }} / {{ tour.jumlah }}</span>
             </div>
-            <h3 id="tour-judul" class="mt-1.5 text-sm font-semibold text-ink">{{ tour.kini.judul }}</h3>
+            <div class="mt-1.5 h-1 overflow-hidden rounded-full bg-[#dce3e1]" aria-hidden="true">
+              <div
+                class="h-full rounded-full bg-accent-2 transition-[width] duration-300"
+                :style="{ width: persen + '%' }"
+              />
+            </div>
+            <h3 id="tour-judul" class="mt-2 text-sm font-semibold text-ink">{{ tour.kini.judul }}</h3>
           </div>
           <button
             type="button"
@@ -149,13 +148,29 @@ const vw = ref(document.documentElement.clientWidth)
 const vh = ref(window.innerHeight)
 
 const nomor = computed(() => tour.indeks + 1)
+const persen = computed(() =>
+  tour.jumlah ? Math.round(((tour.indeks + 1) / tour.jumlah) * 100) : 0,
+)
 const gayaKartu = computed(() => {
   if (!kotak.value) return {}
+  if (vw.value < 640) {
+    // Panel menempel di sisi yang berlawanan dengan target agar sorotan
+    // tidak tertutup kartu. Tinggi mengikuti isi dan tidak keluar layar.
+    const atas = kotak.value.letak === 'atas'
+    return {
+      left: '8px',
+      right: '8px',
+      top: atas ? '8px' : 'auto',
+      bottom: atas ? 'auto' : '8px',
+      width: 'auto',
+      maxWidth: 'calc(100vw - 16px)',
+    }
+  }
   return {
     top: kotak.value.kartuTop + 'px',
     left: kotak.value.kartuLeft + 'px',
     width: kotak.value.kartuLebar + 'px',
-    maxWidth: 'calc(100vw - 24px)',
+    maxWidth: 'calc(100vw - 16px)',
   }
 })
 
@@ -167,15 +182,20 @@ function kartuTengah(lebar) {
   // Target tidak ada / tidak terlihat di layar ini (mis. tabel desktop di HP):
   // tampilkan kartu di tengah tanpa sorotan agar tur tidak berhenti.
   const tinggiKartu = kartuEl.value?.offsetHeight || 240
+  const hp = vw.value < 640
+  const lebarAkhir = hp ? Math.min(400, vw.value - 16) : lebar
   kotak.value = {
     tanpaTarget: true,
     top: 0,
     left: 0,
     width: 0,
     height: 0,
-    kartuLeft: Math.max(12, (vw.value - lebar) / 2),
-    kartuTop: Math.max(12, vh.value / 2 - tinggiKartu / 2),
-    kartuLebar: lebar,
+    kartuLeft: Math.max(8, (vw.value - lebarAkhir) / 2),
+    kartuTop: hp
+      ? Math.max(8, vh.value - tinggiKartu - 8)
+      : Math.max(12, vh.value / 2 - tinggiKartu / 2),
+    kartuLebar: lebarAkhir,
+    letak: 'bawah',
   }
 }
 
@@ -186,8 +206,13 @@ function ukur() {
   if (!el) return kartuTengah(lebar)
   let r = el.getBoundingClientRect()
   if (r.width < 2 || r.height < 2) {
-    // Elemen ada tetapi disembunyikan (mis. tabel desktop saat di HP).
-    // Naik ke wadah terdekat yang terlihat agar sorotan tetap masuk akal.
+    // Elemen memang disembunyikan di layar ini (mis. tombol khusus desktop):
+    // tampilkan kartu di tengah tanpa sorotan.
+    const gaya = window.getComputedStyle(el)
+    if (gaya.display === 'none' || gaya.visibility === 'hidden' || el.offsetParent === null) {
+      return kartuTengah(lebar)
+    }
+    // Elemen ada tetapi runtuh; naik ke wadah terdekat yang terlihat.
     let p = el.parentElement
     while (p && p !== document.body) {
       const b = p.getBoundingClientRect()
@@ -226,6 +251,24 @@ function ukur() {
     ky = r.bottom + jarak
   }
 
+  if (vw.value < 640) {
+    // Di HP kartu jadi panel bawah yang lebar dan mudah dijangkau jempol;
+    // sorotan target tetap terlihat di atasnya.
+    const lebarHp = Math.min(400, vw.value - 16)
+    kx = (vw.value - lebarHp) / 2
+    ky = Math.max(8, vh.value - tinggi - 8)
+    kotak.value = {
+      top: Math.max(0, r.top - pad),
+      left: Math.max(0, r.left - pad),
+      width: Math.min(vw.value - Math.max(0, r.left - pad), r.width + pad * 2),
+      height: r.height + pad * 2,
+      kartuLeft: kx,
+      kartuTop: ky,
+      kartuLebar: lebarHp,
+      letak: r.top + r.height / 2 > vh.value / 2 ? 'atas' : 'bawah',
+    }
+    return
+  }
   kx = Math.max(12, Math.min(kx, vw.value - lebar - 12))
   ky = Math.max(12, Math.min(ky, vh.value - tinggi - 12))
 

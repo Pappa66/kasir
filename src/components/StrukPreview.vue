@@ -33,7 +33,7 @@
 
       <div class="my-1.5 border-t border-dashed border-black" />
 
-      <div v-for="(i, idx) in items" :key="idx" class="mb-1">
+      <div v-for="(i, idx) in items" :key="idx" class="struk-item mb-1">
         <div class="truncate">{{ i.nama }}</div>
         <div class="flex justify-between gap-2">
           <span>{{ qtyLabel(i.qty) }} x {{ ribuan(i.harga) }}</span>

@@ -15,7 +15,7 @@
         </RouterLink>
         <button type="button" class="btn btn-primary" @click="tour.mulaiSemua()">
           <Play :size="14" :stroke-width="1.8" />
-          Mulai tur interaktif
+          Mulai tur sesuai peran
         </button>
       </div>
     </div>
@@ -125,6 +125,11 @@
               />
             </RouterLink>
           </div>
+          <div class="border-t border-line bg-surface px-4 py-2.5 text-2xs leading-relaxed text-ink-soft">
+            Untuk presentasi, tunjukkan empat alur inti lebih dulu: kasir sampai struk, produk dan
+            stok, invoice termasuk void, lalu laporan. Add-on dan pengaturan menyusul agar demo
+            tidak melebar.
+          </div>
         </section>
 
         <section class="panel" data-tour="panduan-bab">
@@ -144,13 +149,13 @@
                 <span class="block text-sm font-medium text-ink">{{ b.judul }}</span>
                 <span class="mt-0.5 block text-2xs leading-relaxed text-ink-soft">{{ b.ket }}</span>
               </span>
-              <span class="shrink-0 text-2xs text-ink-soft">{{ b.langkah.length }} langkah</span>
+              <span class="hidden shrink-0 text-2xs text-ink-soft sm:block">{{ jmlLangkah(b) }} langkah</span>
               <Play :size="14" :stroke-width="1.8" class="mt-0.5 shrink-0 text-accent-2" />
             </button>
           </div>
           <div class="border-t border-line bg-surface px-4 py-2.5 text-2xs leading-relaxed text-ink-soft">
-            Tombol tanda tanya di topbar menjelaskan halaman yang sedang dibuka. Tombol Tur
-            menjalankan semua bab berurutan.
+            Daftar bab mengikuti peran aktif ({{ sesi.aktif.role }}), jadi kasir tidak diajak
+            membuka halaman yang bukan haknya. Tombol Tur menjalankan semua bab berurutan.
           </div>
         </section>
 
@@ -343,7 +348,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import {
   CalendarClock,
@@ -363,7 +368,7 @@ import {
   Wallet,
 } from 'lucide-vue-next'
 import AddonTag from '../components/AddonTag.vue'
-import { BAB_TUR } from '../data/tur'
+import { daftarBab, langkahBab } from '../data/tur'
 import { useSesi } from '../stores/sesi'
 import { useTour } from '../stores/tour'
 import { useUi } from '../stores/ui'
@@ -372,8 +377,11 @@ const router = useRouter()
 const sesi = useSesi()
 const tour = useTour()
 const ui = useUi()
-const babTur = BAB_TUR
-const totalLangkah = BAB_TUR.reduce((n, b) => n + b.langkah.length, 0)
+const babTur = computed(() => daftarBab(sesi.peran))
+const totalLangkah = computed(() =>
+  babTur.value.reduce((n, b) => n + langkahBab(b, sesi.peran).length, 0),
+)
+const jmlLangkah = (b) => langkahBab(b, sesi.peran).length
 
 const autoTur = ref(localStorage.getItem('demo-tur-otomatis') !== '0')
 watch(autoTur, (v) => {

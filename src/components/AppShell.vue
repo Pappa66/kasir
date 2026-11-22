@@ -132,7 +132,7 @@
           <button
             v-if="!tour.aktif && tour.adaBab(route.path)"
             type="button"
-            class="btn btn-sm h-8"
+            class="btn btn-sm hidden h-8 sm:flex"
             title="Jelaskan halaman ini"
             aria-label="Jelaskan halaman ini"
             data-tour="bantuan"
@@ -160,12 +160,20 @@
               class="flex h-8 items-center gap-2 rounded border border-line bg-paper px-2 text-left transition-colors hover:bg-surface"
               :aria-expanded="peranOpen"
               aria-haspopup="menu"
-              title="Ganti peran (demo)"
+              :title="`Ganti peran (${sesi.aktif.nama} · ${sesi.aktif.role})`"
               @click="peranOpen = !peranOpen"
             >
-              <span class="max-w-[84px] truncate text-sm text-ink sm:max-w-[110px]">{{ sesi.aktif.nama }}</span>
               <span
-                class="rounded-sm bg-surface px-1.5 py-0.5 text-[10px] uppercase tracking-[0.04em]"
+                class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent text-[10px] font-semibold leading-none text-white sm:hidden"
+                aria-hidden="true"
+              >
+                {{ inisialPengguna }}
+              </span>
+              <span class="hidden max-w-[84px] truncate text-sm text-ink sm:block sm:max-w-[110px]">
+                {{ sesi.aktif.nama }}
+              </span>
+              <span
+                class="hidden rounded-sm bg-surface px-1.5 py-0.5 text-[10px] uppercase tracking-[0.04em] sm:inline"
                 :class="sesi.pemilik ? 'text-accent-2' : 'text-warn'"
               >
                 {{ sesi.aktif.role }}
@@ -214,7 +222,7 @@
         </div>
       </header>
 
-      <main class="min-w-0 p-3 pb-12 sm:p-4 sm:pb-12 lg:px-6 lg:pb-12 lg:pt-6">
+      <main class="min-w-0 p-3 pb-4 sm:p-4 sm:pb-12 lg:px-6 lg:pb-12 lg:pt-6">
         <slot />
       </main>
     </div>
@@ -344,6 +352,16 @@ function pilih(u) {
   if (izin && !izin.includes(sesi.peran)) router.replace('/kasir')
   ui.kabari(`Mode ${u.role.toLowerCase()}: ${u.nama}.`, 'info')
 }
+
+const inisialPengguna = computed(() =>
+  (sesi.aktif.nama || '?')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((k) => k[0])
+    .join('')
+    .toUpperCase(),
+)
 
 const inisial = computed(() => {
   const kata = toko.data.nama_toko.split(/\s+/).filter((w) => w.toLowerCase() !== 'toko')

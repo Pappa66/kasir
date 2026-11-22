@@ -401,7 +401,7 @@
         </div>
       </div>
 
-      <div class="panel px-4 py-3" data-tour="pintasan">
+      <div class="panel hidden px-4 py-3 sm:block" data-tour="pintasan">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Pintasan</div>
         <ul class="mt-1.5 space-y-1 text-xs text-ink-soft">
           <li class="flex justify-between gap-3"><span>Fokus pencarian</span><kbd class="rounded border border-line bg-surface px-1.5">/</kbd></li>
@@ -466,6 +466,9 @@
 
       <div class="flex flex-wrap items-center gap-2 border-t border-line px-4 py-2">
         <AddonTag class="!px-1.5 !py-0 !text-[9px]" />
+        <span class="w-full text-2xs leading-relaxed text-ink-soft sm:hidden">
+          Struk panjang tercetak bersambung di kertas thermal, tidak dipotong per halaman.
+        </span>
         <span class="min-w-0 flex-1 truncate font-mono text-2xs text-ink-soft">
           {{ tautanStruk }}
         </span>

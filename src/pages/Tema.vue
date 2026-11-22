@@ -74,7 +74,26 @@
       <div class="panel-h">
         <span class="panel-title">Pertimbangan</span>
       </div>
-      <div class="overflow-x-auto">
+      <div class="divide-y divide-line sm:hidden">
+        <div v-for="p in pertimbangan" :key="p.tema" class="px-4 py-3">
+          <div class="text-sm font-medium text-ink">{{ p.tema }}</div>
+          <dl class="mt-2 space-y-2 text-xs">
+            <div>
+              <dt class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Kelebihan</dt>
+              <dd class="mt-0.5 leading-relaxed text-ink">{{ p.kelebihan }}</dd>
+            </div>
+            <div>
+              <dt class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Kekurangan</dt>
+              <dd class="mt-0.5 leading-relaxed text-ink">{{ p.kekurangan }}</dd>
+            </div>
+            <div>
+              <dt class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Cocok untuk</dt>
+              <dd class="mt-0.5 leading-relaxed text-ink">{{ p.cocok }}</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+      <div class="hidden overflow-x-auto sm:block">
         <table class="tbl">
           <thead>
             <tr>
@@ -85,23 +104,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td class="font-medium">Kasir</td>
-              <td>Cepat dipelajari, tidak melelahkan, aman dicetak</td>
-              <td>Terasa biasa, kurang menonjol</td>
-              <td>Toko kelontong, staf senior, shift panjang</td>
-            </tr>
-            <tr>
-              <td class="font-medium">Brutal</td>
-              <td>Paling mudah diingat, bagus untuk konten sosial</td>
-              <td>Melelahkan untuk shift panjang, data padat terasa ramai</td>
-              <td>Merek muda, kopi/snack, toko yang ingin menonjol</td>
-            </tr>
-            <tr>
-              <td class="font-medium">Elegan</td>
-              <td>Kesan premium dan tenang</td>
-              <td>Kepadatan lebih rendah, layar kecil lebih banyak scroll</td>
-              <td>Toko premium, hampers, oleh-oleh</td>
+            <tr v-for="p in pertimbangan" :key="p.tema">
+              <td class="font-medium">{{ p.tema }}</td>
+              <td>{{ p.kelebihan }}</td>
+              <td>{{ p.kekurangan }}</td>
+              <td>{{ p.cocok }}</td>
             </tr>
           </tbody>
         </table>
@@ -119,4 +126,25 @@ import { useTema } from '../stores/tema'
 import { rupiah } from '../lib/format'
 
 const tema = useTema()
+
+const pertimbangan = [
+  {
+    tema: 'Kasir',
+    kelebihan: 'Cepat dipelajari, tidak melelahkan, aman dicetak',
+    kekurangan: 'Terasa biasa, kurang menonjol',
+    cocok: 'Toko kelontong, staf senior, shift panjang',
+  },
+  {
+    tema: 'Brutal',
+    kelebihan: 'Paling mudah diingat, bagus untuk konten sosial',
+    kekurangan: 'Melelahkan untuk shift panjang, data padat terasa ramai',
+    cocok: 'Merek muda, kopi/snack, toko yang ingin menonjol',
+  },
+  {
+    tema: 'Elegan',
+    kelebihan: 'Kesan premium dan tenang',
+    kekurangan: 'Kepadatan lebih rendah, layar kecil lebih banyak scroll',
+    cocok: 'Toko premium, hampers, oleh-oleh',
+  },
+]
 </script>

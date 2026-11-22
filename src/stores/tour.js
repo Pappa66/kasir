@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { BAB_TUR, SEMUA_LANGKAH, babUntuk } from '../data/tur'
+import { BAB_TUR, babUntuk, daftarBab, langkahBab, semuaLangkah } from '../data/tur'
+import { useSesi } from './sesi'
 
 // Status tur interaktif. Daftar langkah disimpan di store supaya tur bisa
 // berpindah halaman tanpa kehilangan posisi.
@@ -9,10 +10,15 @@ export const useTour = defineStore('tour', () => {
   const indeks = ref(0)
   const langkah = ref([])
   const bab = ref(null)
+  const sesi = useSesi()
 
   const kini = computed(() => langkah.value[indeks.value] || null)
   const jumlah = computed(() => langkah.value.length)
   const terakhir = computed(() => indeks.value >= langkah.value.length - 1)
+  const babJudul = computed(() => {
+    const id = kini.value?.bab || bab.value
+    return BAB_TUR.find((b) => b.id === id)?.judul || ''
+  })
 
   function jalankan(daftar, idBab) {
     if (!daftar.length) return false
@@ -24,7 +30,7 @@ export const useTour = defineStore('tour', () => {
   }
 
   function mulaiSemua() {
-    return jalankan(SEMUA_LANGKAH, 'semua')
+    return jalankan(semuaLangkah(sesi.peran), 'semua')
   }
 
   // Tombol Tur di topbar: tur lengkap dari awal.
@@ -35,24 +41,22 @@ export const useTour = defineStore('tour', () => {
   function mulaiBab(id) {
     const b = BAB_TUR.find((x) => x.id === id)
     if (!b) return false
-    return jalankan(
-      b.langkah.map((l) => ({ ...l, rute: l.rute || b.rute, bab: b.id })),
-      b.id,
-    )
+    const daftar = langkahBab(b, sesi.peran)
+    if (!daftar.length) return false
+    return jalankan(daftar, b.id)
   }
 
   // Tombol bantuan: jelaskan halaman yang sedang dibuka.
   function mulaiHalaman(path) {
-    const b = babUntuk(path)
+    const b = babUntuk(path, sesi.peran)
     if (!b) return false
-    return jalankan(
-      b.langkah.map((l) => ({ ...l, rute: l.rute || b.rute, bab: b.id })),
-      b.id,
-    )
+    const daftar = langkahBab(b, sesi.peran)
+    if (!daftar.length) return false
+    return jalankan(daftar, b.id)
   }
 
   function adaBab(path) {
-    return !!babUntuk(path)
+    return !!babUntuk(path, sesi.peran)
   }
 
   function lanjut() {
@@ -70,6 +74,7 @@ export const useTour = defineStore('tour', () => {
   }
 
   return {
+    daftar: daftarBab,
     aktif,
     indeks,
     langkah,
@@ -77,6 +82,7 @@ export const useTour = defineStore('tour', () => {
     kini,
     jumlah,
     terakhir,
+    babJudul,
     mulaiSemua,
     mulaiKilat,
     mulaiBab,

@@ -42,6 +42,12 @@ Hanya ada dua peran sesuai spesifikasi: **Pemilik** (semua modul) dan **Kasir**
 (Pemilik), Siti dan Rina (Kasir). Masuk lewat halaman `/login` dengan memilih
 peran; setelah itu peran bisa diganti lewat dropdown nama di kanan atas.
 
+Di aplikasi asli, pemilik membuat akun kasir (nama, peran, PIN) dari
+Pengaturan. Paket dasar dibatasi 3 akun: 1 pemilik + 2 kasir. Akun awal saat
+serah terima adalah H. Ahmad, Siti, dan Rina; nama serta PIN bisa diganti
+pemilik, sedangkan kasir tidak bisa membuat akun. Demo ini tidak menyimpan akun
+baru dan cukup memilih peran.
+
 - Login hanya simulasi: tanpa kata sandi, status masuk disimpan di
   `sessionStorage` sehingga hilang saat tab ditutup. Tombol Keluar kembali ke
   `/login`.
@@ -67,16 +73,21 @@ peran; setelah itu peran bisa diganti lewat dropdown nama di kanan atas.
 
 ## Tur interaktif
 
-Tombol **Tur** menjalankan tur lengkap **15 bab / 79 langkah** dari menu sampai
-pilihan tampilan. Tombol tanda tanya di topbar hanya menjelaskan halaman yang
-sedang dibuka, dan Panduan punya daftar bab yang bisa dijalankan sendiri-sendiri.
+Tombol **Tur** menjalankan tur lengkap dari menu sampai pilihan tampilan:
+**15 bab / 79 langkah untuk pemilik**, dan **8 bab / 43 langkah untuk kasir**.
+Bab milik pemilik (Dashboard, Stok Masuk, Kedaluwarsa, Opname, Laporan, Jejak,
+Pengaturan) otomatis dilewati untuk kasir, jadi tur tidak pernah membuka halaman
+yang bukan haknya. Tombol tanda tanya di topbar menjelaskan halaman yang sedang
+dibuka (di layar kecil tombol ini disembunyikan; daftar bab ada di Panduan), dan
+Panduan punya daftar bab yang bisa dijalankan sendiri-sendiri.
 Navigasi lewat Lanjut/Kembali/Lewati, panah kiri-kanan, atau Esc. Tur berpindah
 halaman sendiri, menyorot elemen terkait, dan menghormati
-`prefers-reduced-motion`. Bila target tidak tersedia di layar kecil (mis. tombol
-khusus desktop), kartu tur tampil di tengah tanpa sorotan.
+`prefers-reduced-motion`. Di HP kartu tur menjadi panel bawah yang lebar agar
+mudah dijangkau; bila target tidak tersedia di layar kecil (mis. tombol khusus
+desktop), kartu tampil tanpa sorotan.
 
 Tur juga berjalan otomatis sekali per tab saat demo pertama dibuka, tetapi hanya
-bab pengantar (8 langkah), bukan seluruh 79 langkah. Bisa dimatikan dari Panduan;
+bab pengantar (6 langkah untuk kasir, 8 untuk pemilik), bukan seluruh tur. Bisa dimatikan dari Panduan;
 tombol Tur tetap tersedia. Tur otomatis tidak muncul di halaman invoice publik.
 
 ## Label add-on
@@ -146,7 +157,8 @@ src/
   karakter + Enter langsung menambah barang.
 - Posting opname memakai PIN pemilik demo `1234`; setiap selisih wajib beralasan.
 - Tombol Cetak menyalin struk ke `#cetak-root` lalu memanggil `window.print()`,
-  sehingga hanya struk yang tercetak (satu halaman). Salinan itu disembunyikan
+  sehingga hanya struk yang tercetak. Struk panjang tercetak bersambung di
+  kertas thermal dan baris barang tidak dipotong di tengah halaman. Salinan itu disembunyikan
   di layar dan hanya muncul saat media print. Ukuran kertas mengikuti driver
   printer (disarankan printer thermal 58/80 mm diset sebagai default).
 

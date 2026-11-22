@@ -91,7 +91,21 @@
       <div v-if="!l.void.daftar.length" class="px-4 py-3 text-xs text-ink-soft">
         Tidak ada transaksi void hari ini.
       </div>
-      <div v-else class="overflow-x-auto">
+      <div v-else>
+        <div class="divide-y divide-line sm:hidden">
+        <div v-for="v in l.void.daftar" :key="v.nomor" class="px-4 py-3">
+          <div class="flex items-baseline justify-between gap-3">
+            <RouterLink :to="`/invoice/${v.nomor}`" class="min-w-0 truncate font-mono text-xs text-accent-2">
+              {{ v.nomor }}
+            </RouterLink>
+            <span class="shrink-0 text-sm font-semibold tnum">{{ rupiah(v.total) }}</span>
+          </div>
+          <div class="mt-1 text-2xs text-ink-soft">{{ v.jam }} · {{ v.kasir }}</div>
+          <div class="mt-1.5 text-xs text-ink">{{ v.alasan || '—' }}</div>
+          <span v-if="v.tinjau" class="status mt-2 text-warn">Perlu tinjauan</span>
+        </div>
+        </div>
+        <div class="hidden overflow-x-auto sm:block">
         <table class="tbl">
           <thead>
             <tr>
@@ -121,6 +135,7 @@
             </tr>
           </tbody>
         </table>
+        </div>
       </div>
     </section>
 

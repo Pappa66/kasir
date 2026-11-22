@@ -115,8 +115,20 @@
               </tbody>
             </table>
           </div>
-          <div class="border-t border-line px-4 py-2.5 text-xs text-ink-soft">
-            Tambah pengguna dan atur PIN pemilik tersedia di aplikasi asli.
+          <div class="border-t border-line bg-surface px-4 py-3 text-2xs leading-relaxed text-ink-soft">
+            <p class="font-medium text-ink">Akun di aplikasi asli</p>
+            <ul class="mt-1.5 list-disc space-y-1 pl-4">
+              <li>
+                Pemilik membuat akun kasir dari halaman ini: nama, peran, dan PIN. Batas paket
+                dasar 3 akun (1 pemilik + 2 kasir).
+              </li>
+              <li>
+                Akun awal saat serah terima: <span class="text-ink">H. Ahmad</span> (pemilik),
+                <span class="text-ink">Siti</span> dan <span class="text-ink">Rina</span> (kasir).
+                Nama dan PIN bisa diganti pemilik; kasir tidak bisa membuat akun.
+              </li>
+              <li>Demo ini tidak menyimpan akun baru; masuk cukup memilih peran.</li>
+            </ul>
           </div>
         </section>
 

@@ -1,13 +1,13 @@
 // Isi tur interaktif. Satu bab = satu halaman/topik.
 // target: selector CSS yang disorot. rute: halaman yang dibuka dulu.
 const s = (target, judul, isi, posisi = 'bawah') => ({ target, judul, isi, posisi })
+const sP = (...a) => ({ ...s(...a), peran: ['pemilik'] })
 
 export const BAB_TUR = [
   {
     id: 'mulai',
     judul: 'Mulai & peran',
     ket: 'Menu, peran, tema, dan tombol bantuan.',
-    rute: '/dashboard',
     langkah: [
       s('[data-tour="menu"]', 'Satu aplikasi, semua pekerjaan', 'Menu di kiri adalah peta aplikasi. Pemilik melihat semua modul; kasir hanya melihat Kasir, Produk, Invoice, Piutang, Panduan, dan Pilihan tampilan.'),
       s('[data-tour="lencana"]', 'Angka yang perlu dilihat hari ini', 'Lencana di menu menunjukkan bon berjalan dan batch yang mendekati kedaluwarsa. Angka ikut berubah setelah transaksi atau pelunasan.'),
@@ -15,8 +15,8 @@ export const BAB_TUR = [
       s('[data-tour="tema"]', 'Tiga arah tampilan', 'Tombol palet mengganti tampilan antara Kasir, Brutal, dan Elegan. Ini alat demo untuk memilih arah desain; data dan alur tidak berubah.'),
       s('[data-tour="bantuan"]', 'Bantuan per halaman', 'Tombol tanda tanya menjelaskan halaman yang sedang dibuka. Cocok saat staf baru bertanya “ini untuk apa?”.'),
       s('[data-tour="tur"]', 'Tur lengkap 15 bab', 'Tombol Tur memandu seluruh aplikasi dari awal. Tur bisa dihentikan kapan saja dengan Esc atau tombol Lewati.'),
-      s('main h2', 'Dashboard pemilik', 'Halaman pertama setelah masuk adalah ringkasan hari ini: omzet, transaksi, rata-rata, dan item terjual.'),
-      s('[data-tour="dash-kpi"]', 'Empat angka utama', 'Angka dihitung dari transaksi sah hari ini. Transaksi void tidak ikut omzet, tetapi jumlahnya tetap terlihat.'),
+      { ...sP('main h2', 'Dashboard pemilik', 'Halaman pertama setelah masuk adalah ringkasan hari ini: omzet, transaksi, rata-rata, dan item terjual.'), rute: '/dashboard' },
+      { ...sP('[data-tour="dash-kpi"]', 'Empat angka utama', 'Angka dihitung dari transaksi sah hari ini. Transaksi void tidak ikut omzet, tetapi jumlahnya tetap terlihat.'), rute: '/dashboard' },
     ],
   },
   {
@@ -24,6 +24,7 @@ export const BAB_TUR = [
     judul: 'Dashboard',
     ket: 'Ringkasan omzet, stok kritis, dan aktivitas.',
     rute: '/dashboard',
+    peran: ['pemilik'],
     langkah: [
       s('[data-tour="dash-kpi"]', 'Ringkasan hari ini', 'Omzet, jumlah transaksi, rata-rata per transaksi, dan item terjual. Semua memakai data contoh tanggal demo.'),
       s('[data-tour="dash-perhatian"]', 'Tiga hal yang perlu perhatian', 'Stok kritis, batch mendekati kedaluwarsa, dan bon berjalan. Klik kartu kedaluwarsa atau bon untuk langsung membuka halamannya.'),
@@ -68,6 +69,7 @@ export const BAB_TUR = [
     judul: 'Stok masuk',
     ket: 'Penerimaan barang dan batch kedaluwarsa.',
     rute: '/stok-masuk',
+    peran: ['pemilik'],
     langkah: [
       s('main h2', 'Penerimaan barang', 'Catat barang datang dari supplier. Setiap penerimaan menyimpan nomor dokumen, supplier, tanggal, dan daftar barang.'),
       s('[data-tour="stok-aksi"]', 'Tambah penerimaan', 'Klik untuk membuat dokumen baru. Tambahkan beberapa baris sekaligus, lalu simpan sebagai draf atau langsung terima.'),
@@ -118,6 +120,7 @@ export const BAB_TUR = [
     judul: 'Kedaluwarsa & FEFO',
     ket: 'Batch mendekati expired dan penarikan barang.',
     rute: '/kedaluwarsa',
+    peran: ['pemilik'],
     langkah: [
       s('[data-tour="exp-kpi"]', 'Ringkasan risiko', 'Jumlah batch yang sudah expired, yang mendekati 30 hari, nilai berisiko, dan total batch aktif.'),
       s('[data-tour="exp-fefo"]', 'Cara kerja FEFO', 'First Expired First Out: saat menjual, batch dengan tanggal expired terdekat dipotong lebih dulu. Ini mengurangi barang rusak.'),
@@ -130,6 +133,7 @@ export const BAB_TUR = [
     judul: 'Stock opname',
     ket: 'Hitung fisik dan posting selisih.',
     rute: '/opname',
+    peran: ['pemilik'],
     langkah: [
       s('main h2', 'Sesi opname', 'Opname membandingkan stok sistem dengan hitungan fisik. Selisih wajib diberi alasan sebelum diposting.'),
       s('[data-tour="opname-aksi"]', 'Mulai sesi baru', 'Sesi baru menyalin stok sistem sebagai titik awal. Petugas lalu mengisi hasil hitung per produk.'),
@@ -142,6 +146,7 @@ export const BAB_TUR = [
     judul: 'Laporan',
     ket: 'Omzet, laba, produk, stok, dan void.',
     rute: '/laporan',
+    peran: ['pemilik'],
     langkah: [
       s('[data-tour="lap-kpi"]', 'Angka penjualan', 'Omzet, transaksi, item, dan rata-rata. Tab Stok mengganti isi dengan nilai persediaan dan potensi margin.'),
       s('[data-tour="lap-void"]', 'Void hari ini', 'Daftar transaksi yang dibatalkan beserta alasan dan penandaan perlu tinjauan. Void di atas Rp 100.000 muncul di sini.'),
@@ -157,6 +162,7 @@ export const BAB_TUR = [
     judul: 'Jejak aktivitas',
     ket: 'Siapa melakukan apa, kapan, dan alasannya.',
     rute: '/jejak',
+    peran: ['pemilik'],
     langkah: [
       s('main h2', 'Jejak yang tidak bisa dihapus', 'Hanya pemilik yang bisa membuka halaman ini. Catatan dibuat otomatis saat void, ubah harga, opname, dan pembayaran bon.'),
       s('[data-tour="jejak-filter"]', 'Filter dan pencarian', 'Saring berdasarkan jenis aksi atau pengguna, lalu cari nomor invoice, objek, atau alasan.'),
@@ -169,6 +175,7 @@ export const BAB_TUR = [
     judul: 'Pengaturan',
     ket: 'Identitas toko, struk, pengguna, kategori, satuan.',
     rute: '/pengaturan',
+    peran: ['pemilik'],
     langkah: [
       s('[data-tour="set-identitas"]', 'Identitas toko', 'Nama, alamat, telepon, dan pajak. Nama dan alamat tercetak di struk; pajak memengaruhi total transaksi.'),
       s('[data-tour="set-struk"]', 'Struk dan printer', 'Pilih 58 atau 80 mm sesuai printer thermal. Tes cetak memakai struk contoh tanpa menyimpan transaksi.'),
@@ -205,14 +212,32 @@ export const BAB_TUR = [
   },
 ]
 
-export const SEMUA_LANGKAH = BAB_TUR.flatMap((bab) =>
-  bab.langkah.map((l) => ({ ...l, rute: l.rute || bab.rute, bab: bab.id })),
-)
+const SEMUA_PERAN = ['pemilik', 'kasir']
 
-export function babUntuk(path) {
+export function daftarBab(peran = 'pemilik') {
+  return BAB_TUR.filter((b) => (b.peran || SEMUA_PERAN).includes(peran))
+}
+
+export function langkahBab(bab, peran = 'pemilik') {
+  const boleh = !bab.peran || bab.peran.includes(peran)
+  if (!boleh) return []
+  return bab.langkah
+    .filter((l) => !l.peran || l.peran.includes(peran))
+    .map((l) => ({ ...l, rute: l.rute || bab.rute || null, bab: bab.id }))
+}
+
+export function semuaLangkah(peran = 'pemilik') {
+  return daftarBab(peran).flatMap((b) => langkahBab(b, peran))
+}
+
+export function babUntuk(path, peran = 'pemilik') {
+  const daftar = daftarBab(peran)
   return (
-    BAB_TUR.find((b) => b.cocok && b.cocok.some((c) => path.startsWith(c))) ||
-    BAB_TUR.find((b) => b.rute === path) ||
+    daftar.find((b) => b.cocok && b.cocok.some((c) => path.startsWith(c))) ||
+    daftar.find((b) => b.rute === path) ||
     null
   )
 }
+
+// Daftar lengkap untuk pemilik; dipakai skrip pemeriksa.
+export const SEMUA_LANGKAH = semuaLangkah('pemilik')
