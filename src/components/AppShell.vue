@@ -131,9 +131,9 @@
           </div>
 
           <button
-            v-if="!tour.aktif && tour.adaBab(route.path)"
+            v-if="tour.adaBab(route.path)"
             type="button"
-            class="btn btn-sm hidden h-8 sm:flex"
+            class="btn btn-sm flex h-8"
             title="Jelaskan halaman ini"
             aria-label="Jelaskan halaman ini"
             data-tour="bantuan"
@@ -143,7 +143,6 @@
           </button>
 
           <button
-            v-if="!tour.aktif"
             type="button"
             class="btn btn-sm h-8"
             title="Mulai tur interaktif"

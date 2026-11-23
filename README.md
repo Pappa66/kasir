@@ -78,8 +78,10 @@ Tombol **Tur** menjalankan tur lengkap dari menu sampai pilihan tampilan:
 Bab milik pemilik (Dashboard, Stok Masuk, Kedaluwarsa, Opname, Laporan, Jejak,
 Pengaturan) otomatis dilewati untuk kasir, jadi tur tidak pernah membuka halaman
 yang bukan haknya. Tombol tanda tanya di topbar menjelaskan halaman yang sedang
-dibuka (di layar kecil tombol ini disembunyikan; daftar bab ada di Panduan), dan
-Panduan punya daftar bab yang bisa dijalankan sendiri-sendiri.
+dibuka (di layar kecil ikut tampil sebagai ikon), dan Panduan punya daftar bab
+yang bisa dijalankan sendiri-sendiri. Tombol Tur dan tanda tanya tetap terlihat
+saat tur berjalan agar langkah pengantarnya menunjuk tombol yang nyata; klik
+baru aktif lagi setelah tur ditutup.
 Navigasi lewat Lanjut/Kembali/Lewati, panah kiri-kanan, atau Esc. Tur berpindah
 halaman sendiri, menyorot elemen terkait, dan menghormati
 `prefers-reduced-motion`. Di HP kartu tur menjadi panel bawah yang lebar agar
