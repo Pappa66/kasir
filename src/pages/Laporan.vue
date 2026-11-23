@@ -2,8 +2,8 @@
   <div class="space-y-4">
     <div class="flex flex-wrap items-end justify-between gap-3">
       <div>
-        <h2 class="text-lg font-semibold text-ink">Penjualan &amp; stok</h2>
-        <p class="mt-0.5 text-xs text-ink-soft">{{ tanggalPanjang(HARI_INI) }} · data contoh</p>
+        <h2 class="text-lg font-semibold text-ink">Laporan penjualan</h2>
+        <p class="mt-0.5 text-xs text-ink-soft">{{ l.label }} · data contoh</p>
       </div>
       <div class="flex flex-wrap gap-2" data-no-print data-tour="lap-aksi">
         <button type="button" class="btn" @click="ekspor">
@@ -19,31 +19,79 @@
       </div>
     </div>
 
+    <div class="panel flex flex-col gap-2 px-3 py-2.5 sm:flex-row sm:items-center" data-no-print data-tour="lap-periode">
+      <div class="grid grid-cols-3 rounded border border-line p-0.5 sm:inline-flex" role="group" aria-label="Pilih periode laporan">
+        <button
+          v-for="p in periode"
+          :key="p.id"
+          type="button"
+          class="rounded px-3 py-1 text-xs transition-colors"
+          :class="mode === p.id ? 'bg-accent text-white' : 'text-ink-soft hover:bg-surface'"
+          :aria-pressed="mode === p.id"
+          @click="gantiMode(p.id)"
+        >
+          {{ p.label }}
+        </button>
+      </div>
+      <div class="flex min-w-0 items-center gap-2 sm:ml-auto">
+        <button
+          type="button"
+          class="btn btn-sm h-8 w-8 shrink-0 justify-center !px-0"
+          title="Periode sebelumnya"
+          aria-label="Periode sebelumnya"
+          @click="mundur"
+        >
+          <ChevronLeft :size="14" :stroke-width="1.8" />
+        </button>
+        <span class="min-w-0 flex-1 truncate text-center text-xs font-medium text-ink sm:min-w-[176px]">
+          {{ l.label }}
+        </span>
+        <button
+          type="button"
+          class="btn btn-sm h-8 w-8 shrink-0 justify-center !px-0 disabled:opacity-40"
+          title="Periode berikutnya"
+          aria-label="Periode berikutnya"
+          :disabled="!bisaMaju"
+          @click="maju"
+        >
+          <ChevronRight :size="14" :stroke-width="1.8" />
+        </button>
+      </div>
+      <button
+        v-if="!diHariIni"
+        type="button"
+        class="btn btn-sm h-8 w-full sm:w-auto"
+        @click="keHariIni"
+      >
+        Hari ini
+      </button>
+    </div>
+
     <div class="panel grid grid-cols-2 gap-px overflow-hidden bg-line lg:grid-cols-3" data-tour="lap-kpi">
-      <div class="min-w-0 bg-paper p-4">
+      <div class="min-w-0 bg-paper p-3 sm:p-4">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Omzet</div>
-        <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
+        <div class="mt-1.5 break-words text-base font-semibold tnum sm:text-2xl">
           {{ rupiah(l.omzet) }}
         </div>
         <div class="mt-0.5 text-xs text-ink-soft">
-          {{ l.transaksi }} transaksi · rata-rata {{ rupiah(Math.round(l.omzet / l.transaksi)) }}
+          {{ l.transaksi }} transaksi · rata-rata {{ l.transaksi ? rupiah(l.rataRata) : '—' }}
         </div>
       </div>
-      <div class="min-w-0 bg-paper p-4">
+      <div class="min-w-0 bg-paper p-3 sm:p-4">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">HPP</div>
-        <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
+        <div class="mt-1.5 break-words text-base font-semibold tnum sm:text-2xl">
           {{ rupiah(l.hpp) }}
         </div>
         <div class="mt-0.5 text-xs text-ink-soft">modal barang terjual</div>
       </div>
-      <div class="min-w-0 bg-paper p-4">
+      <div class="min-w-0 bg-paper p-3 sm:p-4">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Laba kotor</div>
-        <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
+        <div class="mt-1.5 break-words text-base font-semibold tnum sm:text-2xl">
           {{ rupiah(l.labaKotor) }}
         </div>
         <div class="mt-0.5 text-xs text-ink-soft">{{ persenMargin }}% dari omzet</div>
       </div>
-      <div class="min-w-0 bg-paper p-4">
+      <div class="min-w-0 bg-paper p-3 sm:p-4">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Biaya operasional</div>
         <div class="relative mt-1.5">
           <span class="absolute left-0 top-1/2 -translate-y-1/2 text-sm text-ink-soft">Rp</span>
@@ -58,38 +106,50 @@
         </div>
         <div class="mt-0.5 text-xs text-ink-soft">isi manual · demo</div>
       </div>
-      <div class="min-w-0 bg-paper p-4">
+      <div class="min-w-0 bg-paper p-3 sm:p-4">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Laba bersih</div>
         <div
-          class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl"
+          class="mt-1.5 break-words text-base font-semibold tnum sm:text-2xl"
           :class="labaBersih >= 0 ? 'text-ok' : 'text-bad'"
         >
           {{ rupiah(labaBersih) }}
         </div>
         <div class="mt-0.5 text-xs text-ink-soft">laba kotor − biaya</div>
       </div>
-      <div class="min-w-0 bg-paper p-4">
+      <div class="min-w-0 bg-paper p-3 sm:p-4">
         <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Item terjual</div>
-        <div class="mt-1.5 text-lg font-semibold tnum sm:text-2xl">{{ angka(l.item) }}</div>
+        <div class="mt-1.5 text-base font-semibold tnum sm:text-2xl">{{ angka(l.item) }}</div>
         <div class="mt-0.5 text-xs text-ink-soft">unit, karung, dan kg</div>
       </div>
     </div>
 
     <p class="text-xs leading-relaxed text-ink-soft" data-no-print>
       Laba kotor = omzet − HPP. Laba bersih = laba kotor − biaya operasional. Biaya operasional
-      diisi manual di demo ini; di aplikasi final bisa dicatat per periode.
+      diisi manual untuk periode yang sedang dibuka; di aplikasi final bisa dicatat per periode.
     </p>
 
+    <div class="panel flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2.5 text-2xs" data-no-print>
+      <span class="text-ink-soft">Dibanding {{ l.labelSebelum }}:</span>
+      <span v-for="b in banding" :key="b.label" class="text-ink-soft">
+        {{ b.label }}
+        <span
+          class="font-semibold tnum"
+          :class="b.nilai === null ? 'text-ink-soft' : b.nilai >= 0 ? 'text-ok' : 'text-bad'"
+        >{{ b.teks }}</span>
+      </span>
+      <span v-if="!l.transaksi" class="text-ink-soft">Belum ada transaksi pada periode ini.</span>
+    </div>
+
     <section class="panel" data-tour="lap-void">
-      <div class="panel-h">
-        <span class="panel-title">Void hari ini</span>
+      <div class="panel-h !h-auto flex-col items-start gap-0.5 px-4 py-2.5 sm:h-11 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:py-0">
+        <span class="panel-title">Void periode ini</span>
         <span class="text-xs" :class="l.void.jumlah ? 'text-bad' : 'text-ink-soft'">
           {{ l.void.jumlah }} transaksi · {{ rupiah(l.void.nilai) }}
           <template v-if="l.void.tinjau"> · {{ l.void.tinjau }} perlu tinjauan</template>
         </span>
       </div>
       <div v-if="!l.void.daftar.length" class="px-4 py-3 text-xs text-ink-soft">
-        Tidak ada transaksi void hari ini.
+        Tidak ada transaksi void pada periode ini.
       </div>
       <div v-else>
         <div class="divide-y divide-line sm:hidden">
@@ -100,7 +160,9 @@
             </RouterLink>
             <span class="shrink-0 text-sm font-semibold tnum">{{ rupiah(v.total) }}</span>
           </div>
-          <div class="mt-1 text-2xs text-ink-soft">{{ v.jam }} · {{ v.kasir }}</div>
+          <div class="mt-1 text-2xs text-ink-soft">
+            <template v-if="mode !== 'harian'">{{ tanggalPendek(v.tanggal) }} · </template>{{ v.jam }} · {{ v.kasir }}
+          </div>
           <div class="mt-1.5 text-xs text-ink">{{ v.alasan || '—' }}</div>
           <span v-if="v.tinjau" class="status mt-2 text-warn">Perlu tinjauan</span>
         </div>
@@ -110,6 +172,7 @@
           <thead>
             <tr>
               <th class="w-16">Jam</th>
+              <th v-if="mode !== 'harian'" class="w-24">Tanggal</th>
               <th>Invoice</th>
               <th>Kasir</th>
               <th class="num w-28">Nilai</th>
@@ -120,6 +183,7 @@
           <tbody>
             <tr v-for="v in l.void.daftar" :key="v.nomor">
               <td class="font-mono text-xs">{{ v.jam }}</td>
+              <td v-if="mode !== 'harian'" class="text-xs text-ink-soft">{{ tanggalPendek(v.tanggal) }}</td>
               <td>
                 <RouterLink :to="`/invoice/${v.nomor}`" class="font-mono text-xs text-accent-2">
                   {{ v.nomor }}
@@ -162,42 +226,53 @@
       <div class="panel min-w-0 lg:col-span-2" data-tour="lap-jam">
         <div class="panel-h">
           <div class="flex min-w-0 items-baseline gap-2">
-            <span class="panel-title">Penjualan per jam</span>
-            <span class="text-xs text-ink-soft">klik baris untuk rincian</span>
+            <span class="panel-title">{{ judulRekap }}</span>
+            <span class="hidden text-xs text-ink-soft sm:inline">klik baris untuk rincian</span>
           </div>
           <ChevronRight :size="15" :stroke-width="1.6" class="shrink-0 text-[#9aa8a5]" />
         </div>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" :class="mode === 'bulanan' ? 'max-h-[430px] overflow-y-auto' : ''">
           <table class="tbl">
             <thead>
               <tr>
-                <th class="w-16">Jam</th>
-                <th class="num w-24">Transaksi</th>
+                <th :class="mode === 'harian' ? 'w-12 sm:w-16' : 'w-16 sm:w-24'">{{ mode === 'harian' ? 'Jam' : 'Hari' }}</th>
+                <th class="num hidden w-14 sm:table-cell sm:w-24">Transaksi</th>
                 <th class="num hidden w-20 sm:table-cell">Item</th>
-                <th class="num w-32">Omzet</th>
+                <th class="num w-24 sm:w-32">Omzet</th>
                 <th class="hidden w-32 md:table-cell"></th>
-                <th class="w-8"></th>
+                <th class="w-6 sm:w-8"></th>
               </tr>
             </thead>
             <tbody>
               <tr
-                v-for="r in l.perJam"
-                :key="r.jam"
+                v-for="r in l.rekap"
+                :key="r.jenis === 'jam' ? r.jam : r.tanggal"
                 class="cursor-pointer transition-colors hover:bg-surface"
                 tabindex="0"
                 role="button"
-                :aria-label="`Lihat rincian jam ${r.jam}`"
-                @click="bukaRincian(r.jam)"
-                @keydown.enter.prevent="bukaRincian(r.jam)"
-                @keydown.space.prevent="bukaRincian(r.jam)"
+                :aria-label="mode === 'harian' ? `Lihat rincian jam ${r.jam}` : `Lihat rincian ${r.label}`"
+                @click="bukaRincian(r)"
+                @keydown.enter.prevent="bukaRincian(r)"
+                @keydown.space.prevent="bukaRincian(r)"
               >
-                <td class="tnum font-medium text-accent-2">{{ r.jam }}</td>
-                <td class="num text-ink-soft">{{ r.transaksi }}</td>
+                <td class="tnum font-medium text-accent-2">
+                  <template v-if="mode === 'harian'">
+                    <div>{{ r.jam }}</div>
+                    <div class="text-2xs font-normal text-ink-soft sm:hidden">{{ r.transaksi }} trx</div>
+                  </template>
+                  <template v-else>
+                    <div>{{ r.label }}</div>
+                    <div class="text-2xs font-normal text-ink-soft">
+                      {{ r.sublabel }}<span class="sm:hidden"> · {{ r.transaksi }} trx</span>
+                    </div>
+                  </template>
+                </td>
+                <td class="num hidden text-ink-soft sm:table-cell">{{ r.transaksi }}</td>
                 <td class="num hidden text-ink-soft sm:table-cell">{{ qty(r.item) }}</td>
                 <td class="num font-medium">{{ rupiah(r.total) }}</td>
                 <td class="hidden md:table-cell">
                   <div class="h-1.5 w-full overflow-hidden rounded-full bg-[#e8edeb]">
-                    <div class="h-full bg-accent-2" :style="{ width: (r.total / maksJam) * 100 + '%' }" />
+                    <div class="h-full bg-accent-2" :style="{ width: (r.total / maksRekap) * 100 + '%' }" />
                   </div>
                 </td>
                 <td class="text-right text-[#9aa8a5]">
@@ -207,8 +282,11 @@
             </tbody>
           </table>
         </div>
+        <div v-if="!l.rekap.length" class="px-4 py-3 text-xs text-ink-soft">
+          Tidak ada transaksi selesai pada periode ini.
+        </div>
         <div class="border-t border-line bg-surface px-4 py-2 text-2xs text-ink-soft" data-no-print>
-          Klik jam mana pun untuk melihat transaksi dan item di jam tersebut.
+          Klik baris untuk melihat transaksi dan item pada {{ mode === 'harian' ? 'jam' : 'hari' }} tersebut.
         </div>
       </div>
 
@@ -217,13 +295,14 @@
           <span class="panel-title">Per kasir</span>
         </div>
         <div class="p-4">
+          <p v-if="!l.perKasir.length" class="text-xs text-ink-soft">Belum ada transaksi pada periode ini.</p>
           <div v-for="k in l.perKasir" :key="k.kasir" class="mb-3 last:mb-0">
             <div class="flex items-baseline justify-between text-sm">
               <span>{{ k.kasir }}</span>
               <span class="tnum font-medium">{{ rupiah(k.total) }}</span>
             </div>
             <div class="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-[#e8edeb]">
-              <div class="h-full bg-accent-2" :style="{ width: (k.total / l.omzet) * 100 + '%' }" />
+              <div class="h-full bg-accent-2" :style="{ width: (l.omzet ? (k.total / l.omzet) * 100 : 0) + '%' }" />
             </div>
             <div class="mt-1 text-2xs text-ink-soft">{{ k.transaksi }} transaksi</div>
           </div>
@@ -245,13 +324,14 @@
 
           <div class="mt-4 border-t border-line pt-3">
             <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Kategori</div>
+            <p v-if="!l.perKategori.length" class="mt-2 text-xs text-ink-soft">Belum ada penjualan.</p>
             <div v-for="k in l.perKategori" :key="k.kategori" class="mt-2">
               <div class="flex items-baseline justify-between text-xs">
                 <span class="truncate text-ink">{{ k.kategori }}</span>
                 <span class="tnum text-ink-soft">{{ rupiah(k.nilai) }}</span>
               </div>
               <div class="mt-1 h-1 w-full overflow-hidden rounded-full bg-[#e8edeb]">
-                <div class="h-full bg-accent-2" :style="{ width: (k.nilai / l.perKategori[0].nilai) * 100 + '%' }" />
+                <div class="h-full bg-accent-2" :style="{ width: (l.perKategori[0]?.nilai ? (k.nilai / l.perKategori[0].nilai) * 100 : 0) + '%' }" />
               </div>
             </div>
           </div>
@@ -263,26 +343,26 @@
       <div class="panel grid grid-cols-2 overflow-hidden lg:grid-cols-4">
         <div class="border-b border-r border-line p-4 lg:border-b-0">
           <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Jumlah SKU</div>
-          <div class="mt-1.5 text-lg font-semibold tnum sm:text-2xl">{{ l.jumlahSku }}</div>
+          <div class="mt-1.5 text-base font-semibold tnum sm:text-2xl">{{ l.jumlahSku }}</div>
           <div class="mt-0.5 text-xs text-ink-soft">produk aktif</div>
         </div>
         <div class="border-b border-line p-4 lg:border-b-0 lg:border-r">
           <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Nilai stok (beli)</div>
-          <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
+          <div class="mt-1.5 break-words text-base font-semibold tnum sm:text-2xl">
             {{ rupiah(l.nilaiStokBeli) }}
           </div>
           <div class="mt-0.5 text-xs text-ink-soft">modal tertahan</div>
         </div>
         <div class="border-b border-r border-line p-4 lg:border-b-0">
           <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Nilai stok (jual)</div>
-          <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
+          <div class="mt-1.5 break-words text-base font-semibold tnum sm:text-2xl">
             {{ rupiah(l.nilaiStokJual) }}
           </div>
           <div class="mt-0.5 text-xs text-ink-soft">potensi omzet</div>
         </div>
         <div class="border-b border-line p-4 lg:border-b-0">
           <div class="text-2xs uppercase tracking-[0.04em] text-ink-soft">Potensi margin</div>
-          <div class="mt-1.5 whitespace-nowrap text-lg font-semibold tnum sm:text-2xl">
+          <div class="mt-1.5 break-words text-base font-semibold tnum sm:text-2xl">
             {{ rupiah(l.nilaiStokJual - l.nilaiStokBeli) }}
           </div>
           <div class="mt-0.5 text-xs text-ink-soft">selisih jual − beli</div>
@@ -352,6 +432,9 @@
             </tr>
           </thead>
           <tbody>
+            <tr v-if="!l.terlaris.length">
+              <td colspan="5" class="px-4 py-4 text-xs text-ink-soft">Belum ada penjualan pada periode ini.</td>
+            </tr>
             <tr v-for="(p, i) in l.terlaris" :key="p.produk_id">
               <td class="text-ink-soft tnum">{{ i + 1 }}</td>
               <td class="truncate font-medium">{{ p.nama }}</td>
@@ -359,7 +442,7 @@
               <td class="num font-medium">{{ rupiah(p.nilai) }}</td>
               <td class="hidden md:table-cell">
                 <div class="h-1.5 w-full overflow-hidden rounded-full bg-[#e8edeb]">
-                  <div class="h-full bg-accent-2" :style="{ width: (p.nilai / l.terlaris[0].nilai) * 100 + '%' }" />
+                  <div class="h-full bg-accent-2" :style="{ width: (l.terlaris[0]?.nilai ? (p.nilai / l.terlaris[0].nilai) * 100 : 0) + '%' }" />
                 </div>
               </td>
             </tr>
@@ -368,15 +451,16 @@
       </div>
     </section>
 
-    <p class="text-xs text-ink-soft" data-no-print>
-      Laporan dihitung dari transaksi contoh 19/11/2026. Ekspor CSV dan cetak PDF tersedia sebagai
-      add-on; tombolnya bekerja penuh di demo ini.
+    <p class="text-xs leading-relaxed text-ink-soft" data-no-print>
+      Laporan {{ l.label }} dihitung dari transaksi contoh. Hari tanpa transaksi ditampilkan nol,
+      bukan disembunyikan. Ekspor CSV dan cetak PDF tersedia sebagai add-on; tombolnya bekerja
+      penuh di demo ini.
     </p>
 
     <Modal
       :open="!!rincian"
-      :title="rincian ? `Penjualan jam ${rincian.jam}` : 'Rincian jam'"
-      :subtitle="rincian ? `${rincian.transaksi} transaksi · ${qty(rincian.item)} item` : ''"
+      :title="rincian ? rincian.judul : 'Rincian penjualan'"
+      :subtitle="rincian ? `${rincian.subjudul} · ${qty(rincian.item)} item` : ''"
       lebar="max-w-3xl"
       @close="rincian = null"
     >
@@ -397,7 +481,7 @@
         </div>
 
         <div v-if="!rincian.daftar.length" class="rounded border border-line p-4 text-xs text-ink-soft">
-          Tidak ada transaksi selesai pada jam ini.
+          Tidak ada transaksi selesai pada periode ini.
         </div>
 
         <div v-for="t in rincian.daftar" :key="t.nomor" class="rounded border border-line">
@@ -410,7 +494,7 @@
                 {{ t.nomor }}
               </RouterLink>
               <div class="text-2xs text-ink-soft">
-                {{ t.jam }} · {{ t.kasir }}
+                {{ tanggalPendek(t.tanggal) }} · {{ t.jam }} · {{ t.kasir }}
                 <template v-if="t.pelanggan"> · {{ t.pelanggan }}</template>
                 <template v-if="t.metode === 'bon'"> · bon</template>
                 <template v-else-if="t.kanal === 'qris'"> · QRIS</template>
@@ -442,7 +526,7 @@
       </div>
 
       <template #footer>
-        <span class="text-2xs text-ink-soft">Data contoh 19/11/2026</span>
+        <span class="text-2xs text-ink-soft">{{ rincian ? rincian.keterangan : 'Data contoh' }}</span>
         <button type="button" class="btn" @click="rincian = null">Tutup</button>
       </template>
     </Modal>
@@ -451,31 +535,52 @@
 
 <script setup>
 import { computed, onBeforeUnmount, ref } from 'vue'
-import { ChevronRight, Download, Printer } from 'lucide-vue-next'
+import { ChevronLeft, ChevronRight, Download, Printer } from 'lucide-vue-next'
 import { RouterLink } from 'vue-router'
 import AddonTag from '../components/AddonTag.vue'
 import Modal from '../components/Modal.vue'
-import { getLaporan, getProduk, getRincianJam, HARI_INI } from '../data/adapter'
+import {
+  getLaporan,
+  getProduk,
+  getRincianHari,
+  getRincianJam,
+  geserTanggal,
+  HARI_INI,
+} from '../data/adapter'
 import { unduhCSV } from '../lib/ekspor'
-import { angka, qty, rupiah, tanggalPanjang, tanggalPendek } from '../lib/format'
+import { angka, qty, rupiah, tanggalPendek } from '../lib/format'
 import { useUi } from '../stores/ui'
 
 const ui = useUi()
-const l = getLaporan()
 const produk = getProduk()
 
+const mode = ref('harian')
+const tanggal = ref(HARI_INI)
 const tab = ref('penjualan')
 const hanyaKritis = ref(false)
 const rincian = ref(null)
+
+const periode = [
+  { id: 'harian', label: 'Harian' },
+  { id: 'mingguan', label: 'Mingguan' },
+  { id: 'bulanan', label: 'Bulanan' },
+]
+const labelMode = computed(() => periode.find((p) => p.id === mode.value)?.label || 'Harian')
+const l = computed(() => getLaporan(mode.value, tanggal.value))
+
+const bisaMaju = computed(() => l.value.selesai < HARI_INI)
+const diHariIni = computed(
+  () => l.value.mulai <= HARI_INI && l.value.selesai >= HARI_INI,
+)
 
 // Biaya operasional diisi manual di demo. Di aplikasi final, biaya dicatat
 // per periode dan laba bersih dihitung dari situ.
 const biaya = ref(0)
 const biayaTeks = computed(() => angka(biaya.value))
 const persenMargin = computed(() =>
-  l.omzet ? Math.round((l.labaKotor / l.omzet) * 100) : 0,
+  l.value.omzet ? Math.round((l.value.labaKotor / l.value.omzet) * 100) : 0,
 )
-const labaBersih = computed(() => l.labaKotor - biaya.value)
+const labaBersih = computed(() => l.value.labaKotor - biaya.value)
 
 const tabs = [
   { id: 'penjualan', label: 'Penjualan' },
@@ -483,12 +588,53 @@ const tabs = [
   { id: 'terlaris', label: 'Terlaris' },
 ]
 
-const maksJam = computed(() => Math.max(...l.perJam.map((r) => r.total), 1))
+const maksRekap = computed(() => Math.max(1, ...l.value.rekap.map((r) => r.total)))
+const judulRekap = computed(() =>
+  mode.value === 'harian' ? 'Penjualan per jam' : 'Rekap harian',
+)
 const stokTampil = computed(() =>
   produk.filter((p) => !hanyaKritis.value || p.stok <= p.stok_minimum),
 )
 const nilaiBeliTampil = computed(() => stokTampil.value.reduce((s, p) => s + p.stok * p.harga_beli, 0))
 const nilaiJualTampil = computed(() => stokTampil.value.reduce((s, p) => s + p.stok * p.harga_jual, 0))
+
+const delta = (kini, lalu, fmt = angka) => {
+  const a = Number(kini) || 0
+  const b = Number(lalu) || 0
+  if (!a && !b) return { nilai: null, teks: '—' }
+  if (!b) return { nilai: a, teks: `${fmt(a)} (baru)` }
+  const n = a - b
+  const teks = `${n > 0 ? '+' : n < 0 ? '−' : ''}${fmt(Math.abs(n))}`
+  return { nilai: n, teks }
+}
+const banding = computed(() => {
+  const b = l.value.sebelumnya
+  return [
+    { label: 'Omzet', ...delta(l.value.omzet, b.omzet, rupiah) },
+    { label: 'Laba kotor', ...delta(l.value.labaKotor, b.labaKotor, rupiah) },
+    { label: 'Transaksi', ...delta(l.value.transaksi, b.transaksi, angka) },
+  ]
+})
+
+function gantiMode(id) {
+  if (mode.value === id) return
+  mode.value = id
+  if (tanggal.value > HARI_INI) tanggal.value = HARI_INI
+  biaya.value = 0
+}
+function mundur() {
+  tanggal.value = geserTanggal(l.value.mulai, -1)
+  biaya.value = 0
+}
+function maju() {
+  if (!bisaMaju.value) return
+  tanggal.value = geserTanggal(l.value.selesai, 1)
+  biaya.value = 0
+}
+function keHariIni() {
+  tanggal.value = HARI_INI
+  biaya.value = 0
+}
 
 function ubahBiaya(e) {
   const n = Number(String(e.target.value).replace(/\D/g, '')) || 0
@@ -496,32 +642,66 @@ function ubahBiaya(e) {
   e.target.value = angka(n)
 }
 
-function bukaRincian(jam) {
-  rincian.value = getRincianJam(jam)
+function bukaRincian(r) {
+  rincian.value =
+    r.jenis === 'hari'
+      ? getRincianHari(r.tanggal)
+      : getRincianJam(r.kunci, mode.value, tanggal.value)
 }
 
 function ekspor() {
+  const lap = l.value
+  const daftarRincian = lap.rekap.flatMap((r) => {
+    const daftar =
+      r.jenis === 'hari'
+        ? getRincianHari(r.tanggal).daftar
+        : getRincianJam(r.kunci, mode.value, tanggal.value).daftar
+    return daftar.flatMap((t) =>
+      t.items.map((i) => [
+        t.tanggal,
+        t.nomor,
+        t.jam,
+        t.kasir,
+        t.metode === 'bon' ? 'Bon' : t.kanal === 'qris' ? 'QRIS toko' : 'Tunai',
+        i.nama,
+        i.qty,
+        i.harga,
+        i.subtotal ?? i.harga * i.qty,
+      ]),
+    )
+  })
+
   const baris = [
     ['Laporan Toko Putra Nusantara 18'],
-    ['Tanggal', tanggalPendek(HARI_INI)],
+    ['Jenis periode', labelMode.value],
+    ['Periode', lap.label],
+    ['Mulai', tanggalPendek(lap.mulai)],
+    ['Selesai', tanggalPendek(lap.selesai)],
     [],
     ['Ringkasan', 'Nilai'],
-    ['Omzet', l.omzet],
-    ['HPP', l.hpp],
-    ['Laba kotor', l.labaKotor],
+    ['Omzet', lap.omzet],
+    ['HPP', lap.hpp],
+    ['Laba kotor', lap.labaKotor],
     ['Margin kotor (%)', persenMargin.value],
     ['Biaya operasional', biaya.value],
     ['Laba bersih', labaBersih.value],
-    ['Transaksi', l.transaksi],
-    ['Item terjual', l.item],
-    ['Uang masuk tunai', l.uangMasuk.tunai],
-    ['Uang masuk QRIS toko', l.uangMasuk.qris],
-    ['Void hari ini', l.void.jumlah],
-    ['Nilai void', l.void.nilai],
+    ['Transaksi', lap.transaksi],
+    ['Item terjual', lap.item],
+    ['Rata-rata per transaksi', lap.rataRata],
+    ['Uang masuk tunai', lap.uangMasuk.tunai],
+    ['Uang masuk QRIS toko', lap.uangMasuk.qris],
+    ['Void periode ini', lap.void.jumlah],
+    ['Nilai void', lap.void.nilai],
     [],
-    ['Void', 'Jam', 'Kasir', 'Nilai', 'Alasan', 'Tinjau'],
-    ...l.void.daftar.map((v) => [
+    ['Pembanding', 'Nilai'],
+    ['Omzet periode sebelumnya', lap.sebelumnya.omzet],
+    ['Laba kotor periode sebelumnya', lap.sebelumnya.labaKotor],
+    ['Transaksi periode sebelumnya', lap.sebelumnya.transaksi],
+    [],
+    ['Void', 'Tanggal', 'Jam', 'Kasir', 'Nilai', 'Alasan', 'Tinjau'],
+    ...lap.void.daftar.map((v) => [
       v.nomor,
+      tanggalPendek(v.tanggal),
       v.jam,
       v.kasir,
       v.total,
@@ -529,34 +709,26 @@ function ekspor() {
       v.tinjau ? 'Perlu tinjauan' : '-',
     ]),
     [],
-    ['Penjualan per jam', 'Transaksi', 'Item', 'Omzet'],
-    ...l.perJam.map((r) => [r.jam, r.transaksi, r.item, r.total]),
+    ['Rekap', 'Tanggal', 'Transaksi', 'Item', 'Omzet'],
+    ...lap.rekap.map((r) => [
+      r.label,
+      r.jenis === 'hari' ? tanggalPendek(r.tanggal) : '',
+      r.transaksi,
+      r.item,
+      r.total,
+    ]),
     [],
-    ['Rincian item per jam', 'Invoice', 'Jam', 'Kasir', 'Kanal', 'Produk', 'Qty', 'Harga', 'Subtotal'],
-    ...l.perJam.flatMap((r) =>
-      getRincianJam(r.jam).daftar.flatMap((t) =>
-        t.items.map((i) => [
-          r.jam,
-          t.nomor,
-          t.jam,
-          t.kasir,
-          t.metode === 'bon' ? 'Bon' : t.kanal === 'qris' ? 'QRIS toko' : 'Tunai',
-          i.nama,
-          i.qty,
-          i.harga,
-          i.subtotal ?? i.harga * i.qty,
-        ]),
-      ),
-    ),
+    ['Rincian item', 'Tanggal', 'Invoice', 'Jam', 'Kasir', 'Kanal', 'Produk', 'Qty', 'Harga', 'Subtotal'],
+    ...daftarRincian,
     [],
     ['Per kasir', 'Transaksi', 'Omzet'],
-    ...l.perKasir.map((r) => [r.kasir, r.transaksi, r.total]),
+    ...lap.perKasir.map((r) => [r.kasir, r.transaksi, r.total]),
     [],
     ['Per kategori', 'Qty', 'Nilai'],
-    ...l.perKategori.map((r) => [r.kategori, r.qty, r.nilai]),
+    ...lap.perKategori.map((r) => [r.kategori, r.qty, r.nilai]),
     [],
     ['Produk terlaris', 'Qty', 'Nilai'],
-    ...l.terlaris.map((r) => [r.nama, r.qty, r.nilai]),
+    ...lap.terlaris.map((r) => [r.nama, r.qty, r.nilai]),
     [],
     ['Stok produk', 'Kategori', 'Stok', 'Satuan', 'Harga beli', 'Nilai beli', 'Nilai jual'],
     ...stokTampil.value.map((p) => [
@@ -572,8 +744,8 @@ function ekspor() {
     ['Total nilai beli', nilaiBeliTampil.value],
     ['Total nilai jual', nilaiJualTampil.value],
   ]
-  unduhCSV('laporan-20261119.csv', baris)
-  ui.kabari('Laporan diekspor ke CSV. Buka di Excel atau Sheets.', 'ok')
+  unduhCSV(`laporan-${mode.value}-${lap.mulai}_${lap.selesai}.csv`, baris)
+  ui.kabari(`Laporan ${lap.label} diekspor ke CSV. Buka di Excel atau Sheets.`, 'ok')
 }
 
 function cetakPDF() {
@@ -585,7 +757,7 @@ function cetakPDF() {
   window.addEventListener('afterprint', bersih)
   window.print()
   setTimeout(() => {
-    if (document.body.classList.contains('cetak-laporan')) bersih()
+    if ([...document.body.classList].includes('cetak-laporan')) bersih()
   }, 1500)
 }
 onBeforeUnmount(() => document.body.classList.remove('cetak-laporan'))

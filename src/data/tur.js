@@ -10,7 +10,7 @@ export const BAB_TUR = [
     ket: 'Menu, peran, tema, dan tombol bantuan.',
     langkah: [
       s('[data-tour="menu"]', 'Satu aplikasi, semua pekerjaan', 'Menu di kiri adalah peta aplikasi. Pemilik melihat semua modul; kasir hanya melihat Kasir, Produk, Invoice, Piutang, Panduan, dan Pilihan tampilan.'),
-      s('[data-tour="lencana"]', 'Angka yang perlu dilihat hari ini', 'Lencana di menu menunjukkan bon berjalan dan batch yang mendekati kedaluwarsa. Angka ikut berubah setelah transaksi atau pelunasan.'),
+      s('[data-tour="lencana"]', 'Label ADD-ON dan angkanya', 'Label ADD-ON menandai fitur tambahan di luar paket dasar. Angka di sampingnya adalah jumlah yang menunggu tindakan di modul itu: Piutang menghitung bon berjalan, Kedaluwarsa menghitung batch expired atau segera. Modul tanpa label add-on tidak memakai angka ini.'),
       s('[data-tour="peran"]', 'Ganti peran tanpa keluar', 'Klik nama pengguna di kanan atas untuk masuk sebagai Pemilik, Kasir Siti, atau Kasir Rina. Menu dan tombol langsung menyesuaikan.'),
       s('[data-tour="tema"]', 'Tiga arah tampilan', 'Tombol palet mengganti tampilan antara Kasir, Brutal, dan Elegan. Ini alat demo untuk memilih arah desain; data dan alur tidak berubah.'),
       s('[data-tour="bantuan"]', 'Bantuan per halaman', 'Tombol tanda tanya menjelaskan halaman yang sedang dibuka. Cocok saat staf baru bertanya “ini untuk apa?”.'),
@@ -148,10 +148,11 @@ export const BAB_TUR = [
     rute: '/laporan',
     peran: ['pemilik'],
     langkah: [
-      s('[data-tour="lap-kpi"]', 'Angka penjualan', 'Omzet, transaksi, item, dan rata-rata. Tab Stok mengganti isi dengan nilai persediaan dan potensi margin.'),
-      s('[data-tour="lap-void"]', 'Void hari ini', 'Daftar transaksi yang dibatalkan beserta alasan dan penandaan perlu tinjauan. Void di atas Rp 100.000 muncul di sini.'),
+      s('[data-tour="lap-periode"]', 'Harian, mingguan, dan bulanan', 'Pilih periode laporan, lalu pakai panah untuk membuka hari, minggu, atau bulan yang sudah lewat. Pembanding di bawah KPI menunjukkan naik atau turun terhadap periode sebelumnya; angka minus tetap ditampilkan.'),
+      s('[data-tour="lap-kpi"]', 'Angka penjualan', 'Omzet, transaksi, item, dan rata-rata untuk periode yang dipilih. Tab Stok mengganti isi dengan nilai persediaan dan potensi margin.'),
+      s('[data-tour="lap-void"]', 'Void periode ini', 'Daftar transaksi yang dibatalkan beserta tanggal, alasan, dan penandaan perlu tinjauan. Void di atas Rp 100.000 muncul di sini.'),
       s('[data-tour="lap-tab"]', 'Dua sudut pandang', 'Tab Penjualan untuk omzet dan laba; tab Stok untuk nilai persediaan. Filter hanya stok menipis ada di tab Stok.'),
-      s('[data-tour="lap-jam"]', 'Penjualan per jam', 'Klik satu baris jam untuk melihat transaksi dan item pada jam tersebut. Berguna mencari jam ramai dan jam sepi.'),
+      s('[data-tour="lap-jam"]', 'Rekap per jam atau per hari', 'Pada laporan harian, klik satu jam untuk melihat transaksi dan item. Pada mingguan atau bulanan, tabel berubah menjadi rekap harian dan setiap hari bisa dibuka. Hari tanpa transaksi tetap tampil nol.'),
       s('[data-tour="lap-kasir"]', 'Per kasir', 'Kontribusi omzet tiap kasir. Membantu melihat beban kerja, bukan untuk menilai kinerja secara otomatis.'),
       s('[data-tour="lap-tab"]', 'Produk terlaris dan kategori', 'Produk diurutkan dari omzet. Kategori menunjukkan ke mana uang pelanggan paling banyak pergi.'),
       s('[data-tour="lap-aksi"]', 'Ekspor CSV dan cetak PDF', 'CSV untuk diolah di Excel; cetak PDF untuk arsip atau rapat. Keduanya dibuat di browser, bukan dari server.'),

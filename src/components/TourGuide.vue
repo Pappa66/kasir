@@ -128,12 +128,14 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowRight, X } from 'lucide-vue-next'
+import { useSesi } from '../stores/sesi'
 import { useTour } from '../stores/tour'
 import { useUi } from '../stores/ui'
 
 
 const tour = useTour()
 const ui = useUi()
+const sesi = useSesi()
 const route = useRoute()
 const router = useRouter()
 
@@ -144,8 +146,15 @@ let timerAuto = null
 const kotak = ref(null)
 const kartuEl = ref(null)
 const tombolLanjut = ref(null)
+let pengamatKartu = null
+if (typeof ResizeObserver !== 'undefined') {
+  pengamatKartu = new ResizeObserver(() => {
+    if (tour.aktif) jadwalkanUkur()
+  })
+}
 const vw = ref(document.documentElement.clientWidth)
 const vh = ref(window.innerHeight)
+const bannerTinggi = ref(0)
 
 const nomor = computed(() => tour.indeks + 1)
 const persen = computed(() =>
@@ -171,12 +180,21 @@ const gayaKartu = computed(() => {
     left: kotak.value.kartuLeft + 'px',
     width: kotak.value.kartuLebar + 'px',
     maxWidth: 'calc(100vw - 16px)',
+    maxHeight: `calc(100dvh - ${bannerTinggi.value + 16}px)`,
   }
 })
 
 let percobaan = null
 let jedaUkur = null
 let kunci = 0
+let abaikanRute = null
+let hentiTerakhir = 0
+
+function tinggiBanner() {
+  const b = document.querySelector('[data-banner]')
+  if (!b) return 0
+  return getComputedStyle(b).position === 'fixed' ? Math.ceil(b.getBoundingClientRect().height) : 0
+}
 
 function kartuTengah(lebar) {
   // Target tidak ada / tidak terlihat di layar ini (mis. tabel desktop di HP):
@@ -184,6 +202,9 @@ function kartuTengah(lebar) {
   const tinggiKartu = kartuEl.value?.offsetHeight || 240
   const hp = vw.value < 640
   const lebarAkhir = hp ? Math.min(400, vw.value - 16) : lebar
+  const banner = tinggiBanner()
+  bannerTinggi.value = banner
+  const batasBawah = vh.value - banner - 8
   kotak.value = {
     tanpaTarget: true,
     top: 0,
@@ -192,8 +213,8 @@ function kartuTengah(lebar) {
     height: 0,
     kartuLeft: Math.max(8, (vw.value - lebarAkhir) / 2),
     kartuTop: hp
-      ? Math.max(8, vh.value - tinggiKartu - 8)
-      : Math.max(12, vh.value / 2 - tinggiKartu / 2),
+      ? Math.max(8, batasBawah - tinggiKartu)
+      : Math.max(12, Math.min(vh.value / 2 - tinggiKartu / 2, batasBawah - tinggiKartu)),
     kartuLebar: lebarAkhir,
     letak: 'bawah',
   }
@@ -228,6 +249,9 @@ function ukur() {
   const pad = 6
   const tinggi = kartuEl.value?.offsetHeight || 218
   const jarak = 12
+  const banner = tinggiBanner()
+  bannerTinggi.value = banner
+  const batasBawah = vh.value - banner - 8
   const posisi = tour.kini.posisi || 'bawah'
 
   let kx
@@ -256,7 +280,7 @@ function ukur() {
     // sorotan target tetap terlihat di atasnya.
     const lebarHp = Math.min(400, vw.value - 16)
     kx = (vw.value - lebarHp) / 2
-    ky = Math.max(8, vh.value - tinggi - 8)
+    ky = Math.max(8, batasBawah - tinggi)
     kotak.value = {
       top: Math.max(0, r.top - pad),
       left: Math.max(0, r.left - pad),
@@ -270,7 +294,7 @@ function ukur() {
     return
   }
   kx = Math.max(12, Math.min(kx, vw.value - lebar - 12))
-  ky = Math.max(12, Math.min(ky, vh.value - tinggi - 12))
+  ky = Math.max(12, Math.min(ky, batasBawah - tinggi))
 
   kotak.value = {
     top: Math.max(0, r.top - pad),
@@ -287,6 +311,18 @@ function jadwalkanUkur() {
   cancelAnimationFrame(jedaUkur)
   jedaUkur = requestAnimationFrame(ukur)
 }
+
+// Teks langkah bisa membuat kartu lebih tinggi setelah posisi dihitung.
+// Amati perubahan tinggi kartu lalu ukur ulang agar tidak menembus banner.
+watch(
+  kartuEl,
+  (el, lama) => {
+    if (!pengamatKartu) return
+    if (lama) pengamatKartu.unobserve(lama)
+    if (el) pengamatKartu.observe(el)
+  },
+  { flush: 'post' },
+)
 
 function targetkan(ulang = 0) {
   clearTimeout(percobaan)
@@ -317,7 +353,13 @@ async function muat(ulang = 0) {
   if (!tour.aktif) return
   const token = ++kunci
   if (tour.kini.rute && route.path !== tour.kini.rute) {
-    await router.push(tour.kini.rute)
+    const tujuan = tour.kini.rute
+    // Tandai perpindahan ini sebagai bagian dari tur, bukan klik menu pengguna.
+    abaikanRute = tujuan
+    await router.push(tujuan)
+    setTimeout(() => {
+      if (abaikanRute === tujuan) abaikanRute = null
+    }, 1200)
     if (token !== kunci || !tour.aktif) return
     await new Promise((r) => setTimeout(r, 260))
   }
@@ -340,6 +382,16 @@ function sebelum() {
 
 function lewati() {
   tour.tutup()
+}
+
+function hentikanTur(pesan) {
+  if (!tour.aktif) return
+  tour.tutup()
+  const sekarang = Date.now()
+  if (sekarang - hentiTerakhir > 400) {
+    ui.kabari(pesan, 'info')
+    hentiTerakhir = sekarang
+  }
 }
 
 function tombol(e) {
@@ -406,7 +458,25 @@ function cobaAuto() {
 }
 
 onMounted(cobaAuto)
-watch(() => route.path, cobaAuto)
+watch(() => route.path, (path) => {
+  if (!tour.aktif) return cobaAuto()
+  if (abaikanRute && path === abaikanRute) {
+    abaikanRute = null
+    return
+  }
+  // Pengguna menekan menu sendiri saat tur berjalan: jangan tinggalkan
+  // tirai di halaman baru, karena halaman akan terlihat seperti hilang.
+  hentikanTur('Tur dihentikan karena Anda pindah halaman. Mulai lagi dari tombol Tur.')
+})
+
+watch(
+  () => sesi.aktif.id,
+  () => {
+    if (tour.aktif) {
+      hentikanTur('Tur dihentikan karena peran berubah. Tur mengikuti menu peran yang baru.')
+    }
+  },
+)
 
 onBeforeUnmount(() => {
   clearTimeout(timerAuto)
@@ -415,5 +485,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('scroll', jadwalkanUkur, true)
   clearTimeout(percobaan)
   cancelAnimationFrame(jedaUkur)
+  if (pengamatKartu) pengamatKartu.disconnect()
 })
 </script>

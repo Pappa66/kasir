@@ -31,6 +31,9 @@
           alur toko sehari-hari; add-on diaktifkan terpisah sesuai kebutuhan dan tidak mengubah
           data dasar. Di prototipe ini label <span class="font-medium text-ink">ADD-ON</span>
           dipakai untuk menandai fitur tambahan, dan tidak ada harga yang ditampilkan di aplikasi.
+          Angka setelah tanda titik pada label (mis. <span class="font-mono text-ink">ADD-ON · 3</span>)
+          adalah jumlah item yang menunggu tindakan di modul itu—bon berjalan untuk Piutang,
+          batch expired atau segera untuk Kedaluwarsa—bukan jumlah add-on yang dibeli.
         </p>
       </div>
       <div class="grid grid-cols-1 divide-y divide-line sm:grid-cols-2 sm:divide-x sm:divide-y-0">

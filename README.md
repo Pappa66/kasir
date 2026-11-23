@@ -27,7 +27,7 @@ npm run preview  # cek hasil build
 | Kedaluwarsa & FEFO (add-on) | Batch per tanggal expired, sisa hari, nilai berisiko, tarik batch dari rak |
 | Invoice publik | Halaman tanpa shell untuk pelanggan; divalidasi token demo, bisa dicetak |
 | Stock Opname | Daftar sesi, lembar hitung fisik, selisih + alasan wajib, posting dengan PIN pemilik |
-| Laporan | Omzet, HPP, laba kotor/bersih, penjualan per jam (klik untuk rincian item), per kasir, kanal tunai/QRIS, nilai stok, ekspor CSV/PDF |
+| Laporan | Rekap Harian/Mingguan/Bulanan, tanggal lampau bisa dibuka, omzet/HPP/laba, per jam atau per hari, per kasir, kanal tunai/QRIS, void, nilai stok, ekspor CSV/PDF |
 | Pengaturan | Identitas toko, lebar struk, tes cetak, pengguna, kategori & satuan produk, muat ulang data |
 | Panduan | Alur demo 3 menit, 15 bab tur, tabel hak akses, catatan perangkat, tur otomatis |
 | Panduan memilih | Perbandingan pilihan aplikasi, kelebihan/kekurangan jujur, checklist untuk penjual mana pun |
@@ -74,7 +74,7 @@ baru dan cukup memilih peran.
 ## Tur interaktif
 
 Tombol **Tur** menjalankan tur lengkap dari menu sampai pilihan tampilan:
-**15 bab / 79 langkah untuk pemilik**, dan **8 bab / 43 langkah untuk kasir**.
+**15 bab / 80 langkah untuk pemilik**, dan **8 bab / 43 langkah untuk kasir**.
 Bab milik pemilik (Dashboard, Stok Masuk, Kedaluwarsa, Opname, Laporan, Jejak,
 Pengaturan) otomatis dilewati untuk kasir, jadi tur tidak pernah membuka halaman
 yang bukan haknya. Tombol tanda tanya di topbar menjelaskan halaman yang sedang
@@ -90,6 +90,19 @@ Tur juga berjalan otomatis sekali per tab saat demo pertama dibuka, tetapi hanya
 bab pengantar (6 langkah untuk kasir, 8 untuk pemilik), bukan seluruh tur. Bisa dimatikan dari Panduan;
 tombol Tur tetap tersedia. Tur otomatis tidak muncul di halaman invoice publik.
 
+## Laporan
+
+Laporan punya tiga mode rekap: **Harian** (satu hari, rincian per jam), **Mingguan**
+(Senin–Minggu, rincian per hari), dan **Bulanan** (satu bulan kalender, rincian per
+hari). Panah sebelumnya/berikutnya berpindah periode; tanggal setelah hari demo
+(19 November 2026) tidak bisa dipilih, tetapi tanggal dan periode lampau tetap bisa
+dibuka kembali. Hari tanpa transaksi tampil sebagai baris nol, bukan hilang.
+
+Di atas rekap ada perbandingan dengan periode sebelumnya dalam nominal rupiah dan
+jumlah transaksi (mis. “Omzet +Rp 4.202.275”). Nilai turun ditampilkan dengan tanda
+minus, dan bila periode pembanding kosong dipakai “—”. Ekspor CSV dan cetak PDF
+mengikuti label periode yang sedang dibuka.
+
 ## Label add-on
 
 Aplikasi membedakan **paket dasar** dan **add-on** tanpa menampilkan harga di
@@ -103,6 +116,9 @@ dalam demo:
 - Jumlah add-on perangkat lunak ada empat. Setup thermal, input data awal,
   dan maintenance adalah layanan pendampingan, bukan fitur yang muncul di
   menu aplikasi.
+- Angka kecil di samping label `ADD-ON` pada menu adalah jumlah data yang perlu
+  ditangani saat itu (mis. bon berjalan atau batch mendekati expired), bukan
+  jumlah add-on yang dibeli. Panduan menjelaskan arti angka tersebut per menu.
 - Semua add-on sudah berfungsi di demo:
   - **Piutang/bon** — metode Bon di Kasir (DP, nomor HP, jatuh tempo),
     pelunasan di `/piutang` atau detail invoice, sisa bon ikut di struk.
@@ -120,8 +136,8 @@ dalam demo:
 src/
   data/adapter.js      ← SATU-SATUNYA pintu data. Ganti isi file ini dengan
                           panggilan API/Inertia Laravel; komponen tidak berubah.
-  data/*.json          ← data contoh (25 produk, 71 transaksi, 15 batch,
-                          supplier, stok masuk, opname)
+  data/*.json          ← data contoh (25 produk, 71 transaksi hari ini + 299
+                          riwayat, 15 batch, supplier, stok masuk, opname)
   stores/              ← Pinia: keranjang (tunai/bon), toko, ui (toast),
                           opname, cetak, sesi (peran demo), tour (langkah tur)
   components/          ← AppShell, StrukPreview, CetakStruk, Modal, ToastHost,
@@ -168,7 +184,10 @@ src/
   susu mendekati expired, gas tabung, dll.
 - 15 batch FEFO untuk produk ber-expired.
 - 71 transaksi tanggal 19/11/2026: 67 selesai tunai, 3 bon, 1 void.
-- Omzet contoh mengikuti data transaksi di `penjualan.json`.
+- Riwayat contoh 1 September–18 November 2026 (299 transaksi, termasuk 5 void dan
+  2 bon belum lunas) dipakai untuk menguji rekap mingguan/bulanan dan tanggal
+  lampau. Hari Minggu sengaja kosong.
+- Omzet contoh mengikuti data transaksi di `penjualan.json` dan `riwayat.json`.
 
 ## Deploy
 

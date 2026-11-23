@@ -40,7 +40,7 @@
           <span
             v-if="m.addon"
             class="ml-auto hidden shrink-0 rounded border border-[#59a9a2]/50 px-1 py-px text-[8px] uppercase tracking-[0.06em] text-[#7fc4bd] lg:block"
-            title="Fitur tambahan di luar paket dasar"
+            :title="lencana(m) ? `Fitur tambahan di luar paket dasar. ${lencana(m)} ${m.lencana === 'piutang' ? 'bon berjalan' : 'batch mendekati kedaluwarsa'} perlu dilihat.` : 'Fitur tambahan di luar paket dasar'"
             data-tour="lencana"
           >
             add-on<template v-if="lencana(m)"> · {{ lencana(m) }}</template>
@@ -48,6 +48,7 @@
           <span
             v-else-if="lencana(m)"
             class="ml-auto hidden min-w-[18px] rounded-full bg-white/10 px-1 text-center text-[10px] leading-[16px] text-white lg:block"
+            :title="m.lencana === 'piutang' ? 'Bon berjalan' : 'Batch expired atau segera'"
           >
             {{ lencana(m) }}
           </span>

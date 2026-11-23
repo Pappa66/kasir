@@ -3,6 +3,7 @@
 // pemanggilan API/Inertia. Komponen tidak perlu diubah.
 import produkData from './produk.json'
 import penjualanData from './penjualan.json'
+import riwayatData from './riwayat.json'
 import pengaturanData from './pengaturan.json'
 import supplierData from './supplier.json'
 import stokMasukData from './stok_masuk.json'
@@ -299,7 +300,10 @@ function normalisasiPenjualan(t) {
 }
 
 export function getPenjualan() {
-  if (!cachePenjualan) cachePenjualan = penjualanData.map(normalisasiPenjualan)
+  if (!cachePenjualan) {
+    // Riwayat contoh dipisah agar transaksi hari demo tetap di urutan atas.
+    cachePenjualan = [...penjualanData, ...riwayatData].map(normalisasiPenjualan)
+  }
   return cachePenjualan
 }
 
@@ -460,7 +464,7 @@ export function getInvoicePublik(nomor, token) {
 // ---------------------------------------------------------------- dashboard
 export function getDashboard() {
   const produk = getProduk()
-  const semua = getPenjualan()
+  const semua = getPenjualan().filter((t) => t.tanggal === HARI_INI)
   const sah = semua.filter((t) => t.status === 'selesai')
 
   const total = sah.reduce((s, t) => s + t.total, 0)
@@ -621,11 +625,101 @@ export function getOpname() {
 }
 
 // ----------------------------------------------------------------- laporan
-export function getLaporan() {
-  const produk = getProduk()
-  const hargaBeli = new Map(produk.map((p) => [p.id, p.harga_beli]))
-  const sah = getPenjualan().filter((t) => t.status === 'selesai')
+// ------------------------------------------------------- periode laporan
+// Laporan bisa dilihat per hari, minggu (Senin–Minggu), atau bulan.
+// Semua tanggal memakai kalender demo, bukan jam komputer.
+const BULAN_PANJANG = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+]
+const dua = (n) => String(n).padStart(2, '0')
+const keDate = (iso) => {
+  const [y, m, d] = String(iso).split('-').map(Number)
+  return new Date(y, (m || 1) - 1, d || 1)
+}
+const keISO = (d) => `${d.getFullYear()}-${dua(d.getMonth() + 1)}-${dua(d.getDate())}`
 
+export function geserTanggal(iso, hari) {
+  const d = keDate(iso)
+  d.setDate(d.getDate() + Number(hari || 0))
+  return keISO(d)
+}
+
+export function awalMinggu(iso) {
+  const d = keDate(iso)
+  const mundur = (d.getDay() + 6) % 7 // Senin = 0, Minggu = 6
+  d.setDate(d.getDate() - mundur)
+  return keISO(d)
+}
+
+const akhirBulan = (iso) => {
+  const d = keDate(iso)
+  return keISO(new Date(d.getFullYear(), d.getMonth() + 1, 0))
+}
+
+const labelHari = (iso) =>
+  keDate(iso).toLocaleDateString('id-ID', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  })
+
+const labelHariPendek = (iso) =>
+  keDate(iso).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })
+
+const labelRentang = (mulai, selesai) => {
+  if (mulai === selesai) return labelHari(mulai)
+  const a = keDate(mulai)
+  const b = keDate(selesai)
+  if (a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear()) {
+    return `${a.getDate()}–${b.getDate()} ${BULAN_PANJANG[a.getMonth()]} ${a.getFullYear()}`
+  }
+  return `${a.getDate()} ${BULAN_PANJANG[a.getMonth()].slice(0, 3)} – ${b.getDate()} ${BULAN_PANJANG[b.getMonth()].slice(0, 3)} ${b.getFullYear()}`
+}
+
+export function rentangLaporan(mode = 'harian', tanggal = HARI_INI) {
+  const jenis = ['harian', 'mingguan', 'bulanan'].includes(mode) ? mode : 'harian'
+  let tgl = /^\d{4}-\d{2}-\d{2}$/.test(String(tanggal)) ? String(tanggal) : HARI_INI
+  if (tgl > HARI_INI) tgl = HARI_INI
+
+  let mulai
+  let selesai
+  if (jenis === 'mingguan') {
+    mulai = awalMinggu(tgl)
+    selesai = geserTanggal(mulai, 6)
+  } else if (jenis === 'bulanan') {
+    mulai = tgl.slice(0, 8) + '01'
+    selesai = akhirBulan(tgl)
+  } else {
+    mulai = tgl
+    selesai = tgl
+  }
+
+  const sebelumSelesai = geserTanggal(mulai, -1)
+  const sebelumMulai =
+    jenis === 'mingguan'
+      ? geserTanggal(sebelumSelesai, -6)
+      : jenis === 'bulanan'
+        ? sebelumSelesai.slice(0, 8) + '01'
+        : sebelumSelesai
+
+  const label =
+    jenis === 'bulanan'
+      ? `${BULAN_PANJANG[keDate(mulai).getMonth()]} ${keDate(mulai).getFullYear()}`
+      : jenis === 'harian'
+        ? labelHari(mulai)
+        : labelRentang(mulai, selesai)
+
+  const labelSebelum =
+    jenis === 'bulanan'
+      ? `${BULAN_PANJANG[keDate(sebelumMulai).getMonth()]} ${keDate(sebelumMulai).getFullYear()}`
+      : jenis === 'harian'
+        ? labelHari(sebelumMulai)
+        : labelRentang(sebelumMulai, sebelumSelesai)
+
+  return { mode: jenis, tanggal: tgl, mulai, selesai, sebelumMulai, sebelumSelesai, label, labelSebelum }
+}
+
+function ringkasPenjualan(sah, produk, { denganRekap = true } = {}) {
+  const hargaBeli = new Map(produk.map((p) => [p.id, p.harga_beli]))
   const omzet = sah.reduce((s, t) => s + t.total, 0)
   const item = Math.round(sah.reduce((s, t) => s + t.items.reduce((a, i) => a + i.qty, 0), 0))
   const hpp = Math.round(
@@ -694,12 +788,57 @@ export function getLaporan() {
     }
   }
 
-  const piutang = getPiutangRingkas()
+  return {
+    omzet, hpp, labaKotor, laba: labaKotor,
+    transaksi: sah.length,
+    rataRata: sah.length ? Math.round(omzet / sah.length) : 0,
+    item, perJam, perKasir, perKategori, terlaris, uangMasuk,
+    denganRekap,
+  }
+}
 
-  const daftarVoid = getPenjualan()
+function rekapHarian(sah, r) {
+  // Untuk mingguan/bulanan, pecah per hari. Hari yang tutup tetap tampil
+  // sebagai nol supaya lubang data tidak terlihat seperti halaman rusak.
+  const akhir = r.selesai > HARI_INI ? HARI_INI : r.selesai
+  const hasil = []
+  let tgl = r.mulai
+  while (tgl <= akhir) {
+    const daftar = sah.filter((t) => t.tanggal === tgl)
+    hasil.push({
+      jenis: 'hari',
+      kunci: tgl,
+      tanggal: tgl,
+      label: labelHariPendek(tgl),
+      sublabel: keDate(tgl).toLocaleDateString('id-ID', { weekday: 'long' }),
+      transaksi: daftar.length,
+      item: Math.round(daftar.reduce((s, t) => s + t.items.reduce((a, i) => a + i.qty, 0), 0)),
+      total: daftar.reduce((s, t) => s + t.total, 0),
+    })
+    tgl = geserTanggal(tgl, 1)
+  }
+  return hasil
+}
+
+export function getLaporan(mode = 'harian', tanggal = HARI_INI) {
+  const produk = getProduk()
+  const semua = getPenjualan()
+  const r = rentangLaporan(mode, tanggal)
+
+  const periode = semua.filter((t) => t.tanggal >= r.mulai && t.tanggal <= r.selesai)
+  const sah = periode.filter((t) => t.status === 'selesai')
+  const ringkas = ringkasPenjualan(sah, produk)
+
+  const sebelum = semua.filter(
+    (t) => t.tanggal >= r.sebelumMulai && t.tanggal <= r.sebelumSelesai && t.status === 'selesai',
+  )
+  const ringkasSebelum = ringkasPenjualan(sebelum, produk, { denganRekap: false })
+
+  const daftarVoid = periode
     .filter((t) => t.status === 'void')
     .map((t) => ({
       nomor: t.nomor,
+      tanggal: t.tanggal,
       jam: t.jam,
       kasir: t.kasir,
       total: t.total,
@@ -708,19 +847,24 @@ export function getLaporan() {
       tinjau: !!t.void_perlu_tinjauan,
     }))
 
+  const rekap =
+    r.mode === 'harian'
+      ? ringkas.perJam.map((j) => ({ ...j, jenis: 'jam', kunci: j.jam.slice(0, 2), label: j.jam }))
+      : rekapHarian(sah, r)
+
   return {
-    omzet,
-    hpp,
-    labaKotor,
-    laba: labaKotor,
-    transaksi: sah.length,
-    item,
-    perJam,
-    perKasir,
-    perKategori,
-    terlaris,
-    piutang,
-    uangMasuk,
+    ...ringkas,
+    ...r,
+    rentang: r,
+    rekap,
+    piutang: getPiutangRingkas(),
+    sebelumnya: {
+      omzet: ringkasSebelum.omzet,
+      hpp: ringkasSebelum.hpp,
+      labaKotor: ringkasSebelum.labaKotor,
+      transaksi: ringkasSebelum.transaksi,
+      item: ringkasSebelum.item,
+    },
     void: {
       jumlah: daftarVoid.length,
       nilai: daftarVoid.reduce((s, t) => s + t.total, 0),
@@ -733,14 +877,21 @@ export function getLaporan() {
   }
 }
 
-// Rincian transaksi untuk satu jam pada laporan. Dipakai saat baris jam
-// diklik; hanya transaksi selesai yang dihitung, sama seperti laporan.
-export function getRincianJam(jam) {
+// Rincian transaksi untuk satu jam pada periode laporan.
+export function getRincianJam(jam, mode = 'harian', tanggal = HARI_INI) {
+  const r = rentangLaporan(mode, tanggal)
   const target = String(jam).slice(0, 2).padStart(2, '0') + ':00'
   const daftar = getPenjualan()
-    .filter((t) => t.status === 'selesai' && t.jam.slice(0, 2) + ':00' === target)
+    .filter(
+      (t) =>
+        t.status === 'selesai' &&
+        t.tanggal >= r.mulai &&
+        t.tanggal <= r.selesai &&
+        t.jam.slice(0, 2) + ':00' === target,
+    )
     .map((t) => ({
       nomor: t.nomor,
+      tanggal: t.tanggal,
       jam: t.jam,
       pelanggan: t.pelanggan || '',
       metode: t.metode,
@@ -750,7 +901,37 @@ export function getRincianJam(jam) {
       items: t.items.map((i) => ({ ...i })),
     }))
   return {
-    jam: target,
+    jenis: 'jam',
+    judul: `Penjualan jam ${target}`,
+    subjudul: `${r.label} · ${daftar.length} transaksi`,
+    keterangan: r.label,
+    transaksi: daftar.length,
+    item: daftar.reduce((s, t) => s + t.items.reduce((a, i) => a + i.qty, 0), 0),
+    total: daftar.reduce((s, t) => s + t.total, 0),
+    daftar,
+  }
+}
+
+// Rincian satu hari, dipakai saat baris rekap mingguan/bulanan diklik.
+export function getRincianHari(tanggal) {
+  const daftar = getPenjualan()
+    .filter((t) => t.status === 'selesai' && t.tanggal === tanggal)
+    .map((t) => ({
+      nomor: t.nomor,
+      tanggal: t.tanggal,
+      jam: t.jam,
+      pelanggan: t.pelanggan || '',
+      metode: t.metode,
+      kanal: t.kanal,
+      kasir: t.kasir,
+      total: t.total,
+      items: t.items.map((i) => ({ ...i })),
+    }))
+  return {
+    jenis: 'hari',
+    judul: `Penjualan ${labelHari(tanggal)}`,
+    subjudul: `${daftar.length} transaksi`,
+    keterangan: labelHari(tanggal),
     transaksi: daftar.length,
     item: daftar.reduce((s, t) => s + t.items.reduce((a, i) => a + i.qty, 0), 0),
     total: daftar.reduce((s, t) => s + t.total, 0),
