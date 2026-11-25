@@ -18,6 +18,18 @@
       :data-nav-ciut="navCiut ? '1' : '0'"
       data-shell-nav
     >
+      <button
+        type="button"
+        class="group absolute -right-2 top-[60px] z-10 hidden h-11 w-5 items-center justify-center rounded-r-full border border-l-0 border-line bg-paper text-ink-soft shadow-[2px_2px_8px_rgba(15,47,46,0.16)] transition-all hover:-right-2.5 hover:w-6 hover:text-ink lg:flex"
+        :title="navCiut ? 'Tarik untuk melebarkan menu' : 'Dorong untuk menciutkan menu'"
+        :aria-label="navCiut ? 'Lebarkan menu' : 'Ciutkan menu'"
+        aria-controls="menu-samping"
+        :aria-expanded="!navCiut"
+        @click="navCiut = !navCiut"
+      >
+        <ChevronLeft v-if="!navCiut" :size="13" :stroke-width="2.2" />
+        <ChevronRight v-else :size="13" :stroke-width="2.2" />
+      </button>
       <div class="flex h-[52px] items-center gap-2 border-b border-white/10 px-4">
         <div
           class="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-[#1c4644] text-[11px] font-semibold text-white"
@@ -113,18 +125,6 @@
             @click="navBuka = true"
           >
             <Menu :size="16" :stroke-width="1.8" />
-          </button>
-          <button
-            type="button"
-            class="btn btn-sm hidden h-8 w-8 shrink-0 items-center justify-center px-0 lg:flex"
-            :title="navCiut ? 'Lebarkan menu' : 'Ciutkan menu'"
-            :aria-label="navCiut ? 'Lebarkan menu' : 'Ciutkan menu'"
-            aria-controls="menu-samping"
-            :aria-expanded="!navCiut"
-            @click="navCiut = !navCiut"
-          >
-            <PanelLeftOpen v-if="navCiut" :size="16" :stroke-width="1.8" />
-            <PanelLeftClose v-else :size="16" :stroke-width="1.8" />
           </button>
           <h1 class="truncate text-base font-semibold text-ink">{{ judulHalaman }}</h1>
         </div>
@@ -301,6 +301,8 @@ import {
   CalendarClock,
   Scale,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Check,
   LogOut,
   Play,
@@ -309,8 +311,6 @@ import {
   CircleHelp,
   Menu,
   X,
-  PanelLeftClose,
-  PanelLeftOpen,
 } from 'lucide-vue-next'
 import ToastHost from './ToastHost.vue'
 import { getKedaluwarsaRingkas, getPiutangRingkas } from '../data/adapter'

@@ -9,7 +9,7 @@ export const BAB_TUR = [
     judul: 'Mulai & peran',
     ket: 'Menu, peran, tema, dan tombol bantuan.',
     langkah: [
-      s('[data-tour="menu"]', 'Satu aplikasi, semua pekerjaan', 'Menu di kiri adalah peta aplikasi. Pemilik melihat semua modul; kasir hanya melihat Kasir, Produk, Invoice, Piutang, Panduan, dan Pilihan tampilan. Di HP menu tampil sebagai rail ikon: ketuk ikon menu di kiri atas untuk membuka daftar lengkap. Di desktop, tombol di kiri judul menciutkan atau melebarkan panel.'),
+      s('[data-tour="menu"]', 'Satu aplikasi, semua pekerjaan', 'Menu di kiri adalah peta aplikasi. Pemilik melihat semua modul; kasir hanya melihat Kasir, Produk, Invoice, Piutang, Panduan, dan Pilihan tampilan. Di HP menu tampil sebagai rail ikon: ketuk ikon menu di kiri atas untuk membuka daftar lengkap. Di desktop, pegangan kecil di tepi kanan panel bisa didorong untuk menciutkan atau ditarik untuk melebarkan menu.'),
       s('[data-tour="lencana"]', 'Label ADD-ON dan angkanya', 'Label ADD-ON menandai fitur tambahan di luar paket dasar. Angka di sampingnya adalah jumlah yang menunggu tindakan di modul itu: Piutang menghitung bon berjalan, Kedaluwarsa menghitung batch expired atau segera. Buka panel menu di HP agar label dan angkanya terlihat; di desktop panel bisa diciutkan.'),
       s('[data-tour="peran"]', 'Ganti peran tanpa keluar', 'Klik nama pengguna di kanan atas untuk masuk sebagai Pemilik, Kasir Siti, atau Kasir Rina. Menu dan tombol langsung menyesuaikan.'),
       s('[data-tour="tema"]', 'Tiga arah tampilan', 'Tombol palet mengganti tampilan antara Kasir, Brutal, dan Elegan. Ini alat demo untuk memilih arah desain; data dan alur tidak berubah.'),

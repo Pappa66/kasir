@@ -73,9 +73,9 @@ baru dan cukup memilih peran.
 
 ## Navigasi
 
-- **Desktop:** panel menu selebar 232 px. Tombol di kiri judul menciutkannya
-  menjadi rail ikon 56 px dan melebarkannya kembali; pilihan disimpan di
-  `localStorage['demo-nav-ciut']`.
+- **Desktop:** panel menu selebar 232 px. Pegangan kecil yang menonjol di tepi
+  kanan panel menciutkannya menjadi rail ikon 56 px; klik lagi untuk melebarkan.
+  Pilihan disimpan di `localStorage['demo-nav-ciut']`.
 - **HP:** panel tampil sebagai rail ikon 56 px. Ikon menu di kiri judul membuka
   drawer selebar 232 px berisi label, lencana add-on, dan tombol Keluar.
   Drawer ditutup lewat tombol X, ketuk area gelap di luar panel, Esc, atau
