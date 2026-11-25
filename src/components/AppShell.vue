@@ -1,7 +1,21 @@
 <template>
   <div class="min-h-screen" data-shell>
+    <div
+      v-if="navBuka"
+      class="fixed inset-0 z-30 bg-ink/50 lg:hidden"
+      aria-hidden="true"
+      @click="navBuka = false"
+    />
+
     <aside
-      class="fixed inset-y-0 left-0 z-30 flex w-[56px] flex-col bg-ink text-[#a9bcba] lg:w-[232px]"
+      id="menu-samping"
+      class="fixed inset-y-0 left-0 z-40 flex flex-col bg-ink text-[#a9bcba] transition-[width] duration-200"
+      :class="[
+        navBuka ? 'w-[232px] shadow-2xl' : 'w-[56px]',
+        navCiut ? 'lg:w-[56px] lg:shadow-none' : 'lg:w-[232px] lg:shadow-none',
+      ]"
+      :data-nav-buka="navBuka ? '1' : '0'"
+      :data-nav-ciut="navCiut ? '1' : '0'"
       data-shell-nav
     >
       <div class="flex h-[52px] items-center gap-2 border-b border-white/10 px-4">
@@ -10,16 +24,26 @@
         >
           {{ inisial }}
         </div>
-        <div class="hidden min-w-0 lg:block">
+        <div class="nav-lebar min-w-0">
           <div class="truncate text-xs font-semibold leading-tight text-white" :title="toko.data.nama_toko">
             {{ toko.data.nama_toko }}
           </div>
           <div class="truncate text-2xs text-[#7f9997]">Prototipe aplikasi</div>
         </div>
+        <button
+          v-if="navBuka"
+          type="button"
+          class="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded text-[#a9bcba] transition-colors hover:bg-white/10 hover:text-white lg:hidden"
+          title="Tutup menu"
+          aria-label="Tutup menu"
+          @click="navBuka = false"
+        >
+          <X :size="16" :stroke-width="1.8" />
+        </button>
       </div>
 
       <nav class="flex-1 overflow-y-auto py-3" data-tour="menu">
-        <div class="mb-1 hidden px-4 text-2xs uppercase tracking-[0.08em] text-[#5f7a78] lg:block">
+        <div class="nav-lebar mb-1 px-4 text-2xs uppercase tracking-[0.08em] text-[#5f7a78]">
           Menu
         </div>
         <RouterLink
@@ -29,6 +53,8 @@
           class="group relative flex h-10 items-center gap-3 px-4 text-sm transition-colors hover:bg-white/5 hover:text-white"
           :class="aktif(m.path) ? 'bg-white/[0.07] text-white' : ''"
           :title="m.label"
+          :data-tour="m.addon ? 'lencana' : undefined"
+          @click="navBuka = false"
         >
           <span
             v-if="aktif(m.path)"
@@ -36,18 +62,17 @@
             aria-hidden="true"
           />
           <component :is="m.icon" :size="18" :stroke-width="1.5" class="shrink-0" />
-          <span class="hidden lg:block">{{ m.label }}</span>
+          <span class="nav-lebar">{{ m.label }}</span>
           <span
             v-if="m.addon"
-            class="ml-auto hidden shrink-0 rounded border border-[#59a9a2]/50 px-1 py-px text-[8px] uppercase tracking-[0.06em] text-[#7fc4bd] lg:block"
+            class="nav-lebar ml-auto shrink-0 rounded border border-[#59a9a2]/50 px-1 py-px text-[8px] uppercase tracking-[0.06em] text-[#7fc4bd]"
             :title="lencana(m) ? `Fitur tambahan di luar paket dasar. ${lencana(m)} ${m.lencana === 'piutang' ? 'bon berjalan' : 'batch mendekati kedaluwarsa'} perlu dilihat.` : 'Fitur tambahan di luar paket dasar'"
-            data-tour="lencana"
           >
             add-on<template v-if="lencana(m)"> · {{ lencana(m) }}</template>
           </span>
           <span
             v-else-if="lencana(m)"
-            class="ml-auto hidden min-w-[18px] rounded-full bg-white/10 px-1 text-center text-[10px] leading-[16px] text-white lg:block"
+            class="nav-lebar ml-auto min-w-[18px] rounded-full bg-white/10 px-1 text-center text-[10px] leading-[16px] text-white"
             :title="m.lencana === 'piutang' ? 'Bon berjalan' : 'Batch expired atau segera'"
           >
             {{ lencana(m) }}
@@ -63,17 +88,44 @@
           @click="keluar"
         >
           <LogOut :size="18" :stroke-width="1.5" class="shrink-0" />
-          <span class="hidden lg:block">Keluar</span>
+          <span class="nav-lebar">Keluar</span>
         </button>
       </div>
     </aside>
 
-    <div class="pl-[56px] lg:pl-[232px]" data-shell-body>
+    <div
+      class="pl-[56px] transition-[padding] duration-200"
+      :class="navCiut ? 'lg:pl-[56px]' : 'lg:pl-[232px]'"
+      data-shell-body
+    >
       <header
         class="sticky top-0 z-20 flex h-[52px] items-center justify-between gap-2 border-b border-line bg-paper px-2 sm:gap-3 sm:px-4 lg:px-6"
         data-shell-head
       >
-        <div class="flex min-w-0 flex-1 items-center gap-3">
+        <div class="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+          <button
+            type="button"
+            class="btn btn-sm flex h-8 w-8 shrink-0 items-center justify-center px-0 lg:hidden"
+            title="Buka menu"
+            aria-label="Buka menu"
+            aria-controls="menu-samping"
+            :aria-expanded="navBuka"
+            @click="navBuka = true"
+          >
+            <Menu :size="16" :stroke-width="1.8" />
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm hidden h-8 w-8 shrink-0 items-center justify-center px-0 lg:flex"
+            :title="navCiut ? 'Lebarkan menu' : 'Ciutkan menu'"
+            :aria-label="navCiut ? 'Lebarkan menu' : 'Ciutkan menu'"
+            aria-controls="menu-samping"
+            :aria-expanded="!navCiut"
+            @click="navCiut = !navCiut"
+          >
+            <PanelLeftOpen v-if="navCiut" :size="16" :stroke-width="1.8" />
+            <PanelLeftClose v-else :size="16" :stroke-width="1.8" />
+          </button>
           <h1 class="truncate text-base font-semibold text-ink">{{ judulHalaman }}</h1>
         </div>
         <div class="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -133,7 +185,8 @@
           <button
             v-if="tour.adaBab(route.path)"
             type="button"
-            class="btn btn-sm flex h-8"
+            class="btn btn-sm h-8"
+            :class="tour.aktif && tour.kini?.target?.includes('bantuan') ? 'flex' : 'hidden sm:flex'"
             title="Jelaskan halaman ini"
             aria-label="Jelaskan halaman ini"
             data-tour="bantuan"
@@ -232,7 +285,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import {
   LayoutDashboard,
@@ -254,6 +307,10 @@ import {
   Palette,
   ScrollText,
   CircleHelp,
+  Menu,
+  X,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-vue-next'
 import ToastHost from './ToastHost.vue'
 import { getKedaluwarsaRingkas, getPiutangRingkas } from '../data/adapter'
@@ -310,6 +367,31 @@ const peranOpen = ref(false)
 const akarPeran = ref(null)
 const temaOpen = ref(false)
 const akarTema = ref(null)
+
+// Panel menu: di HP membuka drawer lebar, di desktop bisa diciutkan jadi rail ikon.
+const navBuka = ref(false)
+const navCiut = ref(false)
+try {
+  navCiut.value = localStorage.getItem('demo-nav-ciut') === '1'
+} catch {}
+watch(navCiut, (v) => {
+  try {
+    localStorage.setItem('demo-nav-ciut', v ? '1' : '0')
+  } catch {}
+})
+watch(
+  () => route.path,
+  () => {
+    navBuka.value = false
+  },
+)
+watch(
+  () => tour.aktif,
+  (v) => {
+    if (v) navBuka.value = false
+  },
+)
+
 const namaTema = computed(
   () => tema.daftar.find((t) => t.id === tema.aktif)?.nama || 'Kasir',
 )
@@ -333,6 +415,7 @@ function tombolEsc(e) {
   if (e.key === 'Escape') {
     peranOpen.value = false
     temaOpen.value = false
+    navBuka.value = false
   }
 }
 

@@ -421,3 +421,38 @@
   background: #111;
   color: #ffd60a;
 }
+
+/* Label, lencana, dan nama toko hanya tampil saat panel menu melebar:
+   drawer HP sedang terbuka, atau sidebar desktop tidak diciutkan. */
+.nav-lebar {
+  display: none;
+}
+[data-nav-buka='1'] .nav-lebar {
+  display: block;
+}
+@media (min-width: 1024px) {
+  [data-nav-buka='1'] .nav-lebar {
+    display: none;
+  }
+  [data-nav-ciut='0'] .nav-lebar {
+    display: block;
+  }
+}
+
+/* Saat panel menu menjadi rail ikon, ikon duduk di tengah. */
+@media (max-width: 1023.98px) {
+  #menu-samping[data-nav-buka='0'] nav a,
+  #menu-samping[data-nav-buka='0'] > div:last-child > button {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+@media (min-width: 1024px) {
+  #menu-samping[data-nav-ciut='1'] nav a,
+  #menu-samping[data-nav-ciut='1'] > div:last-child > button {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

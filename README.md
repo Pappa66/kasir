@@ -71,6 +71,19 @@ baru dan cukup memilih peran.
 - Halaman `/publik/:nomor?token=...` sengaja melewati guard login dan peran
   karena dibuka pelanggan; isinya hanya divalidasi token demo.
 
+## Navigasi
+
+- **Desktop:** panel menu selebar 232 px. Tombol di kiri judul menciutkannya
+  menjadi rail ikon 56 px dan melebarkannya kembali; pilihan disimpan di
+  `localStorage['demo-nav-ciut']`.
+- **HP:** panel tampil sebagai rail ikon 56 px. Ikon menu di kiri judul membuka
+  drawer selebar 232 px berisi label, lencana add-on, dan tombol Keluar.
+  Drawer ditutup lewat tombol X, ketuk area gelap di luar panel, Esc, atau
+  setelah memilih menu. Tur yang dimulai otomatis menutup drawer lebih dulu.
+- **Tour:** langkah menu menyorot rail/drawer yang sedang terlihat; langkah
+  label ADD-ON menyorot baris modul (Piutang), jadi tetap ada sorotan saat panel
+  sedang ciut di HP. Salinan langkah menjelaskan cara membuka panel.
+
 ## Tur interaktif
 
 Tombol **Tur** menjalankan tur lengkap dari menu sampai pilihan tampilan:
@@ -78,10 +91,10 @@ Tombol **Tur** menjalankan tur lengkap dari menu sampai pilihan tampilan:
 Bab milik pemilik (Dashboard, Stok Masuk, Kedaluwarsa, Opname, Laporan, Jejak,
 Pengaturan) otomatis dilewati untuk kasir, jadi tur tidak pernah membuka halaman
 yang bukan haknya. Tombol tanda tanya di topbar menjelaskan halaman yang sedang
-dibuka (di layar kecil ikut tampil sebagai ikon), dan Panduan punya daftar bab
-yang bisa dijalankan sendiri-sendiri. Tombol Tur dan tanda tanya tetap terlihat
-saat tur berjalan agar langkah pengantarnya menunjuk tombol yang nyata; klik
-baru aktif lagi setelah tur ditutup.
+dibuka, dan Panduan punya daftar bab yang bisa dijalankan sendiri-sendiri.
+Tombol Tur selalu terlihat; tombol tanda tanya muncul saat langkah tur yang
+membahasnya berjalan (dan di layar kecil hanya pada langkah itu) supaya
+sorotan menunjuk tombol yang nyata, bukan kartu tanpa target.
 Navigasi lewat Lanjut/Kembali/Lewati, panah kiri-kanan, atau Esc. Tur berpindah
 halaman sendiri, menyorot elemen terkait, dan menghormati
 `prefers-reduced-motion`. Di HP kartu tur menjadi panel bawah yang lebar agar
